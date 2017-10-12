@@ -1,4 +1,4 @@
-test
-test
-T
-T1
+gitignore对已经增加版本号的文件不生效，解决办法
+git rm -r --cached .
+git add .
+git commit -m 'update .gitignore'
