@@ -2,3 +2,14 @@ gitignore对已经增加版本号的文件不生效，解决办法
 git rm -r --cached .
 git add .
 git commit -m 'update .gitignore'
+
+install userena
+	pip install django-userena
+
+	then
+	pip install django-guardian==1.4.2
+
+install celery:
+	pip install celery
+
+	then install rabbitMQ follow https://www.rabbitmq.com/install-windows.html
