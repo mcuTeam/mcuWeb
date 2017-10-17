@@ -17,11 +17,19 @@ from django.conf.urls import url,include
 
 from django.contrib import admin
 
+from system.forms import *
+import userena.views as userView
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    
+    
+
+    url(r'^accounts/signin/$',userView.signin,{'auth_form': SigninFormExtra},name="userena_signin"),
+
     url(r'^accounts/', include('userena.urls')),
+
     url(r'',include('system.urls')),
     # url(r'^accounts/',include('accounts.urls')),
 ]

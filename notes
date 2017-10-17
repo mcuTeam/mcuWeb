@@ -16,3 +16,10 @@ install celery:
 
 only thread mode celery:
 	celery -A mcuWeb worker -c1 -l info
+
+merge conflict:
+	git checkout (branch/--ours --thears)  file
+	example:
+	git checkout dev notes
+	git checkout origin/dev notes
+	git checkout --ours notes

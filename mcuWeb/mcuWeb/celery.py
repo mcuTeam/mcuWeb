@@ -22,6 +22,7 @@ try:
 	tcpCliSock.connect(ADDR)
 	tcpCliSock.settimeout(3)
 except BaseException as e:
+	tcpCliSock = None 
 	print(e)
 
 # Using a string here means the worker doesn't have to serialize
@@ -45,23 +46,29 @@ def debug_task(self):
 def testTask(self):
 	global tcpCliSock
 	if tcpCliSock is None:
+
+		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
 		tcpCliSock.settimeout(3)	
-	print("hello celery && Django")
+	print("hello celery && Django",tcpCliSock)
 	try:
 		tcpCliSock.send("LISTMEET\r\nVersion 1\r\nSeqNumber 1\r\n\r\n".encode('utf8'))
 		data=tcpCliSock.recv(BUFSIZ)
 		print(data)
-	except socket.error as e:
-		print("socket error: "+e)
+	# 开始连接成功，后来MCU断开连接了
+	except ConnectionResetError as e:
+		print("ConnectionResetError error: ",e)
+	# 没连接到MCU
+	except BrokenPipeError as e:
+		print("BrokenPipeError: ",e)
 	except IOError as e:
-		print("ioerror:"+e)
-		tcpCliSock.close()
-		tcpCliSock.connect(ADDR)
-		tcpCliSock.settimeout(3)
+		print("ioerror:",e)
+		# tcpCliSock.close()
+		# tcpCliSock.connect(ADDR)
+		# tcpCliSock.settimeout(3)
 	except BaseException as e:
-		print(e)
+		print("BaseException: ",e)
 
 @app.task(bind=True)
 def makeTcp(self):
