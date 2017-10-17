@@ -14,4 +14,4 @@ install celery:
 
 	then install rabbitMQ follow https://www.rabbitmq.com/install-windows.html
 
-cleeery
+
