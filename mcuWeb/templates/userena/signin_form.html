@@ -3,12 +3,35 @@
 <head>
 	<title></title>
 	<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+	<link href="{% static "css/login.css" %}" rel="stylesheet" media="screen">
+	<script src="{% static "js/bootstrap.js" %}"></script>
 </head>
 <body>
-<form method="post">
+	<div class="container">
+<form class="form-signin" method="post">
 	{% csrf_token %}
-{{form}}
-<input type="submit" value="login"> </form>
+    <fieldset>
+    	<legend>TEST</legend>
+    	{{ form.non_field_errors }}
+
+    	{% for field in form %}
+    	{{ field.errors }}
+    	{% comment %} Displaying checkboxes differently {% endcomment %}
+    	{% if field.name == 'remember_me' %}
+    	<p class="checkboxes">
+    	<label for="id_{{field.name}}">{{field}} {{field.label}}</label>
+        </p>
+        {% else %}
+        <p>
+        {{field.label_tag}}
+        {{field}}
+        </p>
+        {% endif %}
+        {% endfor %}
+    </fieldset>>
+<input type="submit" value="login" /> 
+{% if next %}<input type="hidden" name="next" value="{{next}}" />{% endif %}
 </form>
+</div>
 </body>
 </html>
