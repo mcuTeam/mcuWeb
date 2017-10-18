@@ -14,5 +14,12 @@ install celery:
 
 	then install rabbitMQ follow https://www.rabbitmq.com/install-windows.html
 
+only thread mode celery:
+	celery -A mcuWeb worker -c1 -l info
 
-def
+merge conflict:
+	git checkout (branch/--ours --thears)  file
+	example:
+	git checkout dev notes
+	git checkout origin/dev notes
+	git checkout --ours notes
