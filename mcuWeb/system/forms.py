@@ -2,9 +2,9 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from userena.forms import AuthenticationForm
 
-username_style = {'class': 'required','style':"width:900px"}
+username_style = {'class': 'required'}
 
-password_style = {'class': 'required','style':"width:900px"}
+password_style = {'class': 'required'}
 
 class SigninFormExtra(AuthenticationForm):
 	identification = forms.CharField(label="userName by WuNL",
