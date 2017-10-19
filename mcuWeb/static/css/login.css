@@ -1,0 +1,11 @@
+body{color:#006666;
+	background: #ffffff url(../images/bg.jpg) center center fixed;
+    text-align: center;
+    font-size:12px;}
+
+.login{width: 100%;
+	margin: 0 auto;}
+
+.login .logo{margin: 50px auto 0px auto;
+             width: 400px;
+             height: 300px;}
