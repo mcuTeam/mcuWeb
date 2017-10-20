@@ -5,7 +5,8 @@ from mcuWeb.celery import *
 
 @login_required
 def homeView(request):
-	testTask.delay()
+	print("send task")
+	testTask.apply_async()
 	return render(request,'home.html')
 
 def test(request):
