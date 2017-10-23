@@ -14,12 +14,14 @@ label{
 }
 
 p{
-	color:red;
+	color: red;
 }
 
-div#text{
-	height: 25px;
+p#action{
+	margin-top: 12px;
 }
+
+
 
 input#id_identification,#id_password{
 	width: 220px;
