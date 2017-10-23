@@ -15,9 +15,7 @@
 		            {% csrf_token %}
 				<fieldset>
 				    <!-- <legend id="login">登录</legend> -->
-				    {% for err in form.non_field_errors %}
-				    	{{err}}
-				    {% endfor %}
+				    
 				    
 				    {% for field in form %}
 
@@ -38,6 +36,15 @@
 				    {% endfor %}
 				</fieldset>
 		        <input type="submit" id="login" value="{% trans "登录" %}" />
+		        <div id="text">
+		        	<p id="action">
+		        	{% for err in form.non_field_errors %}
+				    	{{err}}
+				    {% endfor %}
+			        </p>
+		        </div>
+		        
+			        
 		    </form>
 		</div>
     </div>

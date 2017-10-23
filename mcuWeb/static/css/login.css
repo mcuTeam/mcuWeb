@@ -13,6 +13,14 @@ label{
 	color: white;
 }
 
+p{
+	color:red;
+}
+
+div#text{
+	height: 25px;
+}
+
 input#id_identification,#id_password{
 	width: 220px;
 	height: 25px;
@@ -30,8 +38,9 @@ input#login{
 	height: 25px;
 	border-radius: 4px;
 	border: 1px solid #cccccc;
-	/*background-color: rgb(18,162,196);*/
 }
+
+
 
 .login{
 	width: 100%;
@@ -45,6 +54,3 @@ input#login{
 	background: url(../images/userlogo.png) no-repeat center center;
 }
 
-/*.login .loginbox{
-    width: 400px;
-}*/
