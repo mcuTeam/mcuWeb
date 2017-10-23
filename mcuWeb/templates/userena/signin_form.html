@@ -15,9 +15,22 @@
 		            {% csrf_token %}
 				<fieldset>
 				    <!-- <legend id="login">登录</legend> -->
-				    
-				    
-				    {% for field in form %}
+
+				    {{form.identification.errors}}
+				    {{form.identification.label_tag}}<label>{{form.identification.errors.0}}</label>
+				    {{form.identification}}
+
+				    {{form.password.label_tag}}
+				    {{form.password}}
+
+				    <p class="checkbox">
+				    <label for="id_{{ form.remember_me.name }}">{{form.remember_me}}  {{ form.remember_me.label }} </label>
+
+				    </p>
+				    			    
+
+
+<!-- 				    {% for field in form %}
 
 				    {% for err in field.errors %}
 				    	{{err}}
@@ -33,7 +46,7 @@
 				    {{ field }}
 				    </p>
 				    {% endif %}
-				    {% endfor %}
+				    {% endfor %} -->
 				</fieldset>
 		        <input type="submit" id="login" value="{% trans "登录" %}" />
 		        <div id="text">
