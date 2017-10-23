@@ -4,104 +4,60 @@
 <head>
 	<title></title>
 	<link href="{% static "css/login.css" %}" rel="stylesheet" media="screen">
-	<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
-	<script src="{% static "js/bootstrap.min.js" %}"></script>
-	<script src="{% static "js/jquery.js" %}"></script>
-	<script type="text/javascript">      
-	$(function(){
-     $("#id_identification").blur(function(){//用户名文本框失去焦点触发验证事件
-        if(!$(this).val || !$(this).val.match(/([w]){2,15}$/))//只处验证不能为空并且只能为英文或者数字或者下划线组成的２－１５个字符
-        {
-            $("#nameTip").html("用户名不能为空且只能为英文或者数字");
-        }
-        else
-        {
-            $("#nameTip").html("输入正确");
-        }
-
-     });
-
-      $("#id_password").blur(function(){//用户名文本框失去焦点触发验证事件
-        if(!$(this).val || !$(this).val.match(/([w]){2,15}$/))//只处验证和上面一样
-        {
-            $("passwordTip").html("密码不能为空且只能为英文或者数字");
-        }
-        else
-        {
-            $("passwordTip").html("输入正确");
-        }
-
-     });
-     // $("#pas2").blur(function(){//用户名文本框失去焦点触发验证事件
-     //    if(!$(this).val || $(this).val() != $("#pas1").val() )//只处验证和上面一样
-     //    {
-     //        $("#pas2").html("密码为空或者和上面的密码不致");
-     //    }
-     //    else
-     //    {
-     //        $("#pas2").html("输入正确");
-     //    }
-
-     // });
-
-})
- </script>
+	<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+	<script src="{% static "js/bootstrap.js" %}"></script>
 </head>
 <body>
     <div class="login">
     	<div class="logo"></div>
     	<div class="loginbox">
-		 	<form action="#" method="post">
+		 	<form action="" method="post">
 		            {% csrf_token %}
 				<fieldset>
 				    <!-- <legend id="login">登录</legend> -->
 
-					{{ form.identification.label_tag }}
+				    {{form.identification.errors}}
+				    {{form.identification.label_tag}}<label>{{form.identification.errors.0}}</label>
 				    {{form.identification}}
 
-					{{ form.password.label_tag }}
-					{{form.password}}
+				    {{form.password.label_tag}}
+				    {{form.password}}
 
-					
-					{{ form.remember_me.label_tag }}
-					{{form.remember_me}}
-				
+				    <p class="checkbox">
+				    <label for="id_{{ form.remember_me.name }}">{{form.remember_me}}  {{ form.remember_me.label }} </label>
+
+				    </p>
+				    			    
+
+
 <!-- 				    {% for field in form %}
-				    <p>
 
 				    {% for err in field.errors %}
 				    	{{err}}
 				    {% endfor %}
-				    </p>
-
 				    {% comment %} Displaying checkboxes differently {% endcomment %}
 				    {% if field.name == 'remember_me' %}
 				    <p class="checkbox">
 				    <label for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
 				    </p>
 				    {% else %}
-					    {% if field.name == 'password' %}
-					    <p>
-					    {{ field.label_tag }}
-					    {{ field }}
-					    </p><span id="passwordTip"></span>
-					    {% else %}
-					    <p>
-					    {{ field.label_tag }}
-					    {{ field }}
-					    </p><span id="nameTip"></span>
-					    {% endif %}
+				    <p>
+				    {{ field.label_tag }}
+				    {{ field }}
+				    </p>
 				    {% endif %}
 				    {% endfor %} -->
 				</fieldset>
 		        <input type="submit" id="login" value="{% trans "登录" %}" />
-		        
+		        <div id="text">
 		        	<p id="action">
 		        	{% for err in form.non_field_errors %}
 				    	{{err}}
 				    {% endfor %}
 			        </p>
-		       
+		        </div>
+		        
+			        
 		    </form>
 		</div>
     </div>

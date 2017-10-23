@@ -155,6 +155,8 @@ def addmeetTask(self,meetName="",meetRemark=""):
 	global tcpCliSock
 	global amqp
 	global app
+	if meetName is "":
+		return "param error"
 	if tcpCliSock is None:
 
 		print("tcpCliSock is None")
@@ -163,9 +165,11 @@ def addmeetTask(self,meetName="",meetRemark=""):
 		tcpCliSock.settimeout(3)	
 	print("addmeetTask task")
 	try:
-		tcpCliSock.send("ADDMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:01020170011\r\nMeetAlias:01020170011\r\nMeetRemark:2017/09/29 14:00\r\n\r\n".encode('utf8'))
+		tcpCliSock.send(("ADDMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetAlias:0%s\r\nMeetRemark:%s\r\n\r\n" % (meetName,meetName,meetRemark)).encode('utf8'))
 		data=tcpCliSock.recv(BUFSIZ)
-		print(data)
+		# print(type(data))
+		# print(data.encode("utf8"))
+		return data.decode("utf8")
 	# 开始连接成功，后来MCU断开连接了
 	except ConnectionResetError as e:
 		print("ConnectionResetError error: ",e)
@@ -242,6 +246,7 @@ def checkNet():
 		try:
 			tcpCliSock.send("LISTMEET\r\nVersion 1\r\nSeqNumber 1\r\n\r\n".encode('utf8'))
 			data=tcpCliSock.recv(BUFSIZ)
+			print(data)
 		except BaseException as e:
 			print("schedule error: ",e)
 			tcpCliSock.close()
