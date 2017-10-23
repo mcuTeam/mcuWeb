@@ -26,7 +26,7 @@ amqp = celery.bin.amqp.amqp(app = app)
 
 HOST = "192.168.43.152"
 PORT = 5038
-BUFSIZ = 1024
+BUFSIZ = 10240
 ADDR = (HOST,PORT)
 tcpCliSock = None 
 try:
@@ -98,7 +98,7 @@ def testTask(self):
 	except BrokenPipeError as e:
 		print("BrokenPipeError: ",e)
 		makeConnection()
-		amqp.run('queue.purge')
+		
 		testTask()
 	except IOError as e:
 		print("ioerror:",e)
@@ -107,11 +107,11 @@ def testTask(self):
 	except BaseException as e:
 		print("BaseException: ",e)
 		makeConnection()
-		amqp.run('queue.purge')
+		
 		testTask()
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
-def setmeetgeneraparaTask(self):
+def setmeetgeneraparaTask(self,meetName="",meetCode="",meetType=""):
 	print("running task")
 	global tcpCliSock
 	global amqp
@@ -138,7 +138,7 @@ def setmeetgeneraparaTask(self):
 	except BrokenPipeError as e:
 		print("BrokenPipeError: ",e)
 		makeConnection()
-		amqp.run('queue.purge')
+		
 		testTask()
 	except IOError as e:
 		print("ioerror:",e)
@@ -147,7 +147,7 @@ def setmeetgeneraparaTask(self):
 	except BaseException as e:
 		print("BaseException: ",e)
 		makeConnection()
-		amqp.run('queue.purge')
+		
 		testTask()
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
@@ -168,7 +168,7 @@ def addmeetTask(self,meetName="",meetRemark=""):
 		tcpCliSock.send(("ADDMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetAlias:0%s\r\nMeetRemark:%s\r\n\r\n" % (meetName,meetName,meetRemark)).encode('utf8'))
 		data=tcpCliSock.recv(BUFSIZ)
 		# print(type(data))
-		# print(data.encode("utf8"))
+		print(data.decode("utf8"))
 		return data.decode("utf8")
 	# 开始连接成功，后来MCU断开连接了
 	except ConnectionResetError as e:
@@ -181,7 +181,7 @@ def addmeetTask(self,meetName="",meetRemark=""):
 	except BrokenPipeError as e:
 		print("BrokenPipeError: ",e)
 		makeConnection()
-		amqp.run('queue.purge')
+		
 		testTask()
 	except IOError as e:
 		print("ioerror:",e)
@@ -190,7 +190,7 @@ def addmeetTask(self,meetName="",meetRemark=""):
 	except BaseException as e:
 		print("BaseException: ",e)
 		makeConnection()
-		amqp.run('queue.purge')
+		
 		testTask()
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
@@ -220,7 +220,7 @@ def deletemeetTask(self):
 	except BrokenPipeError as e:
 		print("BrokenPipeError: ",e)
 		makeConnection()
-		amqp.run('queue.purge')
+		
 		testTask()
 	except IOError as e:
 		print("ioerror:",e)
@@ -229,7 +229,7 @@ def deletemeetTask(self):
 	except BaseException as e:
 		print("BaseException: ",e)
 		makeConnection()
-		amqp.run('queue.purge')
+		
 		testTask()
 
 
@@ -244,7 +244,7 @@ def checkNet():
 	global tcpCliSock
 	if tcpCliSock is not None:
 		try:
-			tcpCliSock.send("LISTMEET\r\nVersion 1\r\nSeqNumber 1\r\n\r\n".encode('utf8'))
+			tcpCliSock.send("HEARTBEAT\r\nVersion 1\r\nSeqNumber 1\r\n\r\n".encode('utf8'))
 			data=tcpCliSock.recv(BUFSIZ)
 			print(data)
 		except BaseException as e:
