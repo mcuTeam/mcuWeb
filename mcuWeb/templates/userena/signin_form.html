@@ -6,6 +6,47 @@
 	<link href="{% static "css/login.css" %}" rel="stylesheet" media="screen">
 	<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
 	<script src="{% static "js/bootstrap.js" %}"></script>
+	<script src="{% static "js/jquery.js" %}"></script>
+	<!-- <script type="text/javascript">
+
+ $(function(){
+     $("#id_identification").blur(function(){//用户名文本框失去焦点触发验证事件
+        if($(this).val )//只处验证不能为空并且只能为英文或者数字或者下划线组成的２－１５个字符
+        {
+            $("#nameTip").html("用户名不能为空");
+        }
+        else
+        {
+            $("#nameTip").html("");
+        }
+
+     });
+
+      $("#pas1").blur(function(){//用户名文本框失去焦点触发验证事件
+        if(!$(this).val || !$(this).val.math(/([w]){2,15}$/))//只处验证和上面一样
+        {
+            $("#pas1").html("密码不能为空且只能为英文或者数字");
+        }
+        else
+        {
+            $("#pas1").html("输入正确");
+        }
+
+     });
+     $("#pas2").blur(function(){//用户名文本框失去焦点触发验证事件
+        if(!$(this).val || $(this).val() != $("#pas1").val() )//只处验证和上面一样
+        {
+            $("#pas2").html("密码为空或者和上面的密码不致");
+        }
+        else
+        {
+            $("#pas2").html("输入正确");
+        }
+
+     });
+
+})
+ </script> -->
 </head>
 <body>
     <div class="login">
@@ -16,12 +57,16 @@
 				<fieldset>
 				    <!-- <legend id="login">登录</legend> -->
 
-				    {{form.identification.errors}}
-				    {{form.identification.label_tag}}<label>{{form.identification.errors.0}}</label>
+				    <!-- {{form.identification.errors}} -->
+				    {{form.identification.label_tag}}
 				    {{form.identification}}
+				   <!--  <span id="nameTip"></span> -->
+				    <p>{{form.identification.errors.0}}</p>
 
 				    {{form.password.label_tag}}
 				    {{form.password}}
+				    <!-- <span id="passwordTip"></span> -->
+				    <p>{{form.password.errors.0}}</p>
 
 				    <p class="checkbox">
 				    <label for="id_{{ form.remember_me.name }}">{{form.remember_me}}  {{ form.remember_me.label }} </label>
