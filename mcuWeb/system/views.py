@@ -5,9 +5,19 @@ from mcuWeb.celery import *
 
 @login_required
 def homeView(request):
-	print("send task")
 	testTask.apply_async()
 	return render(request,'home.html')
+
+@login_required
+def addMeetView(request):
+	addmeetTask.apply_async()
+	return render(request,'home.html')
+
+@login_required
+def delMeetView(request):
+	deletemeetTask.apply_async()
+	return render(request,'home.html')
+
 
 def test(request):
 	pass

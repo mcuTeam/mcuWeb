@@ -16,6 +16,8 @@ install celery:
 
 only thread mode celery:
 	celery -A mcuWeb worker -c1 -l info
+only thread mod celery with scheduler
+	celery -A mcuWeb worker -c1 -l info -B
 
 merge conflict:
 	git checkout (branch/--ours --thears)  file
