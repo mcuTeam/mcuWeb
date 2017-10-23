@@ -32,11 +32,25 @@ def addMeetView(request):
 	meetName = "%s" % current_time
 	meetRemark = meetName
 	result = addmeetTask.apply_async((meetName,meetRemark))
-	data = result.get(timeout=2)
+	try:
+		data = result.get(timeout=2)
+		print("addmeetTask result:",data)
+	except TimeoutError as e:
+		print("timeout error: ",e)
+		return render(request,'home.html')
 	ret = returnCode2Dict(data)
+	if ret['RetCode'] is not '200':
+		print("error occurs")
+	result = setmeetgeneraparaTask.apply_async((meetName,))
+	try:
+		data = result.get(timeout=2)
+		print("setmeetgeneraparaTask result:",data)
+	except TimeoutError as e:
+		print("timeout error: ",e)
+		return render(request,'home.html')	
 	print(ret)
-
-
+	if ret['RetCode'] is not '200':
+		print("error occurs")
 	return render(request,'home.html')
 
 @login_required
