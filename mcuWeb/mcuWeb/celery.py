@@ -151,7 +151,7 @@ def setmeetgeneraparaTask(self):
 		testTask()
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
-def addmeetTask(self):
+def addmeetTask(self,meetName="",meetRemark=""):
 	global tcpCliSock
 	global amqp
 	global app
