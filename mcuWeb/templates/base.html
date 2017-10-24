@@ -2,9 +2,24 @@
 <html>
 <head>
 <title>{% block title %}{% endblock %}</title>
+<script src="{% static "js/bootstrap.js" %}"></script>
+<script src="{% static "js/jquery.js" %}"></script>
+<link href="{% static "css/base.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
 </head>
 <body>
-<img src="{% static "images/1.png" %}" alt="Logo" />
-{% block content %}{% endblock %}
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span2">
+		  <!--Sidebar content-->
+		</div>
+		<div class="span10">
+		  <!--Body content-->
+			<img src="{% static "images/1.png" %}" alt="Logo" />
+			{% block content %}{% endblock %}
+
+		</div>
+	</div>
+</div>
 </body>
-</html>
+</html>   

@@ -3,12 +3,16 @@
 <html>
 <head>
 	<title></title>
-	<link href="{% static "css/login.css" %}" rel="stylesheet" media="screen">
-	<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
 	<script src="{% static "js/bootstrap.js" %}"></script>
 	<script src="{% static "js/jquery.js" %}"></script>
+	<link href="{% static "css/login.css" %}" rel="stylesheet" media="screen">
+	<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
 	<!-- <script type="text/javascript">
-
+	$("a, input[type='button'], input[type='submit'], input[type='checkbox']").bind("focus",function(){
+	if(this.blur){
+	this.blur();
+	}
+	});
  $(function(){
      $("#id_identification").blur(function(){//用户名文本框失去焦点触发验证事件
         if($(this).val )//只处验证不能为空并且只能为英文或者数字或者下划线组成的２－１５个字符
@@ -61,12 +65,12 @@
 				    {{form.identification.label_tag}}
 				    {{form.identification}}
 				   <!--  <span id="nameTip"></span> -->
-				    <p>{{form.identification.errors.0}}</p>
+				    <p id="nameTip">{{form.identification.errors.0}}</p>
 
 				    {{form.password.label_tag}}
 				    {{form.password}}
 				    <!-- <span id="passwordTip"></span> -->
-				    <p>{{form.password.errors.0}}</p>
+				    <p id="passwordTip">{{form.password.errors.0}}</p>
 
 				    <p class="checkbox">
 				    <label for="id_{{ form.remember_me.name }}">{{form.remember_me}}  {{ form.remember_me.label }} </label>
