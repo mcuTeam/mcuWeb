@@ -8,4 +8,5 @@ urlpatterns = [
 
     url(r'^addmeet/$', system_view.addMeetView),
     url(r'^deletemeet/$', system_view.delMeetView),
+    url(r'^listmeet/$', system_view.listMeetView),
 ]
