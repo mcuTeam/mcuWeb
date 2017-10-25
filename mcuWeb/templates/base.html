@@ -2,20 +2,65 @@
 <html>
 <head>
 <title>{% block title %}{% endblock %}</title>
-<script src="{% static "js/bootstrap.js" %}"></script>
 <script src="{% static "js/jquery.js" %}"></script>
+<script src="{% static "js/bootstrap.min.js" %}"></script>
+
 <link href="{% static "css/base.css" %}" rel="stylesheet" media="screen">
 <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
 </head>
 <body>
 <div class="container-fluid">
 	<div class="row-fluid">
+		<div class="span12">
+		</div>
+	</div>
+	<div class="row-fluid">
 		<div class="span2">
 		  <!--Sidebar content-->
+			<ul class="nav nav-list ">
+				<li><a href="#" data-toggle="collapse" data-target="#pill1">系统管理</a>
+					<div id="pill1" class="collapse">
+						<ul id="list1" class="nav nav-pills nav-stacked">
+							<li><a href="#">MCU配置</a></li>
+							<li><a href="#">网口配置</a></li>
+							<li><a href="#">GK配置</a></li>
+							<li><a href="#">系统配置</a></li>
+							<li><a href="#">软件管理</a></li>
+							<li><a href="#">配置文件</a></li>
+						</ul>
+					</div>	
+				</li>
+				<li><a href="#" data-toggle="collapse" data-target="#pill2">会议管理</a>
+					<div id="pill2" class="collapse">
+						<ul id="list2" class="nav nav-pills nav-stacked">
+							<li><a href="#">创建会议</a></li>
+							<li><a href="#">会议列表</a></li>
+						</ul>
+					</div>	
+				</li>
+				<li><a href="#" data-toggle="collapse" data-target="#pill3">日志管理</a>
+					<div id="pill3" class="collapse">
+						<ul id="list3" class="nav nav-pills nav-stacked">
+							<li><a href="#">日志下载</a></li>
+							<li><a href="#">清除日志</a></li>
+						</ul>
+					</div>	
+				</li>
+				<li><a href="#" data-toggle="collapse" data-target="#pill4">设备管理</a>
+					<div id="pill4" class="collapse">
+						<ul id="list4" class="nav nav-pills nav-stacked">
+							<li><a href="#">系统重启</a></li>
+							<li><a href="#">设备重启</a></li>
+							<li><a href="#">设备关机</a></li>
+						</ul>
+					</div>	
+				</li>
+				<li><a href="#">退出</a></li>
+			</ul>
 		</div>
 		<div class="span10">
 		  <!--Body content-->
-			<img src="{% static "images/1.png" %}" alt="Logo" />
+<!-- 			<img src="{% static "images/1.png" %}" alt="Logo" /> -->
 			{% block content %}{% endblock %}
 
 		</div>

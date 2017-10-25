@@ -43,6 +43,7 @@ input#login{
 	height: 25px;
 	border-radius: 4px;
 	border: 1px solid #cccccc;
+	padding: 0px;
 }
 
 .login{

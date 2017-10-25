@@ -1,0 +1,12 @@
+.container-fluid{
+	background-color: rgb(4,15,21);
+}
+
+div.span10{
+	border-radius: 30px;
+	height: 960px;
+	background-color: rgb(24,35,41);
+}
+ul#list1,#list2,#list3,#list4{
+	margin: 0px;
+}
