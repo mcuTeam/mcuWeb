@@ -1,12 +1,64 @@
 .container-fluid{
-	background-color: rgb(4,15,21);
+	background-color: rgb(34,45,51);
 }
 
-div.span10{
+.span12{
+	height: 100px;
+}
+
+div.span9{
 	border-radius: 30px;
-	height: 960px;
-	background-color: rgb(24,35,41);
+	height: 760px;
+	background-color: rgb(54,65,71);
 }
 ul#list1,#list2,#list3,#list4{
 	margin: 0px;
+	font-size: 15px;
+}
+
+ul.nav.nav-pills.nav-stacked{
+	float: right;
+	font-size: 18px;
+}
+
+li{
+	margin: 10px auto 10px auto;
+	text-align: center;
+}
+
+a#nav1,#nav2,#nav3,#nav4,#nav5{
+	color:#0088cc;
+}
+
+a#nav1:hover,#nav2:hover,#nav3:hover,#nav4:hover,#nav5:hover{
+	background-color: black;
+	color: #66d2fd;
+}
+
+a#nav1:focus,#nav2:focus,#nav3:focus,#nav4:focus,#nav5:focus{
+	background-color: #0088cc;
+	color: black;
+}
+
+.nav-pills.nav-stacked > li > a{
+	background-color: transparent;
+	color: #dadada;
+}
+
+.nav-pills.nav-stacked > li > a:hover{
+	background-color: transparent;
+	color: #66d2fd;
+}
+
+.nav-pills.nav-stacked > li > a:focus{
+	background-color: transparent;
+	color: #66d2fd;
+}
+
+ul.nav-list{
+	padding: 0px;
+}
+
+ul.nav-list > li.divider{
+	background-color: transparent;
 }
