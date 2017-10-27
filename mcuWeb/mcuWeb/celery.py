@@ -65,6 +65,7 @@ def makeConnection():
 			time.sleep(3)
 	return True
 
+# ------------------------------------------------------------------------------------------------------------------------------------------
 
 @app.task(bind=True)
 def debug_task(self):
@@ -116,7 +117,6 @@ def setmeetgeneraparaTask(self,meetName="",meetMode="0",meetType="0"):
 	global amqp
 	global app
 	if tcpCliSock is None:
-
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
@@ -182,43 +182,33 @@ def addmeetTask(self,meetName="",meetRemark=""):
 		makeConnection()
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
-def deletemeetTask(self):
+def deletemeetTask(self,meetName=""):
 	global tcpCliSock
 	global amqp
 	global app
 	if tcpCliSock is None:
-
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
 		tcpCliSock.settimeout(3)	
 	print("deletemeetTask task")
 	try:
-		tcpCliSock.send("DELETEMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:01020170011\r\n\r\n".encode('utf8'))
+		tcpCliSock.send(("DELETEMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % meetName).encode('utf8'))
 		data=tcpCliSock.recv(BUFSIZ)
 		print(data)
 	# 开始连接成功，后来MCU断开连接了
 	except ConnectionResetError as e:
 		print("ConnectionResetError error: ",e)
 		makeConnection()
-		# print(amqp.run('queue.purge','celery'))
-		print(app.control.purge())
-		testTask()
 	# 没连接到MCU
 	except BrokenPipeError as e:
 		print("BrokenPipeError: ",e)
 		makeConnection()
-		
-		testTask()
 	except IOError as e:
 		print("ioerror:",e)
-		# makeConnection()
-		# testTask()
 	except BaseException as e:
 		print("BaseException: ",e)
 		makeConnection()
-		
-		testTask()
 
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
@@ -227,7 +217,6 @@ def listmeetTask(self):
 	global amqp
 	global app
 	if tcpCliSock is None:
-
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
@@ -252,6 +241,43 @@ def listmeetTask(self):
 	except BaseException as e:
 		print("BaseException: ",e)
 		makeConnection()
+
+@app.task(bind=True,time_limit=20, soft_time_limit=10)
+def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
+	global tcpCliSock
+	global amqp
+	global app
+	if tcpCliSock is None:
+		print("tcpCliSock is None")
+		tcpCliSock = socket(AF_INET,SOCK_STREAM)
+		tcpCliSock.connect(ADDR)
+		tcpCliSock.settimeout(3)	
+	print("addmemberTask task")
+	try:
+		tcpCliSock.send(("ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\MemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
+			% (meetName,memberName,memberIP,memberName,memberName)).encode('utf8'))
+		# print((("SETMEETGENERAPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (meetName,meetMode,meetType))))
+		data=tcpCliSock.recv(BUFSIZ)
+		print(data.decode("utf8"))
+		if data is not None:
+			return data.decode("utf8")
+		return None
+	# 开始连接成功，后来MCU断开连接了
+	except ConnectionResetError as e:
+		print("ConnectionResetError error: ",e)
+		makeConnection()
+	# 没连接到MCU
+	except BrokenPipeError as e:
+		print("BrokenPipeError: ",e)
+		makeConnection()
+	except IOError as e:
+		print("ioerror:",e)
+		return None
+	except BaseException as e:
+		print("BaseException: ",e)
+		makeConnection()
+
+
 
 @app.task
 def checkNet():

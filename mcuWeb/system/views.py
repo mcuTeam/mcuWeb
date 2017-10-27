@@ -53,7 +53,7 @@ def analysisListMeetResult(retCode):
 @login_required
 def homeView(request):
 	testTask.apply_async()
-	return render(request,'home.html')
+	return render(request,'base.html')
 
 @login_required
 def addMeetView(request):
@@ -67,10 +67,10 @@ def addMeetView(request):
 		print("addmeetTask result:",data)
 	except TimeoutError as e:
 		print("timeout error: ",e)
-		return render(request,'home.html')
+		return render(request,'base.html')
 	if data is None:
 		print("return None")
-		return render(request,'home.html')
+		return render(request,'base.html')
 	ret = returnCode2Dict(data)
 	if ret['RetCode'] != '200':
 		print(type(ret['RetCode']))
@@ -83,7 +83,7 @@ def addMeetView(request):
 		print("setmeetgeneraparaTask result:",data)
 	except TimeoutError as e:
 		print("timeout error: ",e)
-		return render(request,'home.html')	
+		return render(request,'base.html')	
 	ret.clear()
 	if data is  None:
 		print("return None")
@@ -92,12 +92,12 @@ def addMeetView(request):
 		if ret['RetCode'] != '200':
 			print(ret['RetCode'])
 			print("error1 occurs")
-	return render(request,'home.html')
+	return render(request,'base.html')
 
 @login_required
 def delMeetView(request):
 	deletemeetTask.apply_async()
-	return render(request,'home.html')
+	return render(request,'base.html')
 
 
 @login_required
@@ -110,8 +110,8 @@ def listMeetView(request):
 		print(result)
 	except TimeoutError as e:
 		print("timeout error: ",e)
-		return render(request,'home.html')
-	return render(request,'home.html')
+		return render(request,'base.html')
+	return render(request,'base.html')
 
 def test(request):
 	pass

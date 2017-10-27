@@ -70,6 +70,8 @@ AUTH_PROFILE_MODULE = 'accounts.MyProfile'
 USERENA_SIGNIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
+USERENA_REDIRECT_ON_SIGNOUT = '/home/'
+
 
 ROOT_URLCONF = 'mcuWeb.urls'
 SITE_ID = 1
