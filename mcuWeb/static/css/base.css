@@ -1,15 +1,18 @@
 .container-fluid{
-	background-color: rgb(34,45,51);
+	background-color: rgb(51,51,51);
 }
 
 .span12{
 	height: 100px;
+	background:url(../images/head.png) center center no-repeat;
+
 }
+
 
 div.span9{
 	border-radius: 30px;
 	height: 760px;
-	background-color: rgb(54,65,71);
+	background-color: rgb(68,68,68);
 }
 ul#list1,#list2,#list3,#list4{
 	margin: 0px;
@@ -27,16 +30,16 @@ li{
 }
 
 a#nav1,#nav2,#nav3,#nav4,#nav5{
-	color:#0088cc;
+	color:rgb(255,204,0);
 }
 
 a#nav1:hover,#nav2:hover,#nav3:hover,#nav4:hover,#nav5:hover{
 	background-color: black;
-	color: #66d2fd;
+	color: rgb(255,153,0);
 }
 
 a#nav1:focus,#nav2:focus,#nav3:focus,#nav4:focus,#nav5:focus{
-	background-color: #0088cc;
+	background-color: rgb(255,204,0);
 	color: black;
 }
 
@@ -47,12 +50,12 @@ a#nav1:focus,#nav2:focus,#nav3:focus,#nav4:focus,#nav5:focus{
 
 .nav-pills.nav-stacked > li > a:hover{
 	background-color: transparent;
-	color: #66d2fd;
+	color: rgb(255,153,0);
 }
 
 .nav-pills.nav-stacked > li > a:focus{
 	background-color: transparent;
-	color: #66d2fd;
+	color: rgb(255,153,0);
 }
 
 ul.nav-list{
@@ -61,4 +64,5 @@ ul.nav-list{
 
 ul.nav-list > li.divider{
 	background-color: transparent;
+	border-color: red;
 }
