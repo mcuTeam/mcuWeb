@@ -61,7 +61,20 @@
 						<li class="divider"></li>
 						</ul>
 						<ul id="list4" class="nav nav-pills nav-stacked">
-							<li><a href="#">系统重启</a></li>
+							<li><a href="#myModal" data-toggle="modal" >系统重启</a></li>
+							<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+									<h3 id="myModalLabel">系统重启</h3>
+								</div>
+								<div class="modal-body">
+									<p>确定要重新启动系统么？</p>
+								</div>
+								<div class="modal-footer">
+									<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+									<button class="btn btn-warning">确定</button>
+								</div>
+							</div>
 							<li><a href="#">设备重启</a></li>
 							<li><a href="#">设备关机</a></li>
 						</ul>
