@@ -116,3 +116,8 @@ def listMeetView(request):
 def test(request):
 	pass
 	pass
+
+
+@login_required
+def system_infoView(request):
+	return render(request,'system_manage/system_info.html')
