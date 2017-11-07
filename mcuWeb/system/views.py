@@ -53,7 +53,7 @@ def analysisListMeetResult(retCode):
 @login_required
 def homeView(request):
 	testTask.apply_async()
-	return render(request,'base.html')
+	return render(request,'home.html')
 
 @login_required
 def addMeetView(request):
