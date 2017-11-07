@@ -2,3 +2,22 @@ a#nav,a#nav:focus,a#nav:active,a#nav:visited{
 	background-color: rgb(255,204,0);
 	color: black;
 }
+
+div#myCarousel{
+	height: 600px;
+}
+
+div#p1{
+	height: 600px;
+	background:  url(../images/home.png) center center no-repeat;
+}
+
+div#p2{
+	height: 600px;
+	background:  url(../images/home1.jpg) center center no-repeat;
+}
+
+div#p3{
+	height: 600px;
+	background:  url(../images/home2.jpg) center center no-repeat;
+}
