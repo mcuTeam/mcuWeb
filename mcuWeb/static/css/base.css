@@ -35,16 +35,16 @@ li{
 	text-align: center;
 }
 
-a#nav1,#nav2,#nav3,#nav4,#nav5{
+a#nav,#nav1,#nav2,#nav3,#nav4,#nav5{
 	color:rgb(255,204,0);
 }
 
-a#nav1:hover,#nav2:hover,#nav3:hover,#nav4:hover,#nav5:hover{
+a#nav:hover,#nav1:hover,#nav2:hover,#nav3:hover,#nav4:hover,#nav5:hover{
 	background-color: black;
 	color: rgb(255,153,0);
 }
 
-a#nav1:focus,#nav2:focus,#nav3:focus,#nav4:focus,#nav5:focus{
+a#nav:focus,#nav1:focus,#nav2:focus,#nav3:focus,#nav4:focus,#nav5:focus{
 	background-color: rgb(255,204,0);
 	color: black;
 }

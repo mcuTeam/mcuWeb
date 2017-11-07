@@ -5,7 +5,7 @@
 <title>{% block title %}{% endblock %}</title>
 <script src="{% static "js/jquery.js" %}"></script>
 <script src="{% static "js/bootstrap.min.js" %}"></script>
-
+{% block csss %}{% endblock %}
 <link href="{% static "css/base.css" %}" rel="stylesheet" media="screen">
 <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
 </head>
@@ -19,6 +19,7 @@
 		<div class="span2 ">
 		  <!--Sidebar content-->
 			<ul class="nav nav-pills nav-stacked ">
+				<li><a id="nav" href="#">首页</a></li>
 				<li><a id="nav1" href="#" data-toggle="collapse" data-target="#pill1">系统管理</a>
 					<div id="pill1" class="collapse">
 						<ul class="nav nav-list">

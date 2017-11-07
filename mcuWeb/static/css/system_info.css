@@ -1,0 +1,8 @@
+a#nav1,a#nav1:focus,a#nav1:active,a#nav1:visited{
+	background-color: rgb(255,204,0);
+	color: black;
+}
+a#system_info,a#system_info:focus,a#system_info:active,a#system_info:visited{
+	background-color: transparent;
+	color: rgb(255,153,0)
+}

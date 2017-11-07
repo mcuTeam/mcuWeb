@@ -1,23 +1,19 @@
+
 {% extends "base.html" %}
+{% load static %}
+{% block title %}系统信息{% endblock %}
 
-
-{% block title %}home{% endblock %}
+{% block csss %}
+<link href="{% static "css/system_info.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
 
 {% block content %}
 
-<ul class="nav nav-pills">
-  <li class="active">
-    <a href="#">首页</a>
-  </li>
-  <li><a href="#">...</a></li>
-  <li><a href="#">...</a></li>
-</ul>
+
 {% endblock %}
 
 {% block js %}
 <script type="text/javascript">
 	$('#pill1').collapse('show');
-    document.getElementById("system_info").focus();
 </script>
-
 {% endblock %}
