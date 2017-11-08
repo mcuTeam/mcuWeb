@@ -32,11 +32,12 @@ ul.nav.nav-pills.nav-stacked{
 }
 
 li{
-	margin: 10px auto 10px auto;
+	/*margin: 10px auto 10px auto;*/
 	text-align: center;
 }
 
 a#nav,#nav1,#nav2,#nav3,#nav4,#nav5{
+    border-radius: 5px;
 	color:rgb(255,204,0);
 }
 
