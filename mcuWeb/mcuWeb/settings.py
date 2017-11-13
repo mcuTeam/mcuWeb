@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # 'guardian',
     # 'easy_thumbnails',
     'system',
+    'fun',
     "django.contrib.sites",
     "accounts",
     'userena',

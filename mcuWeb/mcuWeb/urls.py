@@ -31,5 +31,6 @@ urlpatterns = [
     url(r'^accounts/', include('userena.urls')),
 
     url(r'',include('system.urls')),
+    url(r'',include('fun.urls')),
     # url(r'^accounts/',include('accounts.urls')),
 ]
