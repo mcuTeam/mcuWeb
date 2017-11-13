@@ -10,16 +10,24 @@
 {% endblock %}
 
 {% block content %}
-
-
-
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>系统信息</p>
+	</div>
+	<div class="span8 offset3">
+		<p>设备生产商：</p>
+		<p>最大在线数：</p>
+		<p>版本号：</p>
+		<p>系列号：</p>
+		<p>备注：</p>
+	</div>
+</div>
 {% endblock %}
 
 {% block js %}
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill1').attr('class','accordion-body collapse in');
-			// $('#pill1').collapse('show');
 		});	
 	</script>
 {% endblock %}
