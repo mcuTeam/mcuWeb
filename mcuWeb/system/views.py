@@ -121,3 +121,24 @@ def test(request):
 @login_required
 def system_infoView(request):
 	return render(request,'system_manage/system_info.html')
+
+@login_required
+def MCU_configView(request):
+	return render(request,'system_manage/MCU_config.html')
+
+
+@login_required
+def port_configView(request):
+	return render(request,'system_manage/port_config.html')
+
+@login_required
+def GK_configView(request):
+	return render(request,'system_manage/GK_config.html')
+
+@login_required
+def sw_manageView(request):
+	return render(request,'system_manage/sw_manage.html')
+
+@login_required
+def configfileView(request):
+	return render(request,'system_manage/configfile.html')
