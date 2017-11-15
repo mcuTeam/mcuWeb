@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}网口配置{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/port_config.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill1').attr('class','accordion-body collapse in');
+		});	
+	</script>
+{% endblock %}
