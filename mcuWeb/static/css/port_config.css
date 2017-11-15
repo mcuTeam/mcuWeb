@@ -9,11 +9,15 @@ div.form-actions{
 	border: 0px;
 }
 
+div#content{
+	margin-top:10px;
+}
+
 a#nav1,a#nav1:focus,a#nav1:active,a#nav1:visited{
 	background-color: rgb(255,204,0);
 	color: black;
 }
-a#MCU_config,a#MCU_config:focus,a#MCU_config:active,a#MCU_config:visited{
+a#port_config,a#port_config:focus,a#port_config:active,a#port_config:visited{
 	background-color: transparent;
 	color: rgb(255,153,0)
 }

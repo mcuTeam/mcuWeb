@@ -13,7 +13,7 @@ a#nav1,a#nav1:focus,a#nav1:active,a#nav1:visited{
 	background-color: rgb(255,204,0);
 	color: black;
 }
-a#MCU_config,a#MCU_config:focus,a#MCU_config:active,a#MCU_config:visited{
+a#sw_manage,a#sw_manage:focus,a#sw_manage:active,a#sw_manage:visited{
 	background-color: transparent;
 	color: rgb(255,153,0)
 }

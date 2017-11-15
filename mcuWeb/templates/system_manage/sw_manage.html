@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}软件管理{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/sw_manage.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>软件管理</p>
+	</div>
+	<div class="span8 offset2">
+
+	</div>
+</div>
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill1').attr('class','accordion-body collapse in');
+		});	
+	</script>
+{% endblock %}

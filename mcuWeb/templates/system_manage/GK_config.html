@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}GK配置{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/GK_config.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>GK配置</p>
+	</div>
+	<div class="span8 offset2">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label">GK IP:</label>
+				<div class="controls">
+					<input type="text" id="name" >
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<label class="checkbox">
+						<input type="checkbox" value="">
+						启用GK
+					</label>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-info">保存</button>
+				<button type="button" class="btn">取消</button>
+			</div>
+		</form>
+
+
+
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill1').attr('class','accordion-body collapse in');
+		});	
+	</script>
+{% endblock %}
