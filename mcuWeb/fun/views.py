@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+
+from system.models import *
 # Create your views here.
 
 @login_required
@@ -9,3 +11,8 @@ def creat_meetingView(request):
 @login_required
 def meetinglistView(request):
 	return render(request,'meeting_manage/meetinglist.html')
+
+@login_required
+def terminallistView(request):
+	terminalList = terminal.objects.all()
+	return render(request,'fun/terminallist.html',{'terminallist':terminalList,'msg':"hello!!!!"})

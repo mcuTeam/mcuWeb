@@ -5,4 +5,6 @@ from fun import views as fun_view
 urlpatterns = [
 	url(r'^creat_meeting/$', fun_view.creat_meetingView),
 	url(r'^meetinglist/$', fun_view.meetinglistView),
+
+	url(r'^terminallist/$', fun_view.terminallistView),
 ]

@@ -1,3 +1,11 @@
+# coding=utf-8
 from django.db import models
 
 # Create your models here.
+
+class terminal(models.Model):
+	name = models.IntegerField(blank=False,null=False,verbose_name=u"E164 Alias")
+	terminalIP = models.GenericIPAddressField(unique=True,max_length=200,blank=False,null=False,verbose_name=u"IP",error_messages={'unique':u"重复IP,请重新输入!"})
+
+class meetingTemplate(models.Model):
+	name = models.CharField(max_length=200,blank=False,null=False,verbose_name=u"meetingTemplate名称")
