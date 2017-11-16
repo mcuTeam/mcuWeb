@@ -1,23 +1,60 @@
+{% extends "base.html" %}
+
 {% load static %}
 {% load i18n %}
 
-{% if msgType == 'info' %}
+{% block title %}添加终端{% endblock %}
 
-<a style="color:blue">{{msg}}</a>
+{% block csss %}
+<link href="{% static "css/addterminal.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
 
-{% elif msgType == 'success' %}
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>添加终端</p>
+	</div>
+	<div class="span8 offset2">
 
-<a style="color:green">{{msg}}</a>
+	{% if msgType == 'info' %}
 
-{% elif msgType == 'error' %}
+	<a style="color:blue">{{msg}}</a>
 
-<a style="color:red">{{msg}}</a>
+	{% elif msgType == 'success' %}
 
-{% endif %}
+	<a style="color:green">{{msg}}</a>
 
-<form id="formCreateChannel"  action="/addterminal/" role="form" method="post">
-	{% csrf_token %}
-{{terminalform}}
+	{% elif msgType == 'error' %}
 
-<input id="btnAddTerminal" class="button" type="submit" value="添加终端" />
-</form>
+	<a style="color:red">{{msg}}</a>
+
+	{% endif %}
+
+		<form class="form-horizontal" id="formCreateChannel"  action="/addterminal/" role="form" method="post">
+			<div class="control-group">
+				<div class="controls">
+				{% csrf_token %}
+			    </div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+				{{terminalform}}
+				</div>
+			</div>
+			<div class="form-actions">
+				<input id="btnAddTerminal" class="btn btn-info" type="submit"  value="添加终端">
+				<a type="button" class="btn" href="/terminallist">返回</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill2').attr('class','accordion-body collapse in');
+		});	
+	</script>
+{% endblock %}
