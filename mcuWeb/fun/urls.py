@@ -5,7 +5,8 @@ from fun import views as fun_view
 urlpatterns = [
 	url(r'^creat_meeting/$', fun_view.creat_meetingView),
 	url(r'^meetinglist/$', fun_view.meetinglistView),
+	url(r'^terminallistP/$', fun_view.terminallistViewP),
 
-	url(r'^terminallist/$', fun_view.terminallistView),
+	url(r'^terminallist/$', fun_view.terminallistView,{'msg':""},name='terminallist'),
 	url(r'^addterminal/$', fun_view.addterminalView),
 ]
