@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}配置文件{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/configfile.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>请选择上传配置文件</p>
+	</div>
+	<div class="span8 offset2">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<div class="controls">
+					<div class="input-append">
+					  <input class="span10" id="appendedInputButton" type="text">
+					  <button class="btn" type="button">浏览</button>	
+					</div>
+			    </div>
+			</div>
+			<div class="form-actions">
+				<button type="button" class="btn btn-info">上传</button>
+				<button type="button" class="btn btn-warning">下载</button>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill1').attr('class','accordion-body collapse in');
+		});	
+	</script>
+{% endblock %}
