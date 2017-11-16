@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}template列表{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/terminallist.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>template列表列表</p>
+	</div>
+	<div class="span8 offset2">
+
+			{% if msgType == 'info' %}
+
+			<a style="color:blue">{{msg}}</a>
+
+			{% elif msgType == 'success' %}
+
+			<a style="color:green">{{msg}}</a>
+
+			{% elif msgType == 'error' %}
+
+			<a style="color:red">{{msg}}</a>
+
+			{% endif %}
+
+			<br>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>template名称</th>
+						<th>template bandwidth:</th>
+					</tr>
+				</thead>
+			{% for template in templatelist %}
+				<tbody>
+					<tr>
+						<td>{{ forloop.counter }}</td>
+					    <td>{{template.name}}</td>
+					    <td>{{template.bandwidth}}</td>
+					</tr>
+				</tbody>
+			{% endfor %}
+			</table>
+			<a type="submit" class="btn btn-info" value="上传文件" href="/addtemplate"><i class="icon-plus-sign icon-white"></i> 添加template</a>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill2').attr('class','accordion-body collapse in');
+		});	
+	</script>
+{% endblock %}
