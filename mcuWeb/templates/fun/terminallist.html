@@ -41,14 +41,14 @@
 			{% for terminal in terminallist %}
 				<tbody>
 					<tr>
-						<td></td>
+						<td>{{ forloop.counter }}</td>
 					    <td>{{terminal.name}}</td>
 					    <td>{{terminal.terminalIP}}</td>
 					</tr>
 				</tbody>
 			{% endfor %}
 			</table>
-			<a type="text" class="btn btn-info" value="上传文件" href="/addterminal"><i class="icon-plus-sign icon-white"></i> 添加终端</a>
+			<a type="submit" class="btn btn-info" value="上传文件" href="/addterminal"><i class="icon-plus-sign icon-white"></i> 添加终端</a>
 	</div>
 </div>
 
