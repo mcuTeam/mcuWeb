@@ -1,0 +1,23 @@
+{% load static %}
+{% load i18n %}
+
+{% if msgType == 'info' %}
+
+<a style="color:blue">{{msg}}</a>
+
+{% elif msgType == 'success' %}
+
+<a style="color:green">{{msg}}</a>
+
+{% elif msgType == 'error' %}
+
+<a style="color:red">{{msg}}</a>
+
+{% endif %}
+
+<form id="formCreateChannel"  action="/addterminal/" role="form" method="post">
+	{% csrf_token %}
+{{terminalform}}
+
+<input id="btnAddTerminal" class="button" type="submit" value="添加终端" />
+</form>

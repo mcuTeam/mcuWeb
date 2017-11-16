@@ -7,4 +7,5 @@ urlpatterns = [
 	url(r'^meetinglist/$', fun_view.meetinglistView),
 
 	url(r'^terminallist/$', fun_view.terminallistView),
+	url(r'^addterminal/$', fun_view.addterminalView),
 ]

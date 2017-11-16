@@ -1,9 +1,25 @@
-{{msg}}
+{% if msgType == 'info' %}
+
+<a style="color:blue">{{msg}}</a>
+
+{% elif msgType == 'success' %}
+
+<a style="color:green">{{msg}}</a>
+
+{% elif msgType == 'error' %}
+
+<a style="color:red">{{msg}}</a>
+
+{% endif %}
+
 <br>
 {% for terminal in terminallist %}
 
 	terminal name:{{terminal.name}}
 	<br>
-	1234
+	terminal ip:{{terminal.terminalIP}}
+	<hr>
 
 {% endfor %}
+
+<a value="上传文件" href="/addterminal">addterminal </a>

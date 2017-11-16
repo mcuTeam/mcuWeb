@@ -79,7 +79,7 @@ def addMeetView(request):
 		print("error0 occurs")
 	result = setmeetgeneraparaTask.apply_async((meetName,))
 	try:
-		data = result.get(timeout=2)
+		data = result.get(timeout=3)
 		print("setmeetgeneraparaTask result:",data)
 	except TimeoutError as e:
 		print("timeout error: ",e)
@@ -104,7 +104,7 @@ def delMeetView(request):
 def listMeetView(request):
 	result = listmeetTask.apply_async()
 	try:
-		data = result.get(timeout=2)
+		data = result.get(timeout=3)
 		# print("addmeetTask result:",data)
 		result = analysisListMeetResult(data)
 		print(result)
