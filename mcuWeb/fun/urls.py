@@ -9,4 +9,7 @@ urlpatterns = [
 
 	url(r'^terminallist/$', fun_view.terminallistView,{'msg':""},name='terminallist'),
 	url(r'^addterminal/$', fun_view.addterminalView),
+
+	url(r'^templatelist/$', fun_view.templatelistView),
+	url(r'^addtemplate/$', fun_view.addtemplateView),
 ]
