@@ -1,0 +1,19 @@
+.span8{
+	color: #dadada;
+	font-size: 15px;
+	margin-top: 50px; 
+}
+
+div.form-actions{
+	background-color: rgb(68,68,68);
+	border: 0px;
+}
+
+a#nav1,a#nav1:focus,a#nav1:active,a#nav1:visited{
+	background-color: rgb(255,204,0);
+	color: black;
+}
+a#configfile,a#configfile:focus,a#configfile:active,a#configfile:visited{
+	background-color: transparent;
+	color: rgb(255,153,0)
+}

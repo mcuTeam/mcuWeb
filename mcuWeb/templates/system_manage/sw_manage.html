@@ -11,10 +11,23 @@
 {% block content %}
 <div class="row-fluid">
 	<div class="span8 offset1">
-		<p>软件管理</p>
+		<p>请选择升级安装包</p>
 	</div>
 	<div class="span8 offset2">
-
+		<form class="form-horizontal">
+			<div class="control-group">
+				<div class="controls">
+					<div class="input-append">
+					  <input class="span10" id="appendedInputButton" type="text">
+					  <button class="btn" type="button">浏览</button>	
+					</div>
+			    </div>
+			</div>
+			<div class="form-actions">
+				<button type="button" class="btn btn-info">升级</button>
+				<button type="button" class="btn btn-warning">降级</button>
+			</div>
+		</form>
 	</div>
 </div>
 {% endblock %}
