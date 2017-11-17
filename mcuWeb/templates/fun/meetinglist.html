@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}会议列表{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/terminallist.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>会议列表</p>
+	</div>
+	<div class="span8 offset2">
+
+			{% if msgType == 'info' %}
+
+			<a style="color:blue">{{msg}}</a>
+
+			{% elif msgType == 'success' %}
+
+			<a style="color:green">{{msg}}</a>
+
+			{% elif msgType == 'error' %}
+
+			<a style="color:red">{{msg}}</a>
+
+			{% endif %}
+
+			<br>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>会议名称</th>
+						<th>会议编号</th>
+            <th>会议备注</th>
+					</tr>
+				</thead>
+			{% for meeting in meetinglist %}
+				<tbody>
+					<tr>
+						<td>{{ forloop.counter }}</td>
+					    <td>{{meeting.name}}</td>
+					    <td>{{meeting.meetingcode}}</td>
+              <td>{{meeting.remark}}</td>
+					</tr>
+				</tbody>
+			{% endfor %}
+			</table>
+			<a type="submit" class="btn btn-info" value="上传文件" href="/creat_meeting"><i class="icon-plus-sign icon-white"></i> 添加会议</a>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill2').attr('class','accordion-body collapse in');
+		});
+	</script>
+{% endblock %}
