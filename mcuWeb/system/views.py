@@ -63,7 +63,7 @@ def addMeetView(request):
 	meetRemark = meetName
 	result = addmeetTask.apply_async((meetName,meetRemark))
 	try:
-		data = result.get(timeout=2)
+		data = result.get(timeout=3)
 		print("addmeetTask result:",data)
 	except TimeoutError as e:
 		print("timeout error: ",e)
@@ -83,12 +83,12 @@ def addMeetView(request):
 		print("setmeetgeneraparaTask result:",data)
 	except TimeoutError as e:
 		print("timeout error: ",e)
-		return render(request,'base.html')	
+		return render(request,'base.html')
 	ret.clear()
 	if data is  None:
 		print("return None")
 	else:
-		ret = returnCode2Dict(data)	
+		ret = returnCode2Dict(data)
 		if ret['RetCode'] != '200':
 			print(ret['RetCode'])
 			print("error1 occurs")
