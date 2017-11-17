@@ -4,10 +4,6 @@
 	margin-top: 50px; 
 }
 
-/*div#warning{
-	height: 50px;
-}*/
-
 thead{
 	color: rgb(255,204,0);
 }
@@ -21,7 +17,7 @@ a#nav2,a#nav2:focus,a#nav2:active,a#nav2:visited{
 	background-color: rgb(255,204,0);
 	color: black;
 }
-a#terminallist,a#terminallist:focus,a#terminallist:active,a#terminallist:visited{
+a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 	background-color: transparent;
 	color: rgb(255,153,0)
 }

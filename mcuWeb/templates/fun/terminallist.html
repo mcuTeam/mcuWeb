@@ -14,20 +14,32 @@
 		<p>终端列表</p>
 	</div>
 	<div class="span8 offset2">
+		<!-- <div id="warning"> -->
+		<div class="alert">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
 
-			{% if msgType == 'info' %}
+			  {% if msgType == 'info' %}
 
-			<a style="color:blue">{{msg}}</a>
+						<a style="color:blue">{{msg}}</a>
 
-			{% elif msgType == 'success' %}
+						{% elif msgType == 'success' %}
 
-			<a style="color:green">{{msg}}</a>
+						<a style="color:green">{{msg}}</a>
 
-			{% elif msgType == 'error' %}
+						{% elif msgType == 'error' %}
 
-			<a style="color:red">{{msg}}</a>
+						<a style="color:red">{{msg}}</a>
 
-			{% endif %}
+						<% else %>
+						<script type="text/javascript">
+							$('document').ready(function(){
+								$(".alert").alert('close');
+		                    });	
+						</script>	
+						{% endif %}
+		</div>
+		<!-- </div> -->
+			
 
 			<br>
 			<table class="table table-condensed">
@@ -49,6 +61,7 @@
 			{% endfor %}
 			</table>
 			<a type="submit" class="btn btn-info" value="上传文件" href="/addterminal"><i class="icon-plus-sign icon-white"></i> 添加终端</a>
+
 	</div>
 </div>
 

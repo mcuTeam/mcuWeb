@@ -15,31 +15,41 @@
 		<p>添加终端</p>
 	</div>
 	<div class="span8 offset2">
+		<div class="alert">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+            
 
-	{% if msgType == 'info' %}
+			{% if msgType == 'info' %}
 
-	<a style="color:blue">{{msg}}</a>
+			<a style="color:blue">{{msg}}</a>
 
-	{% elif msgType == 'success' %}
+			{% elif msgType == 'success' %}
 
-	<a style="color:green">{{msg}}</a>
+			<a style="color:green">{{msg}}</a>
 
-	{% elif msgType == 'error' %}
+			{% elif msgType == 'error' %}
 
-	<a style="color:red">{{msg}}</a>
+			<a style="color:red">{{msg}}</a>
 
-	{% endif %}
+			{% endif %}
+
+		</div>
 
 		<form class="form-horizontal" id="formCreateChannel"  action="/addterminal/" role="form" method="post">
 			<div class="control-group">
-				<div class="controls">
 				{% csrf_token %}
-			    </div>
+					<label class="control-label">{{terminalform.name.label_tag}}</label>
+		            <div class="controls">
+					{{terminalform.name}}
+					<span class="tips">{{terminalform.name.errors.0}}</span>
+				    </div>
 			</div>
 			<div class="control-group">
-				<div class="controls">
-				{{terminalform}}
-				</div>
+					<label class="control-label">{{terminalform.terminalIP.label_tag}}</label>
+		            <div class="controls">
+					{{terminalform.terminalIP}}
+					<span class="tips">{{terminalform.terminalIP.errors.0}}</span>
+				    </div>
 			</div>
 			<div class="form-actions">
 				<input id="btnAddTerminal" class="btn btn-info" type="submit"  value="添加终端">
@@ -55,6 +65,9 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill2').attr('class','accordion-body collapse in');
+			{% if msg == 0 %}
+			$(".alert").alert('close');
+			{% endif %}
 		});	
 	</script>
 {% endblock %}
