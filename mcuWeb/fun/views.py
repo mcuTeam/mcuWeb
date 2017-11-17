@@ -14,10 +14,10 @@ def syncMeetingListAndDB(result):
 	meeting.objects.all().delete()
 	meetingNumber = result['MeetCount']
 	for index in range(0,int(meetingNumber)):
-		filtered = meeting.objects.filter(name=result['MeetName'][index],meetcode=result['MeetAlias'][index])
-		if not filtered.exists():
-			meetingInstance = meeting(name=result['MeetName'][index],meetcode=result['MeetAlias'][index],remark=result['MeetRemark'][index])
-			meetingInstance.save()
+		# filtered = meeting.objects.filter(name=result['MeetName'][index],meetcode=result['MeetAlias'][index])
+		# if not filtered.exists():
+		meetingInstance = meeting(name=result['MeetName'][index],meetcode=result['MeetAlias'][index],remark=result['MeetRemark'][index])
+		meetingInstance.save()
 		# else:
 		# 	filtered.update(remark = result['MeetRemark'][index])
 
@@ -87,17 +87,21 @@ def creat_meetingView(request):
 
 @login_required
 def meetinglistView(request,msgType='',msg=''):
-	result = listmeetTask.apply_async()
 	try:
-		data = result.get(timeout=3)
-		result = analysisListMeetResult(data)
-		print(result)
-	except TimeoutError as e:
+		data = listmeetTask.apply_async().get(timeout=3)
+		print("1")
+	except BaseException as e:
 		print("timeout error: ",e)
 		msgType = "error"
 		msg = "连接MCU失败，显示数据库备份内容"
+		meetinglist = meeting.objects.all()
 		return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
-
+	if not data:
+		msgType = "error"
+		msg = "连接MCU失败，显示数据库备份内容"
+		meetinglist = meeting.objects.all()
+		return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+	result = analysisListMeetResult(data)
 	syncMeetingListAndDB(result)
 	msgType = "nothing"
 	msg = "未知连接错误，将显示数据库备份内容"

@@ -226,21 +226,23 @@ def listmeetTask(self):
 		tcpCliSock.send("LISTMEET\r\nVersion:1\r\nSeqNumber:110\r\n\r\n".encode('utf8'))
 		data=tcpCliSock.recv(BUFSIZ)
 		return data.decode("utf8")
-	# 开始连接成功，后来MCU断开连接了
-	except ConnectionResetError as e:
-		print("ConnectionResetError error: ",e)
-		makeConnection()
-	# 没连接到MCU
-	except BrokenPipeError as e:
-		print("BrokenPipeError: ",e)
-		makeConnection()
-	except IOError as e:
-		print("ioerror:",e)
-		# makeConnection()
-		# testTask()
+	# # 开始连接成功，后来MCU断开连接了
+	# except ConnectionResetError as e:
+	# 	print("ConnectionResetError error: ",e)
+	# 	makeConnection()
+	# # 没连接到MCU
+	# except BrokenPipeError as e:
+	# 	print("BrokenPipeError: ",e)
+	# 	makeConnection()
+	# except IOError as e:
+	# 	print("ioerror:",e)
+	# 	# makeConnection()
+	# 	# testTask()
 	except BaseException as e:
 		print("BaseException: ",e)
-		makeConnection()
+		# self.retry(countdown=5)
+		response = "error"
+		return None
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
 def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
