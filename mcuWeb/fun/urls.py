@@ -12,4 +12,5 @@ urlpatterns = [
 
 	url(r'^templatelist/$', fun_view.templatelistView),
 	url(r'^addtemplate/$', fun_view.addtemplateView),
+
 ]

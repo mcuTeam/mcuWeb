@@ -27,3 +27,9 @@ class meetingTemplateForm(ModelForm):
 	class Meta:
 		model = meetingTemplate
 		fields = '__all__'
+
+class meetingForm(ModelForm):
+	class Meta:
+		model = meeting
+		fields = '__all__'
+		

@@ -28,13 +28,13 @@ HOST = "192.168.43.152"
 PORT = 5038
 BUFSIZ = 10240
 ADDR = (HOST,PORT)
-tcpCliSock = None 
+tcpCliSock = None
 try:
 	tcpCliSock = socket(AF_INET,SOCK_STREAM)
 	tcpCliSock.connect(ADDR)
 	tcpCliSock.settimeout(3)
 except BaseException as e:
-	tcpCliSock = None 
+	tcpCliSock = None
 	print(e)
 
 # Using a string here means the worker doesn't have to serialize
@@ -60,8 +60,8 @@ def makeConnection():
 			tcpCliSock.connect(ADDR)
 			tcpCliSock.settimeout(3)
 		except BaseException as e:
-			tcpCliSock = None 
-			print(e)		
+			tcpCliSock = None
+			print(e)
 			time.sleep(3)
 	return True
 
@@ -82,7 +82,7 @@ def testTask(self):
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
-		tcpCliSock.settimeout(3)	
+		tcpCliSock.settimeout(3)
 	print("hello celery && Django",tcpCliSock)
 	try:
 		tcpCliSock.send("LISTMEET\r\nVersion 1\r\nSeqNumber 1\r\n\r\n".encode('utf8'))
@@ -99,7 +99,7 @@ def testTask(self):
 	except BrokenPipeError as e:
 		print("BrokenPipeError: ",e)
 		makeConnection()
-		
+
 		testTask()
 	except IOError as e:
 		print("ioerror:",e)
@@ -107,7 +107,7 @@ def testTask(self):
 	except BaseException as e:
 		print("BaseException: ",e)
 		makeConnection()
-		
+
 		testTask()
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
@@ -120,7 +120,7 @@ def setmeetgeneraparaTask(self,meetName="",meetMode="0",meetType="0"):
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
-		tcpCliSock.settimeout(3)	
+		tcpCliSock.settimeout(3)
 	print("setmeetgenerapara task")
 	try:
 		tcpCliSock.send(("SETMEETGENERALPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (meetName,meetMode,meetType)).encode('utf8'))
@@ -146,7 +146,7 @@ def setmeetgeneraparaTask(self,meetName="",meetMode="0",meetType="0"):
 		makeConnection()
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
-def addmeetTask(self,meetName="",meetRemark=""):
+def addmeetTask(self,meetName="",meetAlias="",meetRemark=""):
 	global tcpCliSock
 	global amqp
 	global app
@@ -157,10 +157,10 @@ def addmeetTask(self,meetName="",meetRemark=""):
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
-		tcpCliSock.settimeout(3)	
+		tcpCliSock.settimeout(3)
 	print("addmeetTask task")
 	try:
-		tcpCliSock.send(("ADDMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetAlias:0%s\r\nMeetRemark:%s\r\n\r\n" % (meetName,meetName,meetRemark)).encode('utf8'))
+		tcpCliSock.send(("ADDMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetAlias:%s\r\nMeetRemark:%s\r\n\r\n" % (meetName,meetAlias,meetRemark)).encode('utf8'))
 		data=tcpCliSock.recv(BUFSIZ)
 		if data is not None:
 			print(data.decode("utf8"))
@@ -190,7 +190,7 @@ def deletemeetTask(self,meetName=""):
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
-		tcpCliSock.settimeout(3)	
+		tcpCliSock.settimeout(3)
 	print("deletemeetTask task")
 	try:
 		tcpCliSock.send(("DELETEMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % meetName).encode('utf8'))
@@ -220,7 +220,7 @@ def listmeetTask(self):
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
-		tcpCliSock.settimeout(3)	
+		tcpCliSock.settimeout(3)
 	print("listmeetTask task")
 	try:
 		tcpCliSock.send("LISTMEET\r\nVersion:1\r\nSeqNumber:110\r\n\r\n".encode('utf8'))
@@ -251,7 +251,7 @@ def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
 		print("tcpCliSock is None")
 		tcpCliSock = socket(AF_INET,SOCK_STREAM)
 		tcpCliSock.connect(ADDR)
-		tcpCliSock.settimeout(3)	
+		tcpCliSock.settimeout(3)
 	print("addmemberTask task")
 	try:
 		tcpCliSock.send(("ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\MemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
