@@ -1,5 +1,21 @@
+{% extends "base.html" %}
+
 {% load static %}
+
 {% load i18n %}
+
+{% block title %}创建会议{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/templatelist.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>创建会议</p>
+	</div>
+	<div class="span8 offset2">
 
 {% if msgType == 'info' %}
 
@@ -25,3 +41,16 @@
 
 <input id="btnAddTerminal" class="button" type="submit" value="添加会议" />
 </form>
+
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill2').attr('class','accordion-body collapse in');
+		});	
+	</script>
+{% endblock %}

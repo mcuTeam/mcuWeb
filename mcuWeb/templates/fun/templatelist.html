@@ -14,22 +14,26 @@
 		<p>会议模板列表</p>
 	</div>
 	<div class="span8 offset2">
+		{% if msgType == 'info' %}
+		<div class="alert alert-info">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
 
-			{% if msgType == 'info' %}
+		{% elif msgType == 'success' %}
+		<div class="alert alert-success">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
 
-			<a style="color:blue">{{msg}}</a>
+		{% elif msgType == 'error' %}
+		<div class="alert alert-error">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
 
-			{% elif msgType == 'success' %}
-
-			<a style="color:green">{{msg}}</a>
-
-			{% elif msgType == 'error' %}
-
-			<a style="color:red">{{msg}}</a>
-
-			{% endif %}
-
-			<br>
+		{% endif %}	
+		
 			<table class="table table-condensed">
 				<thead>
 					<tr>

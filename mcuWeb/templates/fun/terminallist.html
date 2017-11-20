@@ -14,53 +14,47 @@
 		<p>终端列表</p>
 	</div>
 	<div class="span8 offset2">
-		<!-- <div id="warning"> -->
-		<div class="alert">
+
+		{% if msgType == 'info' %}
+		<div class="alert alert-info">
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
-
-			  {% if msgType == 'info' %}
-
-						<a style="color:blue">{{msg}}</a>
-
-						{% elif msgType == 'success' %}
-
-						<a style="color:green">{{msg}}</a>
-
-						{% elif msgType == 'error' %}
-
-						<a style="color:red">{{msg}}</a>
-
-						<% else %>
-						<script type="text/javascript">
-							$('document').ready(function(){
-								$(".alert").alert('close');
-		                    });	
-						</script>	
-						{% endif %}
+		  	{{msg}}
 		</div>
-		<!-- </div> -->
-			
 
-			<br>
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>终端名称</th>
-						<th>终端IP:</th>
-					</tr>
-				</thead>
-			{% for terminal in terminallist %}
-				<tbody>
-					<tr>
-						<td>{{ forloop.counter }}</td>
-					    <td>{{terminal.name}}</td>
-					    <td>{{terminal.terminalIP}}</td>
-					</tr>
-				</tbody>
-			{% endfor %}
-			</table>
-			<a type="submit" class="btn btn-info" value="上传文件" href="/addterminal"><i class="icon-plus-sign icon-white"></i> 添加终端</a>
+		{% elif msgType == 'success' %}
+		<div class="alert alert-success">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
+
+		{% elif msgType == 'error' %}
+		<div class="alert alert-error">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
+
+		{% endif %}		
+
+			
+		<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>终端名称</th>
+					<th>终端IP:</th>
+				</tr>
+			</thead>
+		{% for terminal in terminallist %}
+			<tbody>
+				<tr>
+					<td>{{ forloop.counter }}</td>
+				    <td>{{terminal.name}}</td>
+				    <td>{{terminal.terminalIP}}</td>
+				</tr>
+			</tbody>
+		{% endfor %}
+		</table>
+		<a type="submit" class="btn btn-info" value="上传文件" href="/addterminal"><i class="icon-plus-sign icon-white"></i> 添加终端</a>
 
 	</div>
 </div>
