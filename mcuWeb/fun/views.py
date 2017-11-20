@@ -31,11 +31,10 @@ def creat_meetingView(request):
 			meetName = meetform.cleaned_data['name']
 			MeetAlias = meetform.cleaned_data['meetcode']
 			meetRemark = meetform.cleaned_data['remark']
-			result = addmeetTask.apply_async((meetName,MeetAlias,meetRemark))
 			try:
-				data = result.get(timeout=3)
+				data = addmeetTask.apply_async((meetName,MeetAlias,meetRemark)).get(timeout=3)
 				print("addmeetTask result:",data)
-			except TimeoutError as e:
+			except BaseException as e:
 				print("timeout error: ",e)
 				msgType = 'error'
 				msg = "操作：添加会议，连接MCU超时"
@@ -56,7 +55,7 @@ def creat_meetingView(request):
 			try:
 				data = result.get(timeout=3)
 				print("setmeetgeneraparaTask result:",data)
-			except TimeoutError as e:
+			except BaseException as e:
 				print("timeout error: ",e)
 				msgType = 'error'
 				msg = "操作：设置会议参数，连接MCU超时"

@@ -19,45 +19,73 @@
 		{% if msgType == 'info' %}
 		<div class="alert alert-info">
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
+			{{msg}}
 		</div>
 
 		{% elif msgType == 'success' %}
 		<div class="alert alert-success">
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
+			{{msg}}
 		</div>
 
 		{% elif msgType == 'error' %}
 		<div class="alert alert-error">
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
+			{{msg}}
 		</div>
 
-		{% endif %}	
+		{% endif %}
 
-<form   class="form-horizontal" action="/addtemplate/" role="form" method="post">
-	{% csrf_token %}
-	<div class="control-group">
-		
-		<label class="control-label">{{templateform.name.label_tag}}</label>
-		<div class="controls">
-		{{templateform.name}}
-		<span>{{templateform.name.errors.0}}</span>
-	    </div>
-    </div>
-    <div class="control-group">
-    	<label class="control-label">{{templateform.bandwidth.label_tag}}</label>
-    	<div class="controls">
-		{{templateform.bandwidth}}
-		<span>{{templateform.bandwidth.errors.0}}</span>
-	    </div>
-	</div>
-	<div class="form-actions">
-     <input id="btnAddTerminal" class="btn btn-info" type="submit" value="添加会议模板" >
-     <a type="button" class="btn" href="/templatelist">返回</a>
-	</div>
-</form>
+		<form   class="form-horizontal" action="/addtemplate/" role="form" method="post">
+			{% csrf_token %}
+			<div class="control-group">
+
+				<label class="control-label">{{templateform.name.label_tag}}</label>
+				<div class="controls">
+					{{templateform.name}}
+					<span>{{templateform.name.errors.0}}</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{{templateform.bandwidth.label_tag}}</label>
+				<div class="controls">
+					{{templateform.bandwidth}}
+					<span>{{templateform.bandwidth.errors.0}}</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{{templateform.videoProtocol.label_tag}}</label>
+				<div class="controls">
+					{{templateform.videoProtocol}}
+					<span>{{templateform.videoProtocol.errors.0}}</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{{templateform.videoFrameRate.label_tag}}</label>
+				<div class="controls">
+					{{templateform.videoFrameRate}}
+					<span>{{templateform.videoFrameRate.errors.0}}</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{{templateform.capalityname.label_tag}}</label>
+				<div class="controls">
+					{{templateform.capalityname}}
+					<span>{{templateform.capalityname.errors.0}}</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{{templateform.audioProtocol.label_tag}}</label>
+				<div class="controls">
+					{{templateform.audioProtocol}}
+					<span>{{templateform.audioProtocol.errors.0}}</span>
+				</div>
+			</div>
+			<div class="form-actions">
+				<input id="btnAddTerminal" class="btn btn-info" type="submit" value="添加会议模板" >
+				<a type="button" class="btn" href="/templatelist">返回</a>
+			</div>
+		</form>
 
 	</div>
 </div>
@@ -65,9 +93,9 @@
 {% endblock %}
 
 {% block js %}
-	<script type="text/javascript">
-		$('document').ready(function(){
-			$('div#pill2').attr('class','accordion-body collapse in');
-		});	
-	</script>
+<script type="text/javascript">
+$('document').ready(function(){
+	$('div#pill2').attr('class','accordion-body collapse in');
+});
+</script>
 {% endblock %}
