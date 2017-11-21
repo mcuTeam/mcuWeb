@@ -19,6 +19,8 @@ only thread mode celery:
 only thread mod celery with scheduler
 	cd mcuWeb/mcuWeb
 	celery -A mcuWeb worker -c1 -l info -B
+on Windows run celery:
+	celery -A mcuWeb worker --pool=solo -l info
 
 merge conflict:
 	git checkout (branch/--ours --thears)  file
