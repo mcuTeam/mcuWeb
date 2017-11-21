@@ -290,13 +290,17 @@ def checkNet():
             tcpCliSock.send("HEARTBEAT\r\nVersion:1\r\nSeqNumber:1\r\n\r\n".encode('utf8'))
             data=tcpCliSock.recv(BUFSIZ)
             print(data)
+            if data:
+                return "success"
         except BaseException as e:
             print("schedule error: ",e)
             tcpCliSock.close()
             tcpCliSock = socket(AF_INET,SOCK_STREAM)
             tcpCliSock.connect(ADDR)
             tcpCliSock.settimeout(3)
+            return "error"
     else:
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
         tcpCliSock.settimeout(3)
+        return "error"

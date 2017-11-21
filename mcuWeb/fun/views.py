@@ -165,4 +165,4 @@ def addtemplateView(request):
 def heartBeatAjaxView(request):
 	if request.is_ajax():
 		print("recv ajax request")
-		return HttpResponse("success")
+		return HttpResponse(True)
