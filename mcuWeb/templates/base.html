@@ -10,6 +10,11 @@
 <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
 </head>
 <body>
+
+ <div class="loading" id="loading"> 
+ 	<div class="progress" id="progress">正在连接MCU</div> 
+ </div>
+
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span1"></div>
@@ -52,8 +57,7 @@
 								<li class="divider"></li>
 								</ul>
 								<ul id="list2" class="nav nav-pills nav-stacked">
-									<li><a href="/creat_meeting">创建会议</a></li>
-									<li><a href="/meetinglist">会议列表</a></li>
+									<li><a id="meetinglist" href="/meetinglist">会议列表</a></li>
 									<li><a id="terminallist" href="/terminallist">终端列表</a></li>
 									<li><a id="templatelist" href="/templatelist">会议模板</a></li>
 								</ul>
@@ -154,6 +158,17 @@
 		  <!--Body content-->
 			{% block content %}{% endblock %}
 		</div>
+			<script type="text/javascript">
+
+		// $('#loading').hide();
+
+		$('#meetinglist').on('click',function(){
+			$('#loading').show();
+		});	
+		// $('document').ready(function(){
+		// 	$('#loading').hide();
+		// });	
+	</script>
 		{% block js %}{% endblock %}
 	</div>
 </div>
