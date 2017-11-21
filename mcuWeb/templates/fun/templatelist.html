@@ -32,14 +32,18 @@
 		  	{{msg}}
 		</div>
 
-		{% endif %}	
-		
+		{% endif %}
+
 			<table class="table table-condensed">
 				<thead>
 					<tr>
 						<th>#</th>
-						<th>template名称</th>
-						<th>template bandwidth:</th>
+						<th>会议模板名称</th>
+						<th>带宽:</th>
+						<th>视频协议:</th>
+						<th>视频刷新率:</th>
+						<th>视频分辨率:</th>
+						<th>音频协议:</th>
 					</tr>
 				</thead>
 			{% for template in templatelist %}
@@ -48,6 +52,10 @@
 						<td>{{ forloop.counter }}</td>
 					    <td>{{template.name}}</td>
 					    <td>{{template.bandwidth}}</td>
+							<td>{{template.videoProtocol}}</td>
+							<td>{{template.videoFrameRate}}</td>
+							<td>{{template.capalityname}}</td>
+							<td>{{template.audioProtocol}}</td>
 					</tr>
 				</tbody>
 			{% endfor %}
@@ -62,6 +70,6 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill2').attr('class','accordion-body collapse in');
-		});	
+		});
 	</script>
 {% endblock %}

@@ -201,7 +201,7 @@ def deletemeetTask(self,meetName=""):
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
         print("ConnectionResetError error: ",e)
-        makeConnection()
+        # makeConnection()
     # 没连接到MCU
     except BrokenPipeError as e:
         print("BrokenPipeError: ",e)
@@ -210,7 +210,7 @@ def deletemeetTask(self,meetName=""):
         print("ioerror:",e)
     except BaseException as e:
         print("BaseException: ",e)
-        makeConnection()
+        # makeConnection()
 
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
