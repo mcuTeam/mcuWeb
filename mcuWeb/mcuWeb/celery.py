@@ -24,7 +24,7 @@ app.conf.timezone = 'UTC'
 amqp = celery.bin.amqp.amqp(app = app)
 
 
-HOST = "192.168.43.152"
+HOST = "127.0.0.1"
 PORT = 5038
 BUFSIZ = 10240
 ADDR = (HOST,PORT)
@@ -229,20 +229,9 @@ def listmeetTask(self):
         data=tcpCliSock.recv(BUFSIZ)
         return data.decode("utf8")
     # 开始连接成功，后来MCU断开连接了
-    except ConnectionResetError as e:
-        print("ConnectionResetError error: ",e)
-        makeConnection()
-    # 没连接到MCU
-    except BrokenPipeError as e:
-        print("BrokenPipeError: ",e)
-        makeConnection()
-    except IOError as e:
-        print("ioerror:",e)
-        # makeConnection()
-        # testTask()
     except BaseException as e:
         print("BaseException: ",e)
-        makeConnection()
+        tcpCliSock = None
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
 def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
@@ -265,19 +254,9 @@ def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
             return data.decode("utf8")
         return None
     # 开始连接成功，后来MCU断开连接了
-    except ConnectionResetError as e:
-        print("ConnectionResetError error: ",e)
-        makeConnection()
-    # 没连接到MCU
-    except BrokenPipeError as e:
-        print("BrokenPipeError: ",e)
-        makeConnection()
-    except IOError as e:
-        print("ioerror:",e)
-        return None
     except BaseException as e:
         print("BaseException: ",e)
-        makeConnection()
+        tcpCliSock = None
 
 
 
