@@ -158,16 +158,18 @@
 		  <!--Body content-->
 			{% block content %}{% endblock %}
 		</div>
-			<script type="text/javascript">
+	<script type="text/javascript">
 
 		$('#loading').hide();
 
 		$('#meetinglist').on('click',function(){
+
 			$('#loading').show();
+			
 		});	
-		// $('document').ready(function(){
-		// 	$('#loading').hide();
-		// });	
+		$('document').ready(function(){
+			$.get(/mcuHeartBeat/);
+		});	
 	</script>
 		{% block js %}{% endblock %}
 	</div>
