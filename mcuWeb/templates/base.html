@@ -5,6 +5,7 @@
 <title>{% block title %}{% endblock %}</title>
 <script src="{% static "js/jquery.js" %}"></script>
 <script src="{% static "js/bootstrap.min.js" %}"></script>
+<!-- <script src="{% static "js/jquery-heartbeat.js" %}"></script> -->
 {% block csss %}{% endblock %}
 <link href="{% static "css/base.css" %}" rel="stylesheet" media="screen">
 <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
@@ -12,13 +13,18 @@
 <body>
 
  <div class="loading" id="loading"> 
- 	<!-- <div class="progress" id="progress">正在连接MCU</div> --> 
+ 	 
  </div>
 
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span1"></div>
-		<div class="span11"></div>
+		<div class="span10"></div>
+		<div id="errortips" class="span1">
+			<div id="cover" class="span1"></div>
+
+		</div>
+
 	</div>
 	<div class="row-fluid">
 		<div class="span2 ">
@@ -158,18 +164,26 @@
 		  <!--Body content-->
 			{% block content %}{% endblock %}
 		</div>
-	<script type="text/javascript">
-
-		$('#loading').hide();
+			<script type="text/javascript">
+				$('document').ready(function(){
+					$('#loading').hide();
+					$(function(){
+						function heartbeat(){
+						   $.get(/mcuHeartBeat/,function(){
+						   	$('#cover').toggle();
+						   });
+						}
+						setInterval(heartbeat,1000);// 心跳10秒
+					});
+				});	
 
 		$('#meetinglist').on('click',function(){
-
 			$('#loading').show();
-			
+
 		});	
-		$('document').ready(function(){
-			$.get(/mcuHeartBeat/);
-		});	
+
+
+
 	</script>
 		{% block js %}{% endblock %}
 	</div>

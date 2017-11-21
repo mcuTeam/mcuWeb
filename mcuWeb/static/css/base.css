@@ -11,12 +11,6 @@
 	  z-index: 7;
 }
 
-/*.loading .progress { 
-	vertical-align: middle; 
-	text-align: center;
-} */
-
-
 .container-fluid{
 	background-color: rgb(51,51,51);
 }
@@ -27,12 +21,21 @@
 
 }
 
-.span11{
+.span10{
 	height: 100px;
 	background:url(../images/head.png) center center no-repeat;
 
 }
 
+div#errortips{
+	background:url(../images/heartbeat.png) right no-repeat;
+}
+
+div#cover{
+	width: 100%;
+	background-color: rgb(51,51,51);
+
+}
 
 div.span9{
 	border-radius: 30px;
