@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect,HttpResponseRedirect
 from django.urls import reverse
+from django.http import HttpResponse,HttpResponseServerError
 
 from fun.forms import *
 from system.models import *
@@ -159,3 +160,9 @@ def addtemplateView(request):
 	else:
 		templateform = meetingTemplateForm()
 		return render(request,'fun/addtemplate.html',{'templateform':templateform,'msgType':'info','msg':"please add"})
+
+@login_required
+def heartBeatAjaxView(request):
+	if request.is_ajax():
+		print("recv ajax request")
+		return HttpResponse("success")

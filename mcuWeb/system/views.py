@@ -52,7 +52,7 @@ def analysisListMeetResult(retCode):
 
 @login_required
 def homeView(request):
-	testTask.apply_async()
+	checkNet.apply_async()
 	return render(request,'home.html')
 
 @login_required
