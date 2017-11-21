@@ -4,9 +4,9 @@
 	margin-top: 50px; 
 }
 
-/*div#warning{
-	height: 50px;
-}*/
+span.tips{
+	color: red;
+}
 
 thead{
 	color: rgb(255,204,0);

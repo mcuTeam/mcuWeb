@@ -7,7 +7,7 @@
 {% block title %}创建会议{% endblock %}
 
 {% block csss %}
-<link href="{% static "css/templatelist.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/meetinglist.css" %}" rel="stylesheet" media="screen">
 {% endblock %}
 
 {% block content %}
@@ -17,30 +17,56 @@
 	</div>
 	<div class="span8 offset2">
 
-{% if msgType == 'info' %}
+		{% if msgType == 'info' %}
+		<div class="alert alert-info">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
 
-<a style="color:blue">{{msg}}</a>
+		{% elif msgType == 'success' %}
+		<div class="alert alert-success">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
 
-{% elif msgType == 'success' %}
+		{% elif msgType == 'error' %}
+		<div class="alert alert-error">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
 
-<a style="color:green">{{msg}}</a>
-
-{% elif msgType == 'error' %}
-
-<a style="color:red">{{msg}}</a>
-
-{% else %}
+		{% endif %}	
 
 
 
-{% endif %}
-
-<form id="formCreateChannel"  action="/creat_meeting/" role="form" method="post">
-	{% csrf_token %}
-{{meetform}}
-
-<input id="btnAddTerminal" class="button" type="submit" value="添加会议" />
-</form>
+		<form class="form-horizontal" id="formCreateChannel"  action="/creat_meeting/" role="form" method="post">
+			<div class="control-group">
+				{% csrf_token %}
+					<label class="control-label">{{meetform.name.label_tag}}</label>
+		            <div class="controls">
+					{{meetform.name}}
+					<span class="tips">{{meetform.name.errors.0}}</span>
+				    </div>
+			</div>
+			<div class="control-group">
+					<label class="control-label">{{meetform.meetcode.label_tag}}</label>
+		            <div class="controls">
+					{{meetform.meetcode}}
+					<span class="tips">{{meetform.meetcode.errors.0}}</span>
+				    </div>
+			</div>
+			<div class="control-group">
+					<label class="control-label">{{meetform.remark.label_tag}}</label>
+		            <div class="controls">
+					{{meetform.remark}}
+					<span class="tips">{{meetform.remark.errors.0}}</span>
+				    </div>
+			</div>
+			<div class="form-actions">
+				<input id="btnAddTerminal" class="btn btn-info" type="submit" value="添加会议" />
+				<a type="button" class="btn" href="/meetinglist">返回</a>
+			</div>
+		</form>
 
 	</div>
 </div>
