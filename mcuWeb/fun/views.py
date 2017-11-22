@@ -166,4 +166,11 @@ def addtemplateView(request):
 def heartBeatAjaxView(request):
 	if request.is_ajax():
 		print("recv ajax request")
+		result=""
+		try:
+			result = checkNet.apply_async().get(timeout=3)
+			print(result)
+		except BaseException as e:
+			print("catch heartbeat error",e)
+			return HttpResponse(False)
 		return HttpResponse(True)
