@@ -258,8 +258,6 @@ def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
         print("BaseException: ",e)
         tcpCliSock = None
 
-
-
 @app.task
 def checkNet():
     print("checkNet!")
@@ -283,3 +281,7 @@ def checkNet():
         tcpCliSock.connect(ADDR)
         tcpCliSock.settimeout(3)
         return "error"
+
+@app.task(bind=True,time_limit=20, soft_time_limit=10)
+def addavformatpara():
+    pass

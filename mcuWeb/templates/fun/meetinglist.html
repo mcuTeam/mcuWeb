@@ -32,7 +32,7 @@
 		  	{{msg}}
 		</div>
 
-		{% endif %}	
+		{% endif %}
 
 			<table class="table">
 				<thead>
@@ -47,7 +47,7 @@
 				<tbody>
 					<tr>
 						<td>{{ forloop.counter }}</td>
-					    <td>{{meeting.name}}</td>
+					    <td><a href="/meetDetails/{{meeting.pk}}">{{meeting.name}}</a></td>
 					    <td>{{meeting.meetcode}}</td>
               <td>{{meeting.remark}}</td>
 					</tr>

@@ -169,7 +169,7 @@ def heartBeatAjaxView(request):
 		result=""
 		try:
 			result = checkNet.apply_async().get(timeout=3)
-			print(result)
+			print("heart beat check result is: ",result)
 		except BaseException as e:
 			print("catch heartbeat error",e)
 			return HttpResponse(False)
