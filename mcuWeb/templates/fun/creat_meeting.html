@@ -35,7 +35,7 @@
 		  	{{msg}}
 		</div>
 
-		{% endif %}	
+		{% endif %}
 
 
 
@@ -62,6 +62,15 @@
 					<span class="tips">{{meetform.remark.errors.0}}</span>
 				    </div>
 			</div>
+
+			<div class="control-group">
+				<label class="control-label">{{meetform.template.label_tag}}</label>
+				<div class="controls">
+					{{meetform.template}}
+					<span>{{meetform.template.errors.0}}</span>
+				</div>
+			</div>
+
 			<div class="form-actions">
 				<input id="btnAddTerminal" class="btn btn-info" type="submit" value="添加会议" />
 				<a type="button" class="btn" href="/meetinglist">返回</a>
@@ -77,6 +86,6 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill2').attr('class','accordion-body collapse in');
-		});	
+		});
 	</script>
 {% endblock %}

@@ -52,14 +52,14 @@ def analysisListMeetResult(retCode):
 
 @login_required
 def homeView(request):
-	heartBeat = checkNet.apply_async()
-	result=""
-	try:
-		result = heartBeat.get(timeout=3)
-		print(result)
-	except BaseException as e:
-		print("catch heartbeat error",e)
-		print(result)
+	# heartBeat = checkNet.apply_async()
+	# result=""
+	# try:
+	# 	result = heartBeat.get(timeout=3)
+	# 	print(result)
+	# except BaseException as e:
+	# 	print("catch heartbeat error",e)
+	# 	print(result)
 	return render(request,'home.html')
 
 @login_required

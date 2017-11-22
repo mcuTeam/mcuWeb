@@ -88,8 +88,9 @@ def creat_meetingView(request):
 @login_required
 def meetinglistView(request,msgType='',msg=''):
 	try:
-		data = listmeetTask.apply_async().get(timeout=3)
 		print("1")
+		data = listmeetTask.apply_async().get(timeout=3)
+
 	except BaseException as e:
 		print("timeout error: ",e)
 		msgType = "error"
@@ -165,4 +166,11 @@ def addtemplateView(request):
 def heartBeatAjaxView(request):
 	if request.is_ajax():
 		print("recv ajax request")
+		result=""
+		try:
+			result = checkNet.apply_async().get(timeout=3)
+			print(result)
+		except BaseException as e:
+			print("catch heartbeat error",e)
+			return HttpResponse(False)
 		return HttpResponse(True)

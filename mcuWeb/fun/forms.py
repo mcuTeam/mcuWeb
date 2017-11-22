@@ -53,6 +53,30 @@ class meetingTemplateForm(ModelForm):
         fields = '__all__'
 
 class meetingForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(meetingForm, self).__init__(*args, **kwargs)
+        self.fields['template'].choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()]
+        # template = forms.ChoiceField(label="会议模板*",choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()],initial=('1','1'),required=True)
+    template = forms.ChoiceField(label="会议模板*",required=True)        
+    def clean_template(self):
+        templatePK = self.cleaned_data['template']
+        if not meetingTemplate.objects.filter(pk=int(templatePK)).exists():
+            raise forms.ValidationError("模板不存在")
+        return templatePK
+    def save(self,commit=True):
+        meeting = super(meetingForm,self).save(commit=False)
+        template = meetingTemplate.objects.get(pk=self.cleaned_data['template'])
+        meeting.bandwidth = template.bandwidth
+        meeting.videoProtocol = template.videoProtocol
+        meeting.videoFrameRate = template.videoFrameRate
+        meeting.capalityname = template.capalityname
+        meeting.audioProtocol = template.audioProtocol
+        if commit:
+            meeting.save()
+        return meeting
     class Meta:
         model = meeting
-        fields = '__all__'
+        fields = ['name',
+        'meetcode',
+        'remark'
+        ]
