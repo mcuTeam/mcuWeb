@@ -169,10 +169,13 @@
 					$('#loading').hide();
 					$(function(){
 						function heartbeat(){
-						   $.get(/mcuHeartBeat/,function(){
-
-						   	$('#cover').toggle();
-						   	
+						   $.get(/mcuHeartBeat/,function(date){
+						   	if(date==="False"){
+						   		$('#cover').hide();
+						   	}
+						   	else{
+						   		$('#cover').show();
+						   	}
 						   });
 						}
 						setInterval(heartbeat,10000);// 心跳10秒
