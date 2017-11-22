@@ -25,3 +25,22 @@ a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 	background-color: transparent;
 	color: rgb(255,153,0)
 }
+
+a#delete,a#edit,a#control{
+	padding: 0px;
+    border: 0px;
+	height: 20px;
+	width: 20px;
+}
+
+a#delete{
+	background: url(../images/delete.png) center no-repeat;
+}
+
+a#edit{
+	background: url(../images/edit.png) center no-repeat;
+}
+
+a#control{
+	background: url(../images/control.png) center no-repeat;
+}
