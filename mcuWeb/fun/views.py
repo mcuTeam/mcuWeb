@@ -200,5 +200,6 @@ def heartBeatAjaxView(request):
 @login_required
 def meetDetailsView(request,meetpk):
 	meetInstance = meeting.objects.get(pk=meetpk)
-	return render(request,'fun/meetDetail.html',{'meetInstance':meetInstance,'msgType':'info','msg':"please add"})
+	terminalList = terminal.objects.all()
+	return render(request,'fun/meetDetail.html',{'meetInstance':meetInstance,'terminalList':terminalList,'msgType':'info','msg':"please add"})
 	pass
