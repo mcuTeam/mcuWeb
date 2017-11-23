@@ -39,7 +39,7 @@
 				    <td>{{terminal.name}}</td>
 				    <td>{{terminal.terminalIP}}</td>
 				    <td><a href="/callmember/{{terminal.pk}}" id="callmember" class="btn" > </a></td>
-				    <td><a id="silence" class="btn"> </a></td>
+				    <td><a class="btn" value="click" onclick="silencemember({{terminal.pk}})"> </a></td>
 				    <td><a id="shut_up" class="btn"> </a></td>
 				    <td><a id="double" class="btn"> </a></td>
 				</tr>
@@ -58,32 +58,37 @@
 			$('div#pill2').attr('class','accordion-body collapse in');
 		});
 		$('#callmember').click(function(){
-					
+
 						   $.get(/callmember/{{terminal.pk}},function(){
-						   
+
 						   	});
-				
+
 				});
 		$('#silence').click(function(){
-					
+
 						   $.get(/silence/{{terminal.pk}},function(){
-						   
+
 						   	});
-				
+
 				});
 		$('#shut_up').click(function(){
-					
+
 						   $.get(/shut_up/{{terminal.pk}},function(){
-						   
+
 						   	});
-				
+
 				});
 				$('#double').click(function(){
-					
+
 						   $.get(/double/{{terminal.pk}},function(){
-						   
+
 						   	});
-				
+
 				});
+    function silencemember(pk){
+      console.log(pk);
+      /sliencemember/pk/
+
+    };
 	</script>
 {% endblock %}
