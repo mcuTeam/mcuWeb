@@ -65,34 +65,34 @@
 
 function callmember(pk){
       console.log(pk);
-       $.get(/callmember/{{terminal.pk}},function(){
+       $.get("/callmember/"+pk+"/",function(){
 					
 						   });
     };
 
     function hangup(pk){
       console.log(pk);
-       $.get(/hangup/{{terminal.pk}},function(){
+       $.get("/hangup/"+pk+"/",function(){
 					
 						   });
     };
     function silencemember(pk){
       console.log(pk);
-       $.get(/silencemember/{{terminal.pk}},function(){
+       $.get("/silencemember/"+pk+"/",function(){
 					
 						   });
     };
 
         function shutup(pk){
       console.log(pk);
-       $.get(/shutup/{{terminal.pk}},function(){
+       $.get("/shutup/"+pk+"/",function(){
 					
 						   });
     };
 
             function double(pk){
       console.log(pk);
-       $.get(/double/{{terminal.pk}},function(){
+       $.get("/double/"+pk+"/",function(){
 					
 						   });
     };
