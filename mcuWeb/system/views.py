@@ -13,7 +13,6 @@ def returnCode2Dict(retCode):
 	retDict = {}
 	for item in a:
 	    res = re.split(r':',item,1)
-	    print(res)
 	    if len(res)<2:
 	        retDict['RetName'] = res[0]
 	    else:

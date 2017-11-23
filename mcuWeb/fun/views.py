@@ -4,11 +4,15 @@ from django.shortcuts import redirect,HttpResponseRedirect
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseServerError
 
+import json
+
 from fun.forms import *
 from system.models import *
 from system.views import *
 
 from mcuWeb.celery import *
+
+from celery.task.control import inspect
 # Create your views here.
 
 def syncMeetingListAndDB(result):
@@ -201,22 +205,113 @@ def addtemplateView(request):
 		templateform = meetingTemplateForm()
 		return render(request,'fun/addtemplate.html',{'templateform':templateform,'msgType':'info','msg':"please add"})
 
+# Ajax Views
+# ---------------------------------------------------------------------------
+
 @login_required
 def heartBeatAjaxView(request):
 	if request.is_ajax():
-		print("recv ajax request")
+		print("recv heartBeat ajax request")
 		result=""
 		try:
 			result = checkNet.apply_async().get(timeout=3)
-			print("heart beat check result is: ",result)
+			print("heart beat check result is: \n",result)
 		except BaseException as e:
 			print("catch heartbeat error",e)
 			return HttpResponse(False)
 		return HttpResponse(True)
 
 @login_required
+def callmemberAjaxView(request,meetpk,pk):
+	if request.is_ajax():
+		print("recv callmember ajax request")
+		result=""
+		if not meeting.objects.filter(pk=meetpk).exists():
+			print("该会议不存在！")
+			return HttpResponse({'msgType':"error",'msg':"该会议不存在！"})
+		if not terminal.objects.filter(pk=pk).exists():
+			print("该终端不存在！")
+			return HttpResponse({'msgType':"error",'msg':"该终端不存在！"})
+		meetname = meeting.objects.get(pk=meetpk).name
+		membername = terminal.objects.get(pk=pk).name
+		memberip = terminal.objects.get(pk=pk).terminalIP
+
+		capability = terminal.objects.get(pk=pk).capalityname
+		# add member
+		try:
+			result = addmemberTask.apply_async((meetname,membername,memberip)).get(timeout=3)
+			print("add member check result is: \n",result)
+		except BaseException as e:
+			print("catch add member error",e)
+			return HttpResponse({'msgType':"error",'msg':"向会议中添加终端过程中发生通信错误！"})
+		if result is None:
+			print("add member return None")
+			return HttpResponse({'msgType':"error",'msg':"向会议中添加终端过程中MCU返回None！"})
+		retDict = returnCode2Dict(result)
+		if retDict['RetCode'] != "200":
+			print("addmemberTask return %s" % retDict['RetCode'])
+			return HttpResponse({'msgType':"error",'msg':("向会议中添加终端过程中MCU返回%s！" % retDict['RetCode'])})
+		# setmemberavformatpara
+		try:
+			result = setmemberavformatparaTask.apply_async((meetname,membername,capability)).get(timeout=3)
+			print("setmemberavformatpara check result is: \n",result)
+		except BaseException as e:
+			print("catch setmemberavformatpara error",e)
+			return HttpResponse({'msgType':"error",'msg':"向会议中添加终端参数过程中发生通信错误！"})
+		if result is None:
+			print("setmemberavformatpara return None")
+			return HttpResponse({'msgType':"error",'msg':"向会议中添加终端参数过程中MCU返回None！"})
+		retDict = returnCode2Dict(result)
+		if retDict['RetCode'] != "200":
+			print("setmemberavformatpara return %s" % retDict['RetCode'])
+			return HttpResponse({'msgType':"error",'msg':("向会议中添加终端参数过程中MCU返回%s！" % retDict['RetCode'])})
+		# callmember
+		try:
+			result = callmemberTask.apply_async((meetname,membername)).get(timeout=3)
+			print("callmemberTask result is: \n",result)
+		except BaseException as e:
+			print("catch callmemberTask error",e)
+			return HttpResponse({'msgType':"error",'msg':"呼叫终端过程中发生通信错误！"})
+		if result is None:
+			print("callmemberTask return None")
+			return HttpResponse({'msgType':"error",'msg':"呼叫终端过程中MCU返回None！"})
+		retDict = returnCode2Dict(result)
+		if retDict['RetCode'] != "200":
+			print("callmemberTask return %s" % retDict['RetCode'])
+			return HttpResponse({'msgType':"error",'msg':("呼叫终端过程中MCU返回%s！" % retDict['RetCode'])})
+		return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+
+@login_required
+def getmeetinfoAjaxView(request,meetpk):
+	if request.is_ajax():
+		print("recv getmeetinfo ajax request")
+		result=""
+		if not meeting.objects.filter(pk=meetpk).exists():
+			print("该会议不存在！")
+			return HttpResponse({'msgType':"error",'msg':"该会议不存在！"})
+
+		meetname = meeting.objects.get(pk=meetpk).name
+		# getmeetinfo
+		try:
+
+			result = getmeetinfoTask.apply_async((meetname,)).get(timeout=3)
+			print("getmeetinfo result is: \n",result)
+		except BaseException as e:
+			print("catch getmeetinfo error",e)
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"获取会议信息过程中发生通信错误！"}))
+		if result is None:
+			print("getmeetinfo return None")
+			return HttpResponse({'msgType':"error",'msg':"获取会议信息过程中MCU返回None！"})
+		retDict = returnCode2Dict(result)
+		if retDict['RetCode'] != "200":
+			print("getmeetinfo return %s" % retDict['RetCode'])
+			return HttpResponse({'msgType':"error",'msg':("获取会议信息过程中MCU返回%s！" % retDict['RetCode'])})
+		return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+
+# ---------------------------------------------------------------------------
+
+@login_required
 def meetDetailsView(request,meetpk):
 	meetInstance = meeting.objects.get(pk=meetpk)
 	terminalList = terminal.objects.all()
 	return render(request,'fun/meetDetail.html',{'meetInstance':meetInstance,'terminalList':terminalList,'msgType':'info','msg':"please add"})
-	pass
