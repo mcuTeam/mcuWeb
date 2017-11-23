@@ -302,3 +302,24 @@ def addavformatpara(self,meetname='',capalityname='',callbandwidth='',audioproto
         print("BaseException: ",e)
         tcpCliSock = None
         return None
+
+@app.task(bind=True,time_limit=20, soft_time_limit=10)
+def setdualformatparaTask(self,meetname="",dualprotocol='',dualformat='',dualBandWidth=1024):
+    global tcpCliSock
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+        tcpCliSock.settimeout(3)
+    print("setdualformatparaTask task")
+    try:
+        msg = ("SETDUALFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nDualProtocol:%s\r\nDualFormat:%s\r\nDualBandWidth:%d\r\n\r\n" \
+            % (meetname,dualprotocol,dualformat,dualBandWidth)).encode('utf8')
+        tcpCliSock.send(msg)
+        data=tcpCliSock.recv(BUFSIZ)
+        return data.decode("utf8")
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("setdualformatparaTask BaseException: ",e)
+        tcpCliSock = None
+        return None

@@ -40,6 +40,10 @@ def creat_meetingView(request):
 			videoframerate = meetInstance.videoFrameRate
 			capalityname = meetInstance.capalityname
 			audioprotocol = meetInstance.audioProtocol
+
+			dualProtocol = meetInstance.dualProtocol
+			dualFormat = meetInstance.dualFormat
+			dualBandWidth = meetInstance.dualBandWidth
 			try:
 				data = addmeetTask.apply_async((meetName,MeetAlias,meetRemark)).get(timeout=3)
 				print("addmeetTask result:",data)
@@ -92,11 +96,24 @@ def creat_meetingView(request):
 				retDict = returnCode2Dict(data)
 				if retDict['RetCode'] == "200":
 					print("addavformatparaTask return 200ok")
-					return redirect(meetinglistView)
 			except BaseException as e:
 				print("addavformatparaTask timeout error: ",e)
 				msgType = 'error'
 				msg = "操作：设置会议格式参数，连接MCU超时"
+				meetinglist = meeting.objects.all()
+				return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+
+			result = setdualformatparaTask.apply_async((meetName,dualProtocol,dualFormat,dualBandWidth))
+			try:
+				data = result.get(timeout=3)
+				retDict = returnCode2Dict(data)
+				if retDict['RetCode'] == "200":
+					print("setdualformatparaTask return 200ok")
+					return redirect(meetinglistView)
+			except BaseException as e:
+				print("setdualformatparaTask timeout error: ",e)
+				msgType = 'error'
+				msg = "操作：设置会议双流参数，连接MCU超时"
 				meetinglist = meeting.objects.all()
 				return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
 			return redirect(meetinglistView)
