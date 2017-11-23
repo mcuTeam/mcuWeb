@@ -1,8 +1,89 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}会议控制{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/meetinglist.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>会议控制</p>
+	</div>
+	<div class="span8 offset2">
+
 1234
 {{meetInstance.bandwidth}}
 <hr>
-终端列表<br>
-{% for terminal in terminalList %}
-{{terminal.name}}
-<hr>
-{% endfor %}
+
+
+<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>终端名称</th>
+					<th>终端IP:</th>
+					<th>连接</th>
+					<th>静音</th>
+					<th>闭麦</th>
+					<th>双流</th>
+				</tr>
+			</thead>
+		{% for terminal in terminalList %}
+			<tbody>
+				<tr>
+					<td>{{ forloop.counter }}</td>
+				    <td>{{terminal.name}}</td>
+				    <td>{{terminal.terminalIP}}</td>
+				    <td><a href="/callmember/{{terminal.pk}}" id="callmember" class="btn" > </a></td>
+				    <td><a id="silence" class="btn"> </a></td>
+				    <td><a id="shut_up" class="btn"> </a></td>
+				    <td><a id="double" class="btn"> </a></td>
+				</tr>
+			</tbody>
+		{% endfor %}
+		</table>
+<a type="button" class="btn" href="/meetinglist">返回</a>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill2').attr('class','accordion-body collapse in');
+		});
+		$('#callmember').click(function(){
+					
+						   $.get(/callmember/{{terminal.pk}},function(){
+						   
+						   	});
+				
+				});
+		$('#silence').click(function(){
+					
+						   $.get(/silence/{{terminal.pk}},function(){
+						   
+						   	});
+				
+				});
+		$('#shut_up').click(function(){
+					
+						   $.get(/shut_up/{{terminal.pk}},function(){
+						   
+						   	});
+				
+				});
+				$('#double').click(function(){
+					
+						   $.get(/double/{{terminal.pk}},function(){
+						   
+						   	});
+				
+				});
+	</script>
+{% endblock %}
