@@ -13,5 +13,7 @@ urlpatterns = [
 	url(r'^templatelist/$', fun_view.templatelistView),
 	url(r'^addtemplate/$', fun_view.addtemplateView),
 
+	url(r'^meetDetails/(?P<meetpk>\d+)/$', fun_view.meetDetailsView),
+
 	url(r'^mcuHeartBeat/$', fun_view.heartBeatAjaxView),
 ]

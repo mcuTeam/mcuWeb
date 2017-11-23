@@ -12,13 +12,13 @@ from mcuWeb.celery import *
 # Create your views here.
 
 def syncMeetingListAndDB(result):
-	meeting.objects.all().delete()
+	meeting.objects.all().update(activeInMcu=False)
 	meetingNumber = result['MeetCount']
 	for index in range(0,int(meetingNumber)):
-		# filtered = meeting.objects.filter(name=result['MeetName'][index],meetcode=result['MeetAlias'][index])
-		# if not filtered.exists():
-		meetingInstance = meeting(name=result['MeetName'][index],meetcode=result['MeetAlias'][index],remark=result['MeetRemark'][index])
-		meetingInstance.save()
+		filtered = meeting.objects.filter(name=result['MeetName'][index],meetcode=result['MeetAlias'][index])
+		if  filtered.exists():
+			print("esists!")
+			filtered.update(activeInMcu=True)
 		# else:
 		# 	filtered.update(remark = result['MeetRemark'][index])
 
@@ -32,6 +32,14 @@ def creat_meetingView(request):
 			meetName = meetform.cleaned_data['name']
 			MeetAlias = meetform.cleaned_data['meetcode']
 			meetRemark = meetform.cleaned_data['remark']
+
+			meetInstance = meetform.save()
+
+			bandwidth = meetInstance.bandwidth
+			videoprotocol = meetInstance.videoProtocol
+			videoframerate = meetInstance.videoFrameRate
+			capalityname = meetInstance.capalityname
+			audioprotocol = meetInstance.audioProtocol
 			try:
 				data = addmeetTask.apply_async((meetName,MeetAlias,meetRemark)).get(timeout=3)
 				print("addmeetTask result:",data)
@@ -57,7 +65,7 @@ def creat_meetingView(request):
 				data = result.get(timeout=3)
 				print("setmeetgeneraparaTask result:",data)
 			except BaseException as e:
-				print("timeout error: ",e)
+				print("setmeetgeneraparaTask timeout error: ",e)
 				msgType = 'error'
 				msg = "操作：设置会议参数，连接MCU超时"
 				meetinglist = meeting.objects.all()
@@ -76,8 +84,22 @@ def creat_meetingView(request):
 					print("error1 occurs")
 				msgType = 'success'
 				msg = "成功"
-				return redirect(meetinglistView)
+				# return redirect(meetinglistView)
 				# return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+			result = addavformatpara.apply_async((meetName,capalityname,bandwidth,audioprotocol,videoprotocol,capalityname,videoframerate))
+			try:
+				data = result.get(timeout=3)
+				retDict = returnCode2Dict(data)
+				if retDict['RetCode'] == "200":
+					print("addavformatparaTask return 200ok")
+					return redirect(meetinglistView)
+			except BaseException as e:
+				print("addavformatparaTask timeout error: ",e)
+				msgType = 'error'
+				msg = "操作：设置会议格式参数，连接MCU超时"
+				meetinglist = meeting.objects.all()
+				return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+			return redirect(meetinglistView)
 		else:
 			return render(request,'fun/creat_meeting.html',{'meetform':meetform,'msgType':"error",'msg':"填写错误，请重新提交"})
 	else:
@@ -174,3 +196,10 @@ def heartBeatAjaxView(request):
 			print("catch heartbeat error",e)
 			return HttpResponse(False)
 		return HttpResponse(True)
+
+@login_required
+def meetDetailsView(request,meetpk):
+	meetInstance = meeting.objects.get(pk=meetpk)
+	terminalList = terminal.objects.all()
+	return render(request,'fun/meetDetail.html',{'meetInstance':meetInstance,'terminalList':terminalList,'msgType':'info','msg':"please add"})
+	pass

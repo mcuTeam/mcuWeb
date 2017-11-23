@@ -283,5 +283,22 @@ def checkNet():
         return "error"
 
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
-def addavformatpara():
-    pass
+def addavformatpara(self,meetname='',capalityname='',callbandwidth='',audioprotocol='',videoprotocol='',videoformat='',videoframerate=60):
+    global tcpCliSock
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+        tcpCliSock.settimeout(3)
+    print("addavformatpara task")
+    try:
+        msg = ("ADDAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nCapalityName:%s\r\nCallBandWidth:%s\r\nAudioProtocol:%s\r\nVideoProtocol:%s\r\nVideoFormat:%s\r\nVideoFrameRate:%d\r\n\r\n" \
+            % (meetname,capalityname,callbandwidth,audioprotocol,videoprotocol,videoformat,videoframerate)).encode('utf8')
+        tcpCliSock.send(msg)
+        data=tcpCliSock.recv(BUFSIZ)
+        return data.decode("utf8")
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("BaseException: ",e)
+        tcpCliSock = None
+        return None
