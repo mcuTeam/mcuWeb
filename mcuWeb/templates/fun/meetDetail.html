@@ -54,41 +54,16 @@
 
 {% block js %}
 	<script type="text/javascript">
+
 		$('document').ready(function(){
 			$('div#pill2').attr('class','accordion-body collapse in');
-		});
-		$('#callmember').click(function(){
-
-						   $.get(/callmember/{{terminal.pk}},function(){
-
-						   	});
-
-				});
-		$('#silence').click(function(){
-
-						   $.get(/silence/{{terminal.pk}},function(){
-
-						   	});
-
-				});
-		$('#shut_up').click(function(){
-
-						   $.get(/shut_up/{{terminal.pk}},function(){
-
-						   	});
-
-				});
-				$('#double').click(function(){
-
-						   $.get(/double/{{terminal.pk}},function(){
-
-						   	});
-
-				});
-    function silencemember(pk){
+				    function silencemember(pk){
       console.log(pk);
       /sliencemember/pk/
 
     };
+		});
+		
+
 	</script>
 {% endblock %}
