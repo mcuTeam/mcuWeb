@@ -40,6 +40,7 @@
 						<th>#</th>
 						<th>会议名称</th>
 						<th>会议编号</th>
+						<th>是否存在于mcu</th>
 			            <th>会议备注</th>
 			            <th>会议控制</th>
 			            <th>编辑</th>
@@ -52,6 +53,7 @@
 						<td>{{ forloop.counter }}</td>
 					    <td><a href="/meetDetails/{{meeting.pk}}">{{meeting.name}}</a></td>
 					    <td>{{meeting.meetcode}}</td>
+							<td>{{meeting.activeInMcu}}</td>
 			            <td>{{meeting.remark}}</td>
 			            <td><a id="control" class="btn" href="/meetDetails/{{meeting.pk}}"> </a></td>
 			            <td><a id="edit" class="btn" > </a></td>

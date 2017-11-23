@@ -20,6 +20,8 @@ class meeting(models.Model):
 	meetcode = models.CharField(unique=True,max_length=200,blank=False,null=False,verbose_name="会议编号*")
 	remark = models.CharField(max_length=400,blank=True,null=False,default="",verbose_name="备注")
 
+	activeInMcu = models.BooleanField(default=True,verbose_name="是否在mcu列表中")
+
 	bandwidth = models.CharField(max_length=200,blank=False,null=False,default="4000",verbose_name="带宽*")
 	videoProtocol = models.CharField(max_length=200,blank=False,null=False,default="H.264",verbose_name="视频协议*")
 	videoFrameRate = models.IntegerField(blank=False,null=False,default=60,verbose_name=u"视频刷新率*")
