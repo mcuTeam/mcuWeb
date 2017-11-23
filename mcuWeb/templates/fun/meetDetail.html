@@ -26,7 +26,9 @@
 					<th>#</th>
 					<th>终端名称</th>
 					<th>终端IP:</th>
+					<th>状态</th>
 					<th>连接</th>
+					<th>断开</th>
 					<th>静音</th>
 					<th>闭麦</th>
 					<th>双流</th>
@@ -38,10 +40,12 @@
 					<td>{{ forloop.counter }}</td>
 				    <td>{{terminal.name}}</td>
 				    <td>{{terminal.terminalIP}}</td>
-				    <td><a href="/callmember/{{terminal.pk}}" id="callmember" class="btn" > </a></td>
-				    <td><a class="btn" value="click" onclick="silencemember({{terminal.pk}})"> </a></td>
-				    <td><a id="shut_up" class="btn"> </a></td>
-				    <td><a id="double" class="btn"> </a></td>
+				    <td>未连接/已连接</td>
+				    <td><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
+				    <td><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
+				    <td><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
+				    <td><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
+				    <td><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
 				</tr>
 			</tbody>
 		{% endfor %}
@@ -54,16 +58,44 @@
 
 {% block js %}
 	<script type="text/javascript">
-
 		$('document').ready(function(){
 			$('div#pill2').attr('class','accordion-body collapse in');
-				    function silencemember(pk){
-      console.log(pk);
-
-
-    };
 		});
-		
+
+
+function callmember(pk){
+      console.log(pk);
+       $.get(/callmember/{{terminal.pk}},function(){
+					
+						   });
+    };
+
+    function hangup(pk){
+      console.log(pk);
+       $.get(/hangup/{{terminal.pk}},function(){
+					
+						   });
+    };
+    function silencemember(pk){
+      console.log(pk);
+       $.get(/silencemember/{{terminal.pk}},function(){
+					
+						   });
+    };
+
+        function shutup(pk){
+      console.log(pk);
+       $.get(/shutup/{{terminal.pk}},function(){
+					
+						   });
+    };
+
+            function double(pk){
+      console.log(pk);
+       $.get(/double/{{terminal.pk}},function(){
+					
+						   });
+    };
 
 	</script>
 {% endblock %}
