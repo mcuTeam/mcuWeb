@@ -57,7 +57,7 @@ class meetingForm(ModelForm):
         super(meetingForm, self).__init__(*args, **kwargs)
         self.fields['template'].choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()]
         # template = forms.ChoiceField(label="会议模板*",choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()],initial=('1','1'),required=True)
-    template = forms.ChoiceField(label="会议模板*",required=True)        
+    template = forms.ChoiceField(label="会议模板*",required=True)
     def clean_template(self):
         templatePK = self.cleaned_data['template']
         if not meetingTemplate.objects.filter(pk=int(templatePK)).exists():
@@ -71,6 +71,11 @@ class meetingForm(ModelForm):
         meeting.videoFrameRate = template.videoFrameRate
         meeting.capalityname = template.capalityname
         meeting.audioProtocol = template.audioProtocol
+
+        meeting.dualProtocol = template.dualProtocol
+        meeting.dualFormat = template.dualFormat
+        meeting.dualBandWidth = template.dualBandWidth
+
         if commit:
             meeting.save()
         return meeting
