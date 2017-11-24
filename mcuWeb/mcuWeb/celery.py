@@ -29,6 +29,7 @@ PORT = 5038
 BUFSIZ = 10240
 ADDR = (HOST,PORT)
 tcpCliSock = None
+seqNumber = 0
 try:
     tcpCliSock = socket(AF_INET,SOCK_STREAM)
     tcpCliSock.connect(ADDR)
@@ -236,8 +237,6 @@ def listmeetTask(self):
 @app.task(bind=True,time_limit=20, soft_time_limit=10)
 def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
     global tcpCliSock
-    global amqp
-    global app
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -245,9 +244,10 @@ def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
         tcpCliSock.settimeout(3)
     print("addmemberTask task")
     try:
-        tcpCliSock.send(("ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\MemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
-            % (meetName,memberName,memberIP,memberName,memberName)).encode('utf8'))
-        # print((("SETMEETGENERAPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (meetName,meetMode,meetType))))
+        msg = ("ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
+            % (meetName,memberName,memberIP,memberName,memberName))
+        print(msg)
+        tcpCliSock.send(msg.encode('utf8'))
         data=tcpCliSock.recv(BUFSIZ)
         print(data.decode("utf8"))
         if data is not None:
@@ -257,18 +257,74 @@ def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
     except BaseException as e:
         print("BaseException: ",e)
         tcpCliSock = None
+        return None
+
+@app.task(bind=True,time_limit=20, soft_time_limit=10)
+def setmemberavformatparaTask(self,meetName="",memberName="0",capalityName="1080P"):
+    global tcpCliSock
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+        tcpCliSock.settimeout(3)
+    print("addmemberTask task")
+    try:
+        msg = ("SETMEMBERAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nCapabilityName:%s\r\n\r\n" \
+            % (meetName,memberName,capalityName))
+        print(msg)
+        tcpCliSock.send(msg.encode('utf8'))
+        data=tcpCliSock.recv(BUFSIZ)
+        print(data.decode("utf8"))
+        if data is not None:
+            return data.decode("utf8")
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("BaseException: ",e)
+        tcpCliSock = None
+        return None
+
+@app.task(bind=True,time_limit=20, soft_time_limit=10)
+def callmemberTask(self,meetName="",memberName="0"):
+    global tcpCliSock
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+        tcpCliSock.settimeout(3)
+    print("callmemberTask task")
+    try:
+        msg = ("CALLMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
+            % (meetName,memberName))
+        print(msg)
+        tcpCliSock.send(msg.encode('utf8'))
+        data=tcpCliSock.recv(BUFSIZ)
+        print(data.decode("utf8"))
+        if data is  None:
+            return None
+        data=tcpCliSock.recv(BUFSIZ)
+        print(data.decode("utf8"))
+        # return data.decode("utf8")
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("callmemberTask BaseException: ",e)
+        tcpCliSock = None
+        return None
 
 @app.task
 def checkNet():
     print("checkNet!")
     global tcpCliSock
+    global seqNumber
+    seqNumber+=1
     if tcpCliSock is not None:
         try:
-            tcpCliSock.send("HEARTBEAT\r\nVersion:1\r\nSeqNumber:1\r\n\r\n".encode('utf8'))
+            tcpCliSock.send(("HEARTBEAT\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
             data=tcpCliSock.recv(BUFSIZ)
-            print(data)
+            print(seqNumber,'-------',data)
             if data:
-                return "success"
+                return data.decode("utf8")
         except BaseException as e:
             print("schedule error: ",e)
             tcpCliSock.close()
@@ -292,7 +348,7 @@ def addavformatpara(self,meetname='',capalityname='',callbandwidth='',audioproto
         tcpCliSock.settimeout(3)
     print("addavformatpara task")
     try:
-        msg = ("ADDAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nCapalityName:%s\r\nCallBandWidth:%s\r\nAudioProtocol:%s\r\nVideoProtocol:%s\r\nVideoFormat:%s\r\nVideoFrameRate:%d\r\n\r\n" \
+        msg = ("ADDAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nCapabilityName:%s\r\nCallBandWidth:%s\r\nAudioProtocol:%s\r\nVideoProtocol:%s\r\nVideoFormat:%s\r\nVideoFrameRate:%d\r\n\r\n" \
             % (meetname,capalityname,callbandwidth,audioprotocol,videoprotocol,videoformat,videoframerate)).encode('utf8')
         tcpCliSock.send(msg)
         data=tcpCliSock.recv(BUFSIZ)
@@ -321,5 +377,30 @@ def setdualformatparaTask(self,meetname="",dualprotocol='',dualformat='',dualBan
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("setdualformatparaTask BaseException: ",e)
+        tcpCliSock = None
+        return None
+
+@app.task(bind=True,time_limit=20, soft_time_limit=10)
+def getmeetinfoTask(self,meetName=""):
+    global tcpCliSock
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+        tcpCliSock.settimeout(3)
+    print("getmeetinfoTask task")
+    try:
+        msg = ("GETMEETINFO\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" \
+            % (meetName))
+        print(msg)
+        tcpCliSock.send(msg.encode('utf8'))
+        data=tcpCliSock.recv(BUFSIZ)
+        print(data.decode("utf8"))
+        if data is not None:
+            return data.decode("utf8")
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("getmeetinfoTask BaseException: ",e)
         tcpCliSock = None
         return None

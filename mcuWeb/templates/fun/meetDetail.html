@@ -10,92 +10,102 @@
 
 {% block content %}
 <div class="row-fluid">
-	<div class="span8 offset1">
-		<p>会议控制</p>
-	</div>
-	<div class="span8 offset2">
+  <div class="span8 offset1">
+    <p>会议控制</p>
+  </div>
+  <div class="span8 offset2">
 
-1234
-{{meetInstance.bandwidth}}
-<hr>
+    1234
+    {{meetInstance.bandwidth}}
+
+    <td><a class="btn" onclick="getmeetinfo({{terminal.pk}})" >getmeetinfo</a></td>
+
+    <hr>
 
 
-<table class="table table-condensed">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>终端名称</th>
-					<th>终端IP:</th>
-					<th>状态</th>
-					<th>连接</th>
-					<th>断开</th>
-					<th>静音</th>
-					<th>闭麦</th>
-					<th>双流</th>
-				</tr>
-			</thead>
-		{% for terminal in terminalList %}
-			<tbody>
-				<tr>
-					<td>{{ forloop.counter }}</td>
-				    <td>{{terminal.name}}</td>
-				    <td>{{terminal.terminalIP}}</td>
-				    <td>未连接/已连接</td>
-				    <td class="callmember"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
-				    <td><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
-				    <td><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
-				    <td><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
-				    <td><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
-				</tr>
-			</tbody>
-		{% endfor %}
-		</table>
-<a type="button" class="btn" href="/meetinglist">返回</a>
-	</div>
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>终端名称</th>
+          <th>终端IP:</th>
+          <th>状态</th>
+          <th>连接</th>
+          <th>断开</th>
+          <th>静音</th>
+          <th>闭麦</th>
+          <th>双流</th>
+        </tr>
+      </thead>
+      {% for terminal in terminalList %}
+      <tbody>
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{terminal.name}}</td>
+          <td>{{terminal.terminalIP}}</td>
+          <td>未连接/已连接</td>
+          <td><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
+          <td><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
+          <td><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
+          <td><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
+          <td><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+    <a type="button" class="btn" href="/meetinglist">返回</a>
+  </div>
 </div>
 
 {% endblock %}
 
 {% block js %}
-	<script type="text/javascript">
-		$('document').ready(function(){
-			$('div#pill2').attr('class','accordion-body collapse in');
-		});
+<script type="text/javascript">
+$('document').ready(function(){
+  $('div#pill2').attr('class','accordion-body collapse in');
+});
 
 
 function callmember(pk){
-      console.log(pk);
-       $.get("/callmember/"+pk+"/",function(){
-					
-						   });
-    };
+  console.log(pk);
+  $.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(){
 
-    function hangup(pk){
-      console.log(pk);
-       $.get("/hangup/"+pk+"/",function(){
-					
-						   });
-    };
-    function silencemember(pk){
-      console.log(pk);
-       $.get("/silencemember/"+pk+"/",function(){
-					
-						   });
-    };
+  });
+};
 
-        function shutup(pk){
-      console.log(pk);
-       $.get("/shutup/"+pk+"/",function(){
-					
-						   });
-    };
+function hangup(pk){
+  console.log(pk);
+  $.get("/hangup/"+pk+"/",function(){
 
-            function double(pk){
-      console.log(pk);
-       $.get("/double/"+pk+"/",function(){
-					
-						   });
-    };
+  });
+};
+function silencemember(pk){
+  console.log(pk);
+  $.get("/silencemember/"+pk+"/",function(){
 
-	</script>
+  });
+};
+
+function shutup(pk){
+  console.log(pk);
+  $.get("/shutup/"+pk+"/",function(){
+
+  });
+};
+
+function double(pk){
+  console.log(pk);
+  $.get("/double/"+pk+"/",function(){
+
+  });
+};
+
+function getmeetinfo(pk){
+  console.log(pk);
+  $.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
+
+  });
+};
+
+</script>
 {% endblock %}
