@@ -29,7 +29,7 @@
           <th>#</th>
           <th>终端名称</th>
           <th>终端IP:</th>
-          <th>状态</th>
+          <th>连接状态</th>
           <th>连接</th>
           <th>断开</th>
           <th>静音</th>
@@ -45,10 +45,10 @@
           <td>{{terminal.terminalIP}}</td>
           <td>未连接/已连接</td>
           <td class="callmember"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
-          <td><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
-          <td><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
-          <td><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
-          <td><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
+          <td class="hangup" ><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
+          <td class="silencemember0" ><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
+          <td class="shutup0" ><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
+          <td class="double0"><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
         </tr>
       </tbody>
       {% endfor %}

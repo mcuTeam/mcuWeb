@@ -26,7 +26,9 @@ a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 	color: rgb(255,153,0)
 }
 
-td.delete > a,td.edit> a ,td.control> a,td.callmember>a{
+td.delete > a,td.edit> a ,td.control> a,
+td.callmember>a,td.hangup>a,td.silencemember>a,td.shutup>a,td.double>a,
+td.silencemember0>a,td.shutup0>a,td.double0>a{
 	padding: 0px;
     border: 0px;
 	height: 20px;
@@ -34,7 +36,11 @@ td.delete > a,td.edit> a ,td.control> a,td.callmember>a{
 }
 
 td.delete > a:hover,td.edit> a:hover ,td.control> a:hover,
-td.delete > a:focus,td.edit> a:focus ,td.control> a:focus{
+td.callmember>a:hover,td.hangup>a:hover,td.silencemember>a:hover,td.shutup>a:hover,td.double>a:hover,
+td.silencemember0>a:hover,td.shutup0>a:hover,td.double0>a:hover,
+td.delete > a:focus,td.edit> a:focus ,td.control> a:focus,
+td.callmember>a:focus,td.hangup>a:focus,td.silencemember>a:focus,td.shutup>a:focus,td.double>a:focus,
+td.silencemember0>a:focus,td.shutup0>a:focus,td.double0>a:focus{
 	background-color: transparent;
 	background-position:0px;
 }
@@ -54,5 +60,41 @@ td.control> a{
 
 td.callmember>a{
 	background: url(../images/call.png) center no-repeat;
+
+}
+
+td.hangup>a{
+	background: url(../images/hangup.png) center no-repeat;
+
+}
+
+td.silencemember>a{
+	background: url(../images/silence.png) center no-repeat;
+
+}
+
+td.silencemember0>a{
+	background: url(../images/silence0.png) center no-repeat;
+
+}
+
+td.shutup>a{
+	background: url(../images/shutup.png) center no-repeat;
+
+}
+
+td.shutup0>a{
+	background: url(../images/shutup0.png) center no-repeat;
+
+}
+
+
+td.double>a{
+	background: url(../images/double.png) center no-repeat;
+
+}
+
+td.double0>a{
+	background: url(../images/double0.png) center no-repeat;
 
 }
