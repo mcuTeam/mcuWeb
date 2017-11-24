@@ -89,7 +89,7 @@ def makeConnection():
 
 # ------------------------------------------------------------------------------------------------------------------------------------------
 
-def testTask(self):
+def testTask():
     print("running task")
     global tcpCliSock
     global amqp
@@ -127,7 +127,7 @@ def testTask(self):
 
         testTask()
 
-def setmeetgeneraparaTask(self,meetName="",meetMode="0",meetType="0"):
+def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
     print("running task")
     global tcpCliSock
     global amqp
@@ -161,7 +161,7 @@ def setmeetgeneraparaTask(self,meetName="",meetMode="0",meetType="0"):
         print("BaseException: ",e)
         makeConnection()
 
-def addmeetTask(self,meetName="",meetAlias="",meetRemark=""):
+def addmeetTask(meetName="",meetAlias="",meetRemark=""):
     global tcpCliSock
     global amqp
     global app
@@ -197,7 +197,7 @@ def addmeetTask(self,meetName="",meetAlias="",meetRemark=""):
         print("BaseException: ",e)
         makeConnection()
 
-def deletemeetTask(self,meetName=""):
+def deletemeetTask(meetName=""):
     global tcpCliSock
     global amqp
     global app
@@ -226,7 +226,7 @@ def deletemeetTask(self,meetName=""):
         # makeConnection()
 
 
-def listmeetTask(self):
+def listmeetTask():
     global tcpCliSock
     global amqp
     global app
@@ -246,7 +246,7 @@ def listmeetTask(self):
         print("BaseException: ",e)
         tcpCliSock = None
 
-def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
+def addmemberTask(meetName="",memberName="0",memberIP="0"):
     global tcpCliSock
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -270,7 +270,7 @@ def addmemberTask(self,meetName="",memberName="0",memberIP="0"):
         tcpCliSock = None
         return None
 
-def setmemberavformatparaTask(self,meetName="",memberName="0",capalityName="1080P"):
+def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
     global tcpCliSock
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -294,7 +294,7 @@ def setmemberavformatparaTask(self,meetName="",memberName="0",capalityName="1080
         tcpCliSock = None
         return None
 
-def callmemberTask(self,meetName="",memberName="0"):
+def callmemberTask(meetName="",memberName="0"):
     global tcpCliSock
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -346,7 +346,7 @@ def checkNet():
         tcpCliSock.settimeout(3)
         return "error"
 
-def addavformatpara(self,meetname='',capalityname='',callbandwidth='',audioprotocol='',videoprotocol='',videoformat='',videoframerate=60):
+def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='',videoprotocol='',videoformat='',videoframerate=60):
     global tcpCliSock
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -366,7 +366,7 @@ def addavformatpara(self,meetname='',capalityname='',callbandwidth='',audioproto
         tcpCliSock = None
         return None
 
-def setdualformatparaTask(self,meetname="",dualprotocol='',dualformat='',dualBandWidth=1024):
+def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidth=1024):
     global tcpCliSock
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -386,7 +386,7 @@ def setdualformatparaTask(self,meetname="",dualprotocol='',dualformat='',dualBan
         tcpCliSock = None
         return None
 
-def getmeetinfoTask(self,meetName=""):
+def getmeetinfoTask(meetName=""):
     global tcpCliSock
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -458,7 +458,7 @@ def creat_meetingView(request):
 			dualFormat = meetInstance.dualFormat
 			dualBandWidth = meetInstance.dualBandWidth
 			try:
-				data = addmeetTask((meetName,MeetAlias,meetRemark))
+				data = addmeetTask(meetName,MeetAlias,meetRemark)
 				print("addmeetTask result:",data)
 			except BaseException as e:
 				print("timeout error: ",e)
@@ -477,7 +477,7 @@ def creat_meetingView(request):
 			if ret['RetCode'] != '200':
 				print(ret['RetCode'] is '200')
 				print("error0 occurs")
-			result = setmeetgeneraparaTask((meetName,))
+			result = setmeetgeneraparaTask(meetName)
 			try:
 				data = result
 				print("setmeetgeneraparaTask result:",data)
@@ -503,7 +503,7 @@ def creat_meetingView(request):
 				msg = "成功"
 				# return redirect(meetinglistView)
 				# return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
-			result = addavformatpara((meetName,capalityname,bandwidth,audioprotocol,videoprotocol,capalityname,videoframerate))
+			result = addavformatpara(meetName,capalityname,bandwidth,audioprotocol,videoprotocol,capalityname,videoframerate)
 			try:
 				data = result
 				retDict = returnCode2Dict(data)
@@ -516,7 +516,7 @@ def creat_meetingView(request):
 				meetinglist = meeting.objects.all()
 				return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
 
-			result = setdualformatparaTask((meetName,dualProtocol,dualFormat,dualBandWidth))
+			result = setdualformatparaTask(meetName,dualProtocol,dualFormat,dualBandWidth)
 			try:
 				data = result
 				retDict = returnCode2Dict(data)
@@ -536,12 +536,27 @@ def creat_meetingView(request):
 		meetform = meetingForm()
 		return render(request,'fun/creat_meeting.html',{'meetform':meetform,'msgType':"info",'msg':"请添加会议"})
 
+@login_required
+def delete_meetingView(request,meetpk):
+	if not meeting.objects.filter(pk=meetpk).exists():
+		print("该会议不存在！")
+		msgType = "error"
+		msg = "该会议不存在"
+		meetinglist = meeting.objects.all()
+		return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+	else:
+		meeting.objects.get(pk=meetpk).delete()
+		msgType = "success"
+		msg = "删除成功"
+		meetinglist = meeting.objects.all()
+		return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+
 
 @login_required
 def meetinglistView(request,msgType='',msg=''):
 	try:
 		print("1")
-		data = listmeetTask(())
+		data = listmeetTask()
 
 	except BaseException as e:
 		print("timeout error: ",e)
@@ -637,10 +652,10 @@ def callmemberAjaxView(request,meetpk,pk):
 		result=""
 		if not meeting.objects.filter(pk=meetpk).exists():
 			print("该会议不存在！")
-			return HttpResponse({'msgType':"error",'msg':"该会议不存在！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
 		if not terminal.objects.filter(pk=pk).exists():
 			print("该终端不存在！")
-			return HttpResponse({'msgType':"error",'msg':"该终端不存在！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"该终端不存在！"}))
 		meetname = meeting.objects.get(pk=meetpk).name
 		membername = terminal.objects.get(pk=pk).name
 		memberip = terminal.objects.get(pk=pk).terminalIP
@@ -648,46 +663,46 @@ def callmemberAjaxView(request,meetpk,pk):
 		capability = terminal.objects.get(pk=pk).capalityname
 		# add member
 		try:
-			result = addmemberTask((meetname,membername,memberip))
+			result = addmemberTask(meetname,membername,memberip)
 			print("add member check result is: \n",result)
 		except BaseException as e:
 			print("catch add member error",e)
-			return HttpResponse({'msgType':"error",'msg':"向会议中添加终端过程中发生通信错误！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端过程中发生通信错误！"}))
 		if result is None:
 			print("add member return None")
-			return HttpResponse({'msgType':"error",'msg':"向会议中添加终端过程中MCU返回None！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端过程中MCU返回None！"}))
 		retDict = returnCode2Dict(result)
 		if retDict['RetCode'] != "200":
 			print("addmemberTask return %s" % retDict['RetCode'])
-			return HttpResponse({'msgType':"error",'msg':("向会议中添加终端过程中MCU返回%s！" % retDict['RetCode'])})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':("向会议中添加终端过程中MCU返回%s！" % retDict['RetCode'])}))
 		# setmemberavformatpara
 		try:
-			result = setmemberavformatparaTask((meetname,membername,capability))
+			result = setmemberavformatparaTask(meetname,membername,capability)
 			print("setmemberavformatpara check result is: \n",result)
 		except BaseException as e:
 			print("catch setmemberavformatpara error",e)
-			return HttpResponse({'msgType':"error",'msg':"向会议中添加终端参数过程中发生通信错误！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端参数过程中发生通信错误！"}))
 		if result is None:
 			print("setmemberavformatpara return None")
-			return HttpResponse({'msgType':"error",'msg':"向会议中添加终端参数过程中MCU返回None！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端参数过程中MCU返回None！"}))
 		retDict = returnCode2Dict(result)
 		if retDict['RetCode'] != "200":
 			print("setmemberavformatpara return %s" % retDict['RetCode'])
-			return HttpResponse({'msgType':"error",'msg':("向会议中添加终端参数过程中MCU返回%s！" % retDict['RetCode'])})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':("向会议中添加终端参数过程中MCU返回%s！" % retDict['RetCode'])}))
 		# callmember
 		try:
-			result = callmemberTask((meetname,membername))
+			result = callmemberTask(meetname,membername)
 			print("callmemberTask result is: \n",result)
 		except BaseException as e:
 			print("catch callmemberTask error",e)
-			return HttpResponse({'msgType':"error",'msg':"呼叫终端过程中发生通信错误！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"呼叫终端过程中发生通信错误！"}))
 		if result is None:
 			print("callmemberTask return None")
-			return HttpResponse({'msgType':"error",'msg':"呼叫终端过程中MCU返回None！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"呼叫终端过程中MCU返回None！"}))
 		retDict = returnCode2Dict(result)
 		if retDict['RetCode'] != "200":
 			print("callmemberTask return %s" % retDict['RetCode'])
-			return HttpResponse({'msgType':"error",'msg':("呼叫终端过程中MCU返回%s！" % retDict['RetCode'])})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':("呼叫终端过程中MCU返回%s！" % retDict['RetCode'])}))
 		return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
 
 @login_required
@@ -697,24 +712,24 @@ def getmeetinfoAjaxView(request,meetpk):
 		result=""
 		if not meeting.objects.filter(pk=meetpk).exists():
 			print("该会议不存在！")
-			return HttpResponse({'msgType':"error",'msg':"该会议不存在！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
 
 		meetname = meeting.objects.get(pk=meetpk).name
 		# getmeetinfo
 		try:
 
-			result = getmeetinfoTask((meetname,))
+			result = getmeetinfoTask(meetname)
 			print("getmeetinfo result is: \n",result)
 		except BaseException as e:
 			print("catch getmeetinfo error",e)
 			return HttpResponse(json.dumps({'msgType':"error",'msg':"获取会议信息过程中发生通信错误！"}))
 		if result is None:
 			print("getmeetinfo return None")
-			return HttpResponse({'msgType':"error",'msg':"获取会议信息过程中MCU返回None！"})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':"获取会议信息过程中MCU返回None！"}))
 		retDict = returnCode2Dict(result)
 		if retDict['RetCode'] != "200":
 			print("getmeetinfo return %s" % retDict['RetCode'])
-			return HttpResponse({'msgType':"error",'msg':("获取会议信息过程中MCU返回%s！" % retDict['RetCode'])})
+			return HttpResponse(json.dumps({'msgType':"error",'msg':("获取会议信息过程中MCU返回%s！" % retDict['RetCode'])}))
 		return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
 
 # ---------------------------------------------------------------------------
