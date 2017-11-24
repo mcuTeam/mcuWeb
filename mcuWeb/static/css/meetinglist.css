@@ -26,21 +26,33 @@ a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 	color: rgb(255,153,0)
 }
 
-a#delete,a#edit,a#control{
+td.delete > a,td.edit> a ,td.control> a,td.callmember>a{
 	padding: 0px;
     border: 0px;
 	height: 20px;
 	width: 20px;
 }
 
-a#delete{
+td.delete > a:hover,td.edit> a:hover ,td.control> a:hover,
+td.delete > a:focus,td.edit> a:focus ,td.control> a:focus{
+	background-color: transparent;
+	background-position:0px;
+}
+
+
+td.delete > a{
 	background: url(../images/delete.png) center no-repeat;
 }
 
-a#edit{
+td.edit> a{
 	background: url(../images/edit.png) center no-repeat;
 }
 
-a#control{
+td.control> a{
 	background: url(../images/control.png) center no-repeat;
+}
+
+td.callmember>a{
+	background: url(../images/call.png) center no-repeat;
+
 }
