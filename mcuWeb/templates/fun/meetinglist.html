@@ -55,9 +55,9 @@
 					    <td>{{meeting.meetcode}}</td>
 						<td>{{meeting.activeInMcu}}</td>
 			            <td>{{meeting.remark}}</td>
-			            <td><a id="control" class="btn" href="/meetDetails/{{meeting.pk}}"> </a></td>
-			            <td><a id="edit" class="btn" > </a></td>
-			            <td><a id="delete" class="btn" href="/delete_meeting/{{meeting.pk}}/"> </a></td>
+			            <td class="control" ><a class="btn" href="/meetDetails/{{meeting.pk}}"> </a></td>
+			            <td class="edit" ><a class="btn" > </a></td>
+			            <td class="delete"><a class="btn" href="/delete_meeting/{{meeting.pk}}/"> </a></td>
 					</tr>
 				</tbody>
 			{% endfor %}
