@@ -28,7 +28,8 @@ a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 
 td.delete > a,td.edit> a ,td.control> a,
 td.callmember>a,td.hangup>a,td.silencemember>a,td.shutup>a,td.double>a,
-td.silencemember0>a,td.shutup0>a,td.double0>a{
+td.silencemember0>a,td.shutup0>a,td.double0>a,
+td.unconnect>button,td.connected>button{
 	padding: 0px;
     border: 0px;
 	height: 20px;
@@ -45,6 +46,13 @@ td.silencemember0>a:focus,td.shutup0>a:focus,td.double0>a:focus{
 	background-position:0px;
 }
 
+td.unconnect>button:focus{
+	outline: none;
+}
+
+td.connected>button:focus{
+	outline: none;
+}
 
 td.delete > a{
 	background: url(../images/delete.png) center no-repeat;
@@ -98,3 +106,12 @@ td.double0>a{
 	background: url(../images/double0.png) center no-repeat;
 
 }
+
+td.unconnect>button{
+	background: url(../images/unconnect.png) center no-repeat;
+}
+
+td.connected>button{
+	background: url(../images/connected.png) center no-repeat;
+}
+

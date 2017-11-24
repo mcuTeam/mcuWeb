@@ -18,7 +18,7 @@
     1234
     {{meetInstance.bandwidth}}
 
-    <td><a class="btn" onclick="getmeetinfo({{terminal.pk}})" >getmeetinfo</a></td>
+    <a class="btn" onclick="getmeetinfo({{terminal.pk}})" >getmeetinfo</a>
 
     <hr>
 
@@ -43,7 +43,7 @@
           <td>{{ forloop.counter }}</td>
           <td>{{terminal.name}}</td>
           <td>{{terminal.terminalIP}}</td>
-          <td>未连接/已连接</td>
+          <td class="unconnect"><button></button></td>
           <td class="callmember"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
           <td class="hangup" ><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
           <td class="silencemember0" ><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
@@ -64,7 +64,6 @@
 $('document').ready(function(){
   $('div#pill2').attr('class','accordion-body collapse in');
 });
-
 
 function callmember(pk){
   console.log(pk);
