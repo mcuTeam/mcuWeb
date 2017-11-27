@@ -4,44 +4,25 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect,HttpResponseRedirect
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseServerError
-
+import threading
 import json
 
 from fun.forms import *
 from system.models import *
 from system.views import *
+import re
 
-from mcuWeb.celery import *
-
-from celery.task.control import inspect
 # Create your views here.
 
 
 
 
 import os
-from celery import Celery
-import celery.bin.amqp
+
 import sys
 import time
 import socket
 from socket import *
-
-# set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mcuWeb.settings')
-
-app = Celery('mcuWeb', backend='rpc://', broker='pyamqp://')
-app.conf.result_backend = 'rpc://'
-
-app.conf.beat_schedule = {
-    'checkNet-every-10-seconds': {
-        'task': 'mcuWeb.celery.checkNet',
-        'schedule': 10.0,
-    },
-}
-app.conf.timezone = 'UTC'
-
-amqp = celery.bin.amqp.amqp(app = app)
 
 
 HOST = "127.0.0.1"
@@ -50,29 +31,40 @@ BUFSIZ = 10240
 ADDR = (HOST,PORT)
 tcpCliSock = None
 seqNumber = 0
+recvDict={}
+
 try:
     tcpCliSock = socket(AF_INET,SOCK_STREAM)
     tcpCliSock.connect(ADDR)
-    tcpCliSock.settimeout(3)
+
 except BaseException as e:
     tcpCliSock = None
     print(e)
     print("1")
 
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
-# - namespace='CELERY' means all celery-related configuration keys
-#   should have a `CELERY_` prefix.
-app.config_from_object('django.conf:settings', namespace='CELERY')
+def loop():
+    global tcpCliSock
+    global recvDict
+    while True:
+        data=tcpCliSock.recv(BUFSIZ)
+        # print("loop recv:",data)
+        g = re.search('SeqNumber:\d+',data.decode('utf8'))
+        if g is not None:
+            # print(g.group())
+            recvDict[g.group()] = data.decode('utf8')
+t = threading.Thread(target=loop)
+t.start()
 
-# Load task modules from all registered Django app configs.
-app.autodiscover_tasks()
+
 
 def brokenpipeHandle():
     pass
 
 def makeConnection():
     global tcpCliSock
+    global seqNumber
+    global recvDict
+    seqNumber+=1
     if tcpCliSock is not None:
         tcpCliSock.close()
     tcpCliSock = None
@@ -80,91 +72,65 @@ def makeConnection():
         try:
             tcpCliSock = socket(AF_INET,SOCK_STREAM)
             tcpCliSock.connect(ADDR)
-            tcpCliSock.settimeout(3)
+
         except BaseException as e:
             tcpCliSock = None
             print(e)
             time.sleep(3)
     return True
 
+def checkReturnIsNotifyOrNot(ret):
+    isnotify = ("RESP_NOTIFYOFFLINE" in ret)
+    print(isnotify)
+    return isnotify
+
 # ------------------------------------------------------------------------------------------------------------------------------------------
-
-def testTask():
-    print("running task")
-    global tcpCliSock
-    global amqp
-    global app
-    if tcpCliSock is None:
-
-        print("tcpCliSock is None")
-        tcpCliSock = socket(AF_INET,SOCK_STREAM)
-        tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
-    print("hello celery && Django",tcpCliSock)
-    try:
-        tcpCliSock.send("LISTMEET\r\nVersion 1\r\nSeqNumber 1\r\n\r\n".encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data)
-    # 开始连接成功，后来MCU断开连接了
-    except ConnectionResetError as e:
-        print("ConnectionResetError error: ",e)
-        makeConnection()
-        # print(amqp.run('queue.purge','celery'))
-        print(app.control.purge())
-        testTask()
-    # 没连接到MCU
-    except BrokenPipeError as e:
-        print("BrokenPipeError: ",e)
-        makeConnection()
-
-        testTask()
-    except IOError as e:
-        print("ioerror:",e)
-        return None
-    except BaseException as e:
-        print("BaseException: ",e)
-        makeConnection()
-
-        testTask()
 
 def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
     print("running task")
     global tcpCliSock
-    global amqp
-    global app
+    global seqNumber
+    global recvDict
+    seqNumber+=1
+
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("setmeetgenerapara task")
     try:
-        tcpCliSock.send(("SETMEETGENERALPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (meetName,meetMode,meetType)).encode('utf8'))
-        print((("SETMEETGENERAPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (meetName,meetMode,meetType))))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data.decode("utf8"))
-        if data is not None:
-            return data.decode("utf8")
-        return None
+        tcpCliSock.send(("SETMEETGENERALPARA\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (seqNumber,meetName,meetMode,meetType)).encode('utf8'))
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
         print("ConnectionResetError error: ",e)
-        makeConnection()
+
     # 没连接到MCU
     except BrokenPipeError as e:
         print("BrokenPipeError: ",e)
-        makeConnection()
+
     except IOError as e:
         print("ioerror:",e)
         return None
     except BaseException as e:
         print("BaseException: ",e)
-        makeConnection()
+
 
 def addmeetTask(meetName="",meetAlias="",meetRemark=""):
     global tcpCliSock
-    global amqp
-    global app
+    global seqNumber
+    global recvDict
+    seqNumber+=1
     if meetName is "":
         return "param error"
     if tcpCliSock is None:
@@ -172,75 +138,97 @@ def addmeetTask(meetName="",meetAlias="",meetRemark=""):
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("addmeetTask task")
     try:
-        tcpCliSock.send(("ADDMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetAlias:%s\r\nMeetRemark:%s\r\n\r\n" % (meetName,meetAlias,meetRemark)).encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        if data is not None:
-            print(data.decode("utf8"))
-            return data.decode("utf8")
-        return None
+        tcpCliSock.send(("ADDMEET\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMeetAlias:%s\r\nMeetRemark:%s\r\n\r\n" % (seqNumber,meetName,meetAlias,meetRemark)).encode('utf8'))
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
         print("ConnectionResetError error: ",e)
-        makeConnection()
-        makeConnection()
+
+
     # 没连接到MCU
     except BrokenPipeError as e:
         print("BrokenPipeError: ",e)
-        makeConnection()
+
     except IOError as e:
         print("ioerror:",e)
         return None
     except BaseException as e:
         print("BaseException: ",e)
-        makeConnection()
+
 
 def deletemeetTask(meetName=""):
     global tcpCliSock
-    global amqp
-    global app
+    global seqNumber
+    global recvDict
+    seqNumber+=1
+
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("deletemeetTask task")
     try:
-        tcpCliSock.send(("DELETEMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % meetName).encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data)
+        tcpCliSock.send(("DELETEMEET\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" % (seqNumber,meetName)).encode('utf8'))
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
         print("ConnectionResetError error: ",e)
-        # makeConnection()
+        #
     # 没连接到MCU
     except BrokenPipeError as e:
         print("BrokenPipeError: ",e)
-        makeConnection()
+
     except IOError as e:
         print("ioerror:",e)
     except BaseException as e:
         print("BaseException: ",e)
-        # makeConnection()
+        #
 
 
 def listmeetTask():
     global tcpCliSock
-    global amqp
-    global app
-    print(app.current_worker_task)
+    global seqNumber
+    global recvDict
+    seqNumber+=1
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("listmeetTask task")
     try:
-        tcpCliSock.send("LISTMEET\r\nVersion:1\r\nSeqNumber:110\r\n\r\n".encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        return data.decode("utf8")
+        tcpCliSock.send(("LISTMEET\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -248,22 +236,29 @@ def listmeetTask():
 
 def addmemberTask(meetName="",memberName="0",memberIP="0"):
     global tcpCliSock
+    global seqNumber
+    global recvDict
+    seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("addmemberTask task")
     try:
-        msg = ("ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
-            % (meetName,memberName,memberIP,memberName,memberName))
+        msg = ("ADDMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
+            % (seqNumber,meetName,memberName,memberIP,memberName,memberName))
         print(msg)
         tcpCliSock.send(msg.encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data.decode("utf8"))
-        if data is not None:
-            return data.decode("utf8")
-        return None
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -272,22 +267,29 @@ def addmemberTask(meetName="",memberName="0",memberIP="0"):
 
 def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
     global tcpCliSock
+    global seqNumber
+    global recvDict
+    seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("addmemberTask task")
     try:
-        msg = ("SETMEMBERAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nCapabilityName:%s\r\n\r\n" \
-            % (meetName,memberName,capalityName))
+        msg = ("SETMEMBERAVFORMATPARA\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nCapabilityName:%s\r\n\r\n" \
+            % (seqNumber,meetName,memberName,capalityName))
         print(msg)
         tcpCliSock.send(msg.encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data.decode("utf8"))
-        if data is not None:
-            return data.decode("utf8")
-        return None
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -296,25 +298,29 @@ def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
 
 def callmemberTask(meetName="",memberName="0"):
     global tcpCliSock
+    global seqNumber
+    global recvDict
+    seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("callmemberTask task")
     try:
-        msg = ("CALLMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
-            % (meetName,memberName))
+        msg = ("CALLMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
+            % (seqNumber,meetName,memberName))
         print(msg)
         tcpCliSock.send(msg.encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print("callmemberTask 0 :",data.decode("utf8"))
-        if data is  None:
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
             return None
-        data=tcpCliSock.recv(BUFSIZ)
-        print('callmemberTask 1 :',data.decode("utf8"))
-        # return data.decode("utf8")
-        return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("callmemberTask BaseException: ",e)
@@ -325,41 +331,55 @@ def checkNet():
     print("checkNet!")
     global tcpCliSock
     global seqNumber
+    global recvDict
     seqNumber+=1
     if tcpCliSock is not None:
         try:
             tcpCliSock.send(("HEARTBEAT\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
-            data=tcpCliSock.recv(BUFSIZ)
+            time.sleep(0.2)
+            key = "SeqNumber:"+str(seqNumber)
+            if key not in recvDict.keys():
+                print("in keys ")
+                return None
+            data = recvDict[key]
             print(seqNumber,'-------',data)
-            if data:
-                return data.decode("utf8")
+            del recvDict[key]
+            return data
         except BaseException as e:
             print("schedule error: ",e)
             tcpCliSock.close()
             tcpCliSock = socket(AF_INET,SOCK_STREAM)
             tcpCliSock.connect(ADDR)
-            tcpCliSock.settimeout(3)
             return "error"
     else:
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
         return "error"
 
 def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='',videoprotocol='',videoformat='',videoframerate=60):
     global tcpCliSock
+    global seqNumber
+    seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("addavformatpara task")
     try:
-        msg = ("ADDAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nCapabilityName:%s\r\nCallBandWidth:%s\r\nAudioProtocol:%s\r\nVideoProtocol:%s\r\nVideoFormat:%s\r\nVideoFrameRate:%d\r\n\r\n" \
-            % (meetname,capalityname,callbandwidth,audioprotocol,videoprotocol,videoformat,videoframerate)).encode('utf8')
+        msg = ("ADDAVFORMATPARA\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nCapabilityName:%s\r\nCallBandWidth:%s\r\nAudioProtocol:%s\r\nVideoProtocol:%s\r\nVideoFormat:%s\r\nVideoFrameRate:%d\r\n\r\n" \
+            % (seqNumber,meetname,capalityname,callbandwidth,audioprotocol,videoprotocol,videoformat,videoframerate)).encode('utf8')
         tcpCliSock.send(msg)
-        data=tcpCliSock.recv(BUFSIZ)
-        return data.decode("utf8")
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -368,18 +388,27 @@ def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='
 
 def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidth=1024):
     global tcpCliSock
+    global seqNumber
+    seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("setdualformatparaTask task")
     try:
-        msg = ("SETDUALFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nDualProtocol:%s\r\nDualFormat:%s\r\nDualBandWidth:%d\r\n\r\n" \
-            % (meetname,dualprotocol,dualformat,dualBandWidth)).encode('utf8')
+        msg = ("SETDUALFORMATPARA\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nDualProtocol:%s\r\nDualFormat:%s\r\nDualBandWidth:%d\r\n\r\n" \
+            % (seqNumber,meetname,dualprotocol,dualformat,dualBandWidth)).encode('utf8')
         tcpCliSock.send(msg)
-        data=tcpCliSock.recv(BUFSIZ)
-        return data.decode("utf8")
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("setdualformatparaTask BaseException: ",e)
@@ -388,22 +417,28 @@ def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidt
 
 def getmeetinfoTask(meetName=""):
     global tcpCliSock
+    global seqNumber
+    seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
         tcpCliSock.connect(ADDR)
-        tcpCliSock.settimeout(3)
+
     print("getmeetinfoTask task")
     try:
-        msg = ("GETMEETINFO\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" \
-            % (meetName))
+        msg = ("GETMEETINFO\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" \
+            % (seqNumber,meetName))
         print(msg)
         tcpCliSock.send(msg.encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data.decode("utf8"))
-        if data is not None:
-            return data.decode("utf8")
-        return None
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        if key not in recvDict.keys():
+            print("in keys ")
+            return None
+        data = recvDict[key]
+        print(seqNumber,'-------',data)
+        del recvDict[key]
+        return data
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("getmeetinfoTask BaseException: ",e)
