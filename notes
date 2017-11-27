@@ -28,3 +28,8 @@ merge conflict:
 	git checkout dev notes
 	git checkout origin/dev notes
 	git checkout --ours notes
+
+channels install:
+	pip install -U channels
+	pip install pypiwin32
+	vc++2005

@@ -47,8 +47,19 @@ INSTALLED_APPS = [
     "accounts",
     'userena',
     'guardian',
-    'easy_thumbnails'
+    'easy_thumbnails',
+    'channels'
 ]
+
+# In settings.py
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "mcuWeb.routing.channel_routing",
+    },
+}
+
+
 
 MIDDLEWARE = [
     # 'django.middleware.locale.LocaleMiddleware',

@@ -165,6 +165,20 @@
 			{% block content %}{% endblock %}
 		</div>
 			<script type="text/javascript">
+
+      // Note that the path doesn't matter right now; any WebSocket
+      // connection gets bumped over to WebSocket consumers
+      socket = new WebSocket("ws://" + window.location.host + "/chat/");
+      socket.onmessage = function(e) {
+          alert(e.data);
+      }
+      socket.onopen = function open() {
+        console.log('WebSockets connection created.');
+      };
+      // Call onopen directly if socket is already open
+      if (socket.readyState == WebSocket.OPEN) socket.onopen();
+
+
 				$('document').ready(function(){
 					$('#loading').hide();
 					$(function(){
