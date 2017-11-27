@@ -12,7 +12,7 @@ from fun.forms import *
 from system.models import *
 from system.views import *
 import re
-
+from django.core.cache import cache
 # Create your views here.
 
 
@@ -45,7 +45,7 @@ except BaseException as e:
 
 def loop():
     global tcpCliSock
-    global recvDict
+
     while True:
         try:
             if tcpCliSock is None:
@@ -54,11 +54,29 @@ def loop():
                 tcpCliSock.connect(ADDR)
 
             data=tcpCliSock.recv(BUFSIZ)
-            print("loop recv:",data)
+            # print("loop recv:",data)
+            if "RESP_NOTIFY" in data.decode('utf8'):
+                print("recv notify!")
+                if cache.get('notify') is not None:
+                    tmp = cache.get('notify')
+                    tmp.append(data.decode('utf8'))
+                    # print("tmp is ",tmp)
+                    cache.set('notify',tmp,10)
+                else:
+                    # print("notify is none")
+                    tmp = []
+                    tmp.append(data.decode('utf8'))
+                    cache.set('notify',tmp,10)
+                continue
             g = re.search('SeqNumber:\d+',data.decode('utf8'))
             if g is not None:
                 # print(g.group())
-                recvDict[g.group()] = data.decode('utf8')
+                with lock:
+                    # global recvDict
+                    cache.set(g.group(),data.decode('utf8'),10)
+                    # recvDict[g.group()] = data.decode('utf8')
+                    # cache.set('recvDict',recvDict,10)
+                    # print(cache.get('recvDict').keys())
         except BaseException as e:
             print("loop error:",e)
             tcpCliSock.close()
@@ -74,10 +92,11 @@ def brokenpipeHandle():
 
 def makeConnection():
     global tcpCliSock
-    global seqNumber
+
     global recvDict
-    global lock
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if tcpCliSock is not None:
         tcpCliSock.close()
@@ -97,15 +116,19 @@ def checkReturnIsNotifyOrNot(ret):
     isnotify = ("RESP_NOTIFYOFFLINE" in ret)
     return isnotify
 
+
+
+
 # ------------------------------------------------------------------------------------------------------------------------------------------
 
 def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
     print("running task")
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
 
 
@@ -119,12 +142,14 @@ def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
         tcpCliSock.send(("SETMEETGENERALPARA\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (seqNumber,meetName,meetMode,meetType)).encode('utf8'))
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # # print("not in keys!  --- ",key)
-        del recvDict[key]
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
         return data
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
@@ -143,10 +168,11 @@ def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
 
 def addmeetTask(meetName="",meetAlias="",meetRemark=""):
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if meetName is "":
         return "param error"
@@ -161,12 +187,14 @@ def addmeetTask(meetName="",meetAlias="",meetRemark=""):
         tcpCliSock.send(("ADDMEET\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMeetAlias:%s\r\nMeetRemark:%s\r\n\r\n" % (seqNumber,meetName,meetAlias,meetRemark)).encode('utf8'))
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # # print("not in keys!  --- ",key)
-        del recvDict[key]
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
         return data
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
@@ -186,10 +214,11 @@ def addmeetTask(meetName="",meetAlias="",meetRemark=""):
 
 def deletemeetTask(meetName=""):
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
 
 
@@ -203,13 +232,15 @@ def deletemeetTask(meetName=""):
         tcpCliSock.send(("DELETEMEET\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" % (seqNumber,meetName)).encode('utf8'))
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # # print("not in keys!  --- ",key)
-        del recvDict[key]
-        return data
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        return None
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
         print("ConnectionResetError error: ",e)
@@ -227,10 +258,11 @@ def deletemeetTask(meetName=""):
 
 def listmeetTask():
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
 
     if tcpCliSock is None:
@@ -243,13 +275,15 @@ def listmeetTask():
         tcpCliSock.send(("LISTMEET\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # # print("not in keys!  --- ",key)
-        del recvDict[key]
-        return data
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        return None
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -257,10 +291,11 @@ def listmeetTask():
 
 def addmemberTask(meetName="",memberName="0",memberIP="0"):
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -275,13 +310,15 @@ def addmemberTask(meetName="",memberName="0",memberIP="0"):
         tcpCliSock.send(msg.encode('utf8'))
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # # print("not in keys!  --- ",key)
-        del recvDict[key]
-        return data
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        return None
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -290,10 +327,11 @@ def addmemberTask(meetName="",memberName="0",memberIP="0"):
 
 def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -308,13 +346,15 @@ def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
         tcpCliSock.send(msg.encode('utf8'))
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # # print("not in keys!  --- ",key)
-        del recvDict[key]
-        return data
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        return None
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -323,10 +363,11 @@ def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
 
 def callmemberTask(meetName="",memberName="0"):
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -341,13 +382,15 @@ def callmemberTask(meetName="",memberName="0"):
         tcpCliSock.send(msg.encode('utf8'))
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # # print("not in keys!  --- ",key)
-        del recvDict[key]
-        return data
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        return None
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("callmemberTask BaseException: ",e)
@@ -357,23 +400,26 @@ def callmemberTask(meetName="",memberName="0"):
 def checkNet():
     print("checkNet!")
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if tcpCliSock is not None:
         try:
             tcpCliSock.send(("HEARTBEAT\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
             time.sleep(0.2)
             key = "SeqNumber:"+str(seqNumber)
-            if key not in recvDict.keys():
-                print("not in keys!  --- ",key)
-                return None
-            data = recvDict[key]
-            # print("not in keys!  --- ",key)
-            del recvDict[key]
-            return data
+            for i in range(0,5):
+                data = cache.get(key)
+                if data is None:
+                    time.sleep(0.1)
+                    continue
+                else:
+                    # print("checknet ",data)
+                    return data
+            return None
         except BaseException as e:
             print("schedule error: ",e)
             tcpCliSock.close()
@@ -388,10 +434,11 @@ def checkNet():
 
 def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='',videoprotocol='',videoformat='',videoframerate=60):
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -405,13 +452,15 @@ def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # print("not in keys!  --- ",key)
-        del recvDict[key]
-        return data
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        return None
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -420,10 +469,11 @@ def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='
 
 def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidth=1024):
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -437,13 +487,15 @@ def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidt
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!  --- ",key)
-            return None
-        data = recvDict[key]
-        # print("not in keys!  --- ",key)
-        del recvDict[key]
-        return data
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        return None
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("setdualformatparaTask BaseException: ",e)
@@ -452,10 +504,11 @@ def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidt
 
 def getmeetinfoTask(meetName=""):
     global tcpCliSock
-    global seqNumber
-    global recvDict
-    global lock
+
+
+
     with lock:
+        global seqNumber
         seqNumber+=1
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -469,13 +522,16 @@ def getmeetinfoTask(meetName=""):
         tcpCliSock.send(msg.encode('utf8'))
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
-        if key not in recvDict.keys():
-            print("not in keys!-----",key)
-            return None
-        data = recvDict[key]
-        # # print("not in keys!  --- ",key)
-        del recvDict[key]
-        return data
+
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        return None
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("getmeetinfoTask BaseException: ",e)
@@ -510,6 +566,34 @@ def syncMeetingListAndDB(result):
         # else:
         #     filtered.update(remark = result['MeetRemark'][index])
 
+def analysisMeetinfo(retCode):
+	if type(retCode) is not str:
+		return False
+	s = re.sub(r'\r\n\r\n','',retCode)
+	a = s.split('\r\n')
+	retDict = {}
+	for item in a:
+	    res = re.split(r':',item,1)
+	    # print(res)
+	    if len(res)<2:
+	        retDict['RetName'] = res[0]
+	    else:
+	        retDict[res[0]] = res[1]
+	meetInfo = re.split('\|',retDict['MemberList'])
+	for item in meetInfo:
+		# print(item)
+		deep1 = re.split(r';',item)
+		# print("deep1: ",deep1)
+		for itemD1 in deep1:
+			deep2 = re.split(r'\=',itemD1,1)
+			# print(deep2)
+			if deep2[0] in retDict and len(deep2) > 1:
+				retDict[deep2[0]].append(deep2[1])
+			elif len(deep2) > 1:
+				retDict[deep2[0]] = []
+				retDict[deep2[0]].append(deep2[1])
+	return retDict
+
 # ---------------------------------------------------------------------------------------------------------------------
 
 @login_required
@@ -541,20 +625,10 @@ def creat_meetingView(request):
                 msg = "操作：添加会议，连接MCU超时"
                 meetinglist = meeting.objects.all()
                 return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
-            if data is None:
-                print("return None")
-                msgType = 'error'
-                msg = "MCU未返回数据"
-                meetinglist = meeting.objects.all()
-                return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
 
-            ret = returnCode2Dict(data)
-            if ret['RetCode'] != '200':
-                # print(ret['RetCode'] is '200')
-                print("error0 occurs")
-            result = setmeetgeneraparaTask(meetName)
+
             try:
-                data = result
+                data = setmeetgeneraparaTask(meetName)
                 # print("setmeetgeneraparaTask result:",data)
             except BaseException as e:
                 print("setmeetgeneraparaTask timeout error: ",e)
@@ -562,22 +636,8 @@ def creat_meetingView(request):
                 msg = "操作：设置会议参数，连接MCU超时"
                 meetinglist = meeting.objects.all()
                 return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
-            ret.clear()
-            if data is  None:
-                print("return None")
-                msgType = 'error'
-                msg = "连接MCU超时"
-                meetinglist = meeting.objects.all()
-                return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
-            else:
-                ret = returnCode2Dict(data)
-                if ret['RetCode'] != '200':
-                    # print(ret['RetCode'])
-                    print("error1 occurs")
-                msgType = 'success'
-                msg = "成功"
-                # return redirect(meetinglistView)
-                # return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+
+
             result = addavformatpara(meetName,capalityname,bandwidth,audioprotocol,videoprotocol,capalityname,videoframerate)
             try:
                 data = result
@@ -796,7 +856,13 @@ def getmeetinfoAjaxView(request,meetpk):
         try:
 
             result = getmeetinfoTask(meetname)
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                print(notifyList)
+                cache.delete('notify')
             # print("getmeetinfo result is: \n",result)
+            if result is not None:
+                print(analysisMeetinfo(result))
         except BaseException as e:
             print("catch getmeetinfo error",e)
             return HttpResponse(json.dumps({'msgType':"error",'msg':"获取会议信息过程中发生通信错误！"}))

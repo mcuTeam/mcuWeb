@@ -67,6 +67,13 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
 ANONYMOUS_USER_ID = -1
 AUTH_PROFILE_MODULE = 'accounts.MyProfile'
 
