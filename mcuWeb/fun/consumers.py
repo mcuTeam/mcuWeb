@@ -29,11 +29,13 @@ def ws_message(message):
 @channel_session_user_from_http
 def ws_connect(message):
     print("connect",message.channel.name,message.reply_channel.name,message['path'],message.user)
-    # for item in message:
-    #     print(item)
+
     Group("notifications").add(message.reply_channel)
+    if message['path'] == '/meetlist/':
+        Group("meetlist").add(message.reply_channel)
     time.sleep(3)
     Group("notifications").send({'text':"hello"},immediately=True)
+    Group("meetlist").send({'text':"meetlist"},immediately=True)
     # for i in [0]:
     #
     #     # Accept the connection request
@@ -143,25 +145,20 @@ def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
     try:
         tcpCliSock.send(("SETMEETGENERALPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (meetName,meetMode,meetType)).encode('utf8'))
         print((("SETMEETGENERAPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (meetName,meetMode,meetType))))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data.decode("utf8"))
-        if data is not None:
-            return data.decode("utf8")
-        return None
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
         print("ConnectionResetError error: ",e)
-        makeConnection()
+        # makeConnection()
     # 没连接到MCU
     except BrokenPipeError as e:
         print("BrokenPipeError: ",e)
-        makeConnection()
+        # makeConnection()
     except IOError as e:
         print("ioerror:",e)
         return None
     except BaseException as e:
         print("BaseException: ",e)
-        makeConnection()
+        # makeConnection()
 
 def addmeetTask(meetName="",meetAlias="",meetRemark=""):
     global tcpCliSock
@@ -176,11 +173,6 @@ def addmeetTask(meetName="",meetAlias="",meetRemark=""):
     print("addmeetTask task")
     try:
         tcpCliSock.send(("ADDMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMeetAlias:%s\r\nMeetRemark:%s\r\n\r\n" % (meetName,meetAlias,meetRemark)).encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        if data is not None:
-            print(data.decode("utf8"))
-            return data.decode("utf8")
-        return None
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
         print("ConnectionResetError error: ",e)
@@ -207,8 +199,7 @@ def deletemeetTask(meetName=""):
     print("deletemeetTask task")
     try:
         tcpCliSock.send(("DELETEMEET\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % meetName).encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data)
+
     # 开始连接成功，后来MCU断开连接了
     except ConnectionResetError as e:
         print("ConnectionResetError error: ",e)
@@ -234,8 +225,7 @@ def listmeetTask():
     print("listmeetTask task")
     try:
         tcpCliSock.send("LISTMEET\r\nVersion:1\r\nSeqNumber:110\r\n\r\n".encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        return data.decode("utf8")
+
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -254,11 +244,7 @@ def addmemberTask(meetName="",memberName="0",memberIP="0"):
             % (meetName,memberName,memberIP,memberName,memberName))
         print(msg)
         tcpCliSock.send(msg.encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data.decode("utf8"))
-        if data is not None:
-            return data.decode("utf8")
-        return None
+
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -278,11 +264,7 @@ def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
             % (meetName,memberName,capalityName))
         print(msg)
         tcpCliSock.send(msg.encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data.decode("utf8"))
-        if data is not None:
-            return data.decode("utf8")
-        return None
+
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -302,14 +284,7 @@ def callmemberTask(meetName="",memberName="0"):
             % (meetName,memberName))
         print(msg)
         tcpCliSock.send(msg.encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print("callmemberTask 0 :",data.decode("utf8"))
-        if data is  None:
-            return None
-        data=tcpCliSock.recv(BUFSIZ)
-        print('callmemberTask 1 :',data.decode("utf8"))
-        # return data.decode("utf8")
-        return None
+
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("callmemberTask BaseException: ",e)
@@ -324,10 +299,7 @@ def checkNet():
     if tcpCliSock is not None:
         try:
             tcpCliSock.send(("HEARTBEAT\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
-            # data=tcpCliSock.recv(BUFSIZ)
-            # print(seqNumber,'-------',data)
-            # if data:
-            #     return data.decode("utf8")
+
         except BaseException as e:
             print("schedule error: ",e)
             tcpCliSock.close()
@@ -353,8 +325,7 @@ def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='
         msg = ("ADDAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nCapabilityName:%s\r\nCallBandWidth:%s\r\nAudioProtocol:%s\r\nVideoProtocol:%s\r\nVideoFormat:%s\r\nVideoFrameRate:%d\r\n\r\n" \
             % (meetname,capalityname,callbandwidth,audioprotocol,videoprotocol,videoformat,videoframerate)).encode('utf8')
         tcpCliSock.send(msg)
-        data=tcpCliSock.recv(BUFSIZ)
-        return data.decode("utf8")
+
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("BaseException: ",e)
@@ -373,8 +344,7 @@ def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidt
         msg = ("SETDUALFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nDualProtocol:%s\r\nDualFormat:%s\r\nDualBandWidth:%d\r\n\r\n" \
             % (meetname,dualprotocol,dualformat,dualBandWidth)).encode('utf8')
         tcpCliSock.send(msg)
-        data=tcpCliSock.recv(BUFSIZ)
-        return data.decode("utf8")
+
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("setdualformatparaTask BaseException: ",e)
@@ -394,11 +364,7 @@ def getmeetinfoTask(meetName=""):
             % (meetName))
         print(msg)
         tcpCliSock.send(msg.encode('utf8'))
-        data=tcpCliSock.recv(BUFSIZ)
-        print(data.decode("utf8"))
-        if data is not None:
-            return data.decode("utf8")
-        return None
+
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("getmeetinfoTask BaseException: ",e)
