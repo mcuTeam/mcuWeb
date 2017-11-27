@@ -4,6 +4,21 @@
 	margin-top: 50px; 
 }
 
+div#meetinfo{
+	padding-top: 10px;
+	padding-left: 20px;
+	border-radius: 7px;
+	margin-top: 10px;
+	background-color: rgb(51,51,51);
+	color: #dadada;
+	font-size: 15px;
+
+}
+
+/*strong{
+	color: rgb(255,204,0);
+}*/
+
 span.tips{
 	color: red;
 }
@@ -23,7 +38,7 @@ a#nav2,a#nav2:focus,a#nav2:active,a#nav2:visited{
 }
 a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 	background-color: transparent;
-	color: rgb(255,153,0)
+	color: rgb(255,153,0);
 }
 
 td.delete > a,td.edit> a ,td.control> a,

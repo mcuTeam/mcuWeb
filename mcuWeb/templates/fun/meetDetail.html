@@ -17,11 +17,24 @@
 </div>
 <!-- 会议信息显示 -->
 <div class="row-fluid">
-	<div class="span8 offset2">
-	1234
-	{{meetInstance.bandwidth}}
-
-	<hr>
+	<div class="span8 offset2" id="meetinfo">
+		<div class="row-fluid">
+			<div class="span4">
+				<p><strong>会议名称：</strong>{{meetInstance.name}}</p>
+				<p><strong>带宽：</strong>{{meetInstance.bandwidth}}</p>
+				<p><strong>视频分辨率：</strong>{{meetInstance.capalityname}}</p>
+			</div>
+			<div class="span4">
+				<p><strong>会议编号：</strong>{{meetInstance.meetcode}}</p>
+				<p><strong>视频协议：</strong>{{meetInstance.videoProtocol}}</p>
+				<p><strong>音频协议：</strong>{{meetInstance.audioProtocol}}</p>
+			</div>
+			<div class="span4">
+				<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
+				<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
+				
+			</div>
+		</div>
 	</div>
 </div>
 <!-- 列表显示 -->
@@ -74,8 +87,7 @@ $('document').ready(function(){
 
 			});
 		}
-		// getmeetinfo();
-		setInterval(getmeetinfo,2000);// 心跳10秒
+		setInterval(getmeetinfo,2000);// 2秒状态轮询
 	});
 });
 
