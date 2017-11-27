@@ -75,6 +75,8 @@ def loop():
     while True:
         data=tcpCliSock.recv(BUFSIZ)
         print("loop recv:",data)
+        if message['path'] == '/meetlist/':
+            Group("meetlist").send({'text':data.decode('utf8')},immediately=True)
         Group("notifications").send({'text':data.decode('utf8')},immediately=True)
 t = threading.Thread(target=loop)
 t.start()
