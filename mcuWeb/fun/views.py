@@ -46,8 +46,12 @@ def loop():
     global tcpCliSock
     global recvDict
     while True:
+        if tcpCliSock is None:
+            print("tcpCliSock is None")
+            tcpCliSock = socket(AF_INET,SOCK_STREAM)
+            tcpCliSock.connect(ADDR)
         data=tcpCliSock.recv(BUFSIZ)
-        # print("loop recv:",data)
+        print("loop recv:",data)
         g = re.search('SeqNumber:\d+',data.decode('utf8'))
         if g is not None:
             # print(g.group())
@@ -105,7 +109,7 @@ def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -145,7 +149,7 @@ def addmeetTask(meetName="",meetAlias="",meetRemark=""):
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -185,7 +189,7 @@ def deletemeetTask(meetName=""):
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -223,7 +227,7 @@ def listmeetTask():
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -253,7 +257,7 @@ def addmemberTask(meetName="",memberName="0",memberIP="0"):
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -284,7 +288,7 @@ def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -315,7 +319,7 @@ def callmemberTask(meetName="",memberName="0"):
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -339,7 +343,7 @@ def checkNet():
             time.sleep(0.2)
             key = "SeqNumber:"+str(seqNumber)
             if key not in recvDict.keys():
-                print("in keys ")
+                print("not in keys!")
                 return None
             data = recvDict[key]
             print(seqNumber,'-------',data)
@@ -374,7 +378,7 @@ def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -403,7 +407,7 @@ def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidt
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!")
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -433,7 +437,7 @@ def getmeetinfoTask(meetName=""):
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
         if key not in recvDict.keys():
-            print("in keys ")
+            print("not in keys!-----",key)
             return None
         data = recvDict[key]
         print(seqNumber,'-------',data)
@@ -754,7 +758,7 @@ def getmeetinfoAjaxView(request,meetpk):
 		try:
 
 			result = getmeetinfoTask(meetname)
-			print("getmeetinfo result is: \n",result)
+			# print("getmeetinfo result is: \n",result)
 		except BaseException as e:
 			print("catch getmeetinfo error",e)
 			return HttpResponse(json.dumps({'msgType':"error",'msg':"获取会议信息过程中发生通信错误！"}))
