@@ -91,6 +91,15 @@ $('document').ready(function(){
 	});
 });
 
+// $('.silencemember0').on('click',function(){
+// 	$(this).attr('class','silencemember');
+// });
+
+// $('.silencemember').on('click',function(){
+// 	$(this).attr('class','silencemember0');
+// });
+
+
 function callmember(pk){
   console.log(pk);
   $.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(){
@@ -100,28 +109,32 @@ function callmember(pk){
 
 function hangup(pk){
   console.log(pk);
-  $.get("/hangup/"+pk+"/",function(){
+  $.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
   });
 };
 function silencemember(pk){
   console.log(pk);
-  $.get("/silencemember/"+pk+"/",function(){
-  	$('.silencemember0').attr('class','silencemember');
+  
+
+
+
+  $.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+
 
   });
 };
 
 function shutup(pk){
   console.log(pk);
-  $.get("/shutup/"+pk+"/",function(){
+  $.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
   });
 };
 
 function double(pk){
   console.log(pk);
-  $.get("/double/"+pk+"/",function(){
+  $.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
   });
 };
