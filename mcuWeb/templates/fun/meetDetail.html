@@ -60,12 +60,12 @@
 		      <td>{{ forloop.counter }}</td>
 		      <td>{{terminal.name}}</td>
 		      <td>{{terminal.terminalIP}}</td>
-		      <td class="unconnect"><button></button></td>
-		      <td class="callmember"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
-		      <td class="hangup" ><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
-		      <td class="silencemember0" ><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
-		      <td class="shutup0" ><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
-		      <td class="double0"><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
+		      <td class="unconnect" id="connect{{terminal.pk}}"><button></button></td>
+		      <td class="callmember1" id="callmember{{terminal.pk}}"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
+		      <td class="hangupforbid" id="hangup{{terminal.pk}}"><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
+		      <td class="silencememberforbid" id="silencemember{{terminal.pk}}"><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
+		      <td class="shutupforbid" id="shutup{{terminal.pk}}"><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
+		      <td class="doubleforbid" id="double{{terminal.pk}}"><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
 		    </tr>
 		  </tbody>
 		  {% endfor %}
@@ -84,6 +84,7 @@ $('document').ready(function(){
 	$(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
+				$('#connect'+pk.toString()).attr('class','connected');
 
 			});
 		}
@@ -91,52 +92,89 @@ $('document').ready(function(){
 	});
 });
 
-// $('.silencemember0').on('click',function(){
-// 	$(this).attr('class','silencemember');
-// });
-
-// $('.silencemember').on('click',function(){
-// 	$(this).attr('class','silencemember0');
-// });
-
-
 function callmember(pk){
   console.log(pk);
-  $.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(){
-
+  if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
+  	  $.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(){
+  	$('#connect'+pk.toString()).attr('class','connecting');
+  	setTimeout(function(){	
+  		$('#connect'+pk.toString()).attr('class','connected');
+  	$('#callmember'+pk.toString()).attr('class','callmemberforbid');
+  	$('#hangup'+pk.toString()).attr('class','hangup1');
+  	$('#silencemember'+pk.toString()).attr('class','silencemember0');
+  	$('#shutup'+pk.toString()).attr('class','shutup0');
+  	$('#double'+pk.toString()).attr('class','double0');	
+  	}, 2000);
   });
+  }
+
 };
 
 function hangup(pk){
-  console.log(pk);
+	if ($('#hangup'+pk.toString()).hasClass('hangup1')) {
+		  console.log(pk);
+
+    $('#connect'+pk.toString()).attr('class','unconnect');
+  	$('#callmember'+pk.toString()).attr('class','callmember1');
+  	$('#hangup'+pk.toString()).attr('class','hangupforbid');
+  	$('#silencemember'+pk.toString()).attr('class','silencememberforbid');
+  	$('#shutup'+pk.toString()).attr('class','shutupforbid');
+  	$('#double'+pk.toString()).attr('class','doubleforbid');	
+
   $.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
   });
+	}
+
 };
 function silencemember(pk){
   console.log(pk);
-  
+  	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){
+		$('#silencemember'+pk.toString()).attr('class','silencemember1');
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
+		});
+	}
+	else if($('#silencemember'+pk.toString()).hasClass('silencemember1')){
+		$('#silencemember'+pk.toString()).attr('class','silencemember0');
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
-
-  $.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
-
-
-  });
+		});
+	}
 };
 
 function shutup(pk){
   console.log(pk);
-  $.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+    if($('#shutup'+pk.toString()).hasClass('shutup0')){
+		$('#shutup'+pk.toString()).attr('class','shutup1');
+		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
-  });
+		});
+	}
+	else if($('#shutup'+pk.toString()).hasClass('shutup1')){
+		$('#shutup'+pk.toString()).attr('class','shutup0');
+		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+
+		});
+	}
+
 };
 
 function double(pk){
   console.log(pk);
-  $.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+    if($('#double'+pk.toString()).hasClass('double0')){
+		$('#double'+pk.toString()).attr('class','double1');
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
-  });
+		});
+	}
+	else if($('#double'+pk.toString()).hasClass('double1')){
+		$('#double'+pk.toString()).attr('class','double0');
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+
+		});
+	}
+
 };
 
 

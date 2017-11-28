@@ -42,9 +42,10 @@ a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 }
 
 td.delete > a,td.edit> a ,td.control> a,
-td.callmember>a,td.hangup>a,td.silencemember>a,td.shutup>a,td.double>a,
+td.callmember1>a,td.hangup1>a,td.silencemember1>a,td.shutup1>a,td.double1>a,
+td.callmemberforbid>a,td.hangupforbid>a,td.silencememberforbid>a,td.shutupforbid>a,td.doubleforbid>a,
 td.silencemember0>a,td.shutup0>a,td.double0>a,
-td.unconnect>button,td.connected>button{
+td.unconnect>button,td.connecting>button,td.connected>button{
 	padding: 0px;
     border: 0px;
 	height: 20px;
@@ -52,10 +53,12 @@ td.unconnect>button,td.connected>button{
 }
 
 td.delete > a:hover,td.edit> a:hover ,td.control> a:hover,
-td.callmember>a:hover,td.hangup>a:hover,td.silencemember>a:hover,td.shutup>a:hover,td.double>a:hover,
+td.callmember1>a:hover,td.hangup1>a:hover,td.silencemember1>a:hover,td.shutup1>a:hover,td.double1>a:hover,
+td.callmemberforbid>a:hover,td.hangupforbid>a:hover,td.silencememberforbid>a:hover,td.shutupforbid>a:hover,td.doubleforbid>a:hover,
 td.silencemember0>a:hover,td.shutup0>a:hover,td.double0>a:hover,
 td.delete > a:focus,td.edit> a:focus ,td.control> a:focus,
-td.callmember>a:focus,td.hangup>a:focus,td.silencemember>a:focus,td.shutup>a:focus,td.double>a:focus,
+td.callmember1>a:focus,td.hangup1>a:focus,td.silencemember1>a:focus,td.shutup1>a:focus,td.double1>a:focus,
+td.callmemberforbid>a:focus,td.hangupforbid>a:focus,td.silencememberforbid>a:focus,td.shutupforbid>a:focus,td.doubleforbid>a:focus,
 td.silencemember0>a:focus,td.shutup0>a:focus,td.double0>a:focus{
 	background-color: transparent;
 	background-position:0px;
@@ -81,18 +84,33 @@ td.control> a{
 	background: url(../images/control.png) center no-repeat;
 }
 
-td.callmember>a{
+td.callmember1>a{
 	background: url(../images/call.png) center no-repeat;
 
 }
 
-td.hangup>a{
+td.callmemberforbid>a{
+	background: url(../images/callforbid.png) center no-repeat;
+
+}
+
+td.hangup1>a{
 	background: url(../images/hangup.png) center no-repeat;
 
 }
 
-td.silencemember>a{
+td.hangupforbid>a{
+	background: url(../images/hangupforbid.png) center no-repeat;
+
+}
+
+td.silencemember1>a{
 	background: url(../images/silence.png) center no-repeat;
+
+}
+
+td.silencememberforbid>a{
+	background: url(../images/silenceforbid.png) center no-repeat;
 
 }
 
@@ -101,8 +119,13 @@ td.silencemember0>a{
 
 }
 
-td.shutup>a{
+td.shutup1>a{
 	background: url(../images/shutup.png) center no-repeat;
+
+}
+
+td.shutupforbid>a{
+	background: url(../images/shutupforbid.png) center no-repeat;
 
 }
 
@@ -112,8 +135,13 @@ td.shutup0>a{
 }
 
 
-td.double>a{
+td.double1>a{
 	background: url(../images/double.png) center no-repeat;
+
+}
+
+td.doubleforbid>a{
+	background: url(../images/doubleforbid.png) center no-repeat;
 
 }
 
@@ -124,6 +152,10 @@ td.double0>a{
 
 td.unconnect>button{
 	background: url(../images/unconnect.png) center no-repeat;
+}
+
+td.connecting>button{
+	background: url(../images/connecting.png) center no-repeat;
 }
 
 td.connected>button{
