@@ -18,5 +18,6 @@ urlpatterns = [
 
 	url(r'^mcuHeartBeat/$', fun_view.heartBeatAjaxView),
 	url(r'^callmember/(?P<meetpk>\d+)/(?P<pk>\d+)/$', fun_view.callmemberAjaxView),
+	url(r'^hangup/(?P<meetpk>\d+)/(?P<pk>\d+)/$', fun_view.hungupAjaxView),
 	url(r'^getmeetinfo/(?P<meetpk>\d+)/$', fun_view.getmeetinfoAjaxView),
 ]
