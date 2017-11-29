@@ -64,8 +64,7 @@
 			<div class="span12" id="">
 				<button>全部连接</button>
 				<button>全部断开</button>
-				<button>全部静音</button>
-				<button>全部闭麦</button>
+
 			</div>
 		</div>
 	</div>
@@ -166,13 +165,13 @@ function silencemember(pk){
   console.log(pk);
   	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){
 		$('#silencemember'+pk.toString()).attr('class','silencemember1');
-		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
 
 		});
 	}
 	else if($('#silencemember'+pk.toString()).hasClass('silencemember1')){
 		$('#silencemember'+pk.toString()).attr('class','silencemember0');
-		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
 
 		});
 	}
@@ -182,13 +181,13 @@ function shutup(pk){
   console.log(pk);
     if($('#shutup'+pk.toString()).hasClass('shutup0')){
 		$('#shutup'+pk.toString()).attr('class','shutup1');
-		$.get("/shutup_on/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
 
 		});
 	}
 	else if($('#shutup'+pk.toString()).hasClass('shutup1')){
 		$('#shutup'+pk.toString()).attr('class','shutup0');
-		$.get("/shutup_off/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
 
 		});
 	}
@@ -199,13 +198,13 @@ function double(pk){
   console.log(pk);
     if($('#double'+pk.toString()).hasClass('double0')){
 		$('#double'+pk.toString()).attr('class','double1');
-		$.get("/double_on/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
 
 		});
 	}
 	else if($('#double'+pk.toString()).hasClass('double1')){
 		$('#double'+pk.toString()).attr('class','double0');
-		$.get("/double_off/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
 
 		});
 	}
