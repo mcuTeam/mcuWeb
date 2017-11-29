@@ -166,13 +166,13 @@ function silencemember(pk){
   console.log(pk);
   	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){
 		$('#silencemember'+pk.toString()).attr('class','silencemember1');
-		$.get("/silencemember_on/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
 		});
 	}
 	else if($('#silencemember'+pk.toString()).hasClass('silencemember1')){
 		$('#silencemember'+pk.toString()).attr('class','silencemember0');
-		$.get("/silencemember_off/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
 		});
 	}
