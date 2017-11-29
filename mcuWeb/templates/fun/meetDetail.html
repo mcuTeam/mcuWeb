@@ -37,6 +37,31 @@
 		</div>
 	</div>
 </div>
+<!-- 按钮框体 -->
+<div class="row-fluid">
+	<div class="span8 offset2" id="button">
+		<button>全部连接</button>
+		<button>全部断开</button>
+		<div class="row-fluid">
+			<div class="span6" id="">
+				<select>
+				  <option>管理员模式</option>
+				  <option>主席模式</option>
+				  <option>声音激励模式</option>
+				</select>
+			</div>
+			<div class="span6" id="">
+				<select>
+				  <option>管理员模式</option>
+				  <option>主席模式</option>
+				  <option>声音激励模式</option>
+				</select>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <!-- 列表显示 -->
 <div class="row-fluid">
 	<div class="span8 offset2">
@@ -131,13 +156,13 @@ function silencemember(pk){
   console.log(pk);
   	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){
 		$('#silencemember'+pk.toString()).attr('class','silencemember1');
-		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/silencemember_on/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
 		});
 	}
 	else if($('#silencemember'+pk.toString()).hasClass('silencemember1')){
 		$('#silencemember'+pk.toString()).attr('class','silencemember0');
-		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/silencemember_off/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
 		});
 	}
@@ -147,13 +172,13 @@ function shutup(pk){
   console.log(pk);
     if($('#shutup'+pk.toString()).hasClass('shutup0')){
 		$('#shutup'+pk.toString()).attr('class','shutup1');
-		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/shutup_on/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
 		});
 	}
 	else if($('#shutup'+pk.toString()).hasClass('shutup1')){
 		$('#shutup'+pk.toString()).attr('class','shutup0');
-		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/shutup_off/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
 		});
 	}
@@ -164,13 +189,13 @@ function double(pk){
   console.log(pk);
     if($('#double'+pk.toString()).hasClass('double0')){
 		$('#double'+pk.toString()).attr('class','double1');
-		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/double_on/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
 		});
 	}
 	else if($('#double'+pk.toString()).hasClass('double1')){
 		$('#double'+pk.toString()).attr('class','double0');
-		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+		$.get("/double_off/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
 		});
 	}
