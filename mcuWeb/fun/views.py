@@ -925,7 +925,15 @@ def getmeetinfoAjaxView(request,meetpk):
             # print("getmeetinfo result is: \n",result)
             if result is not None:
                 analysysResult = analysisMeetinfo(result)
-                # print(analysysResult)
+                # analysysResult['']
+                if "EPName" in analysysResult.keys():
+                    analysysResult['pk'] = []
+                    for ename in analysysResult['EPName']:
+                        if terminal.objects.filter(name = ename).exists():
+                            analysysResult['pk'].append(terminal.objects.get(name = ename).pk)
+                        else:
+                            analysysResult['pk'].append("None")
+                print(analysysResult)
                 return HttpResponse(json.dumps(analysysResult))
         except BaseException as e:
             print("catch getmeetinfo error",e)
