@@ -36,3 +36,5 @@ class meeting(models.Model):
 	dualProtocol = models.CharField(max_length=200,blank=False,null=False,default="H.264",verbose_name="双流视频协议*")
 	dualFormat = models.CharField(max_length=200,blank=False,null=False,default="XGA",verbose_name="双流视频格式*")
 	dualBandWidth = models.IntegerField(blank=False,null=False,default=1024,verbose_name="双流带宽*")
+
+	operationModel = models.CharField(max_length=200,blank=False,null=False,default="操作员模式",verbose_name="操作模式*")

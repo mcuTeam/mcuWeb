@@ -55,7 +55,13 @@ class meetingTemplateForm(ModelForm):
 class meetingForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(meetingForm, self).__init__(*args, **kwargs)
+        OPERATIONMODEL_CHOICES=[
+        ('操作员模式','操作员模式'),
+        ('主席模式','主席模式'),
+        ('语音激励模式','语音激励模式')
+        ]
         self.fields['template'].choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()]
+        self.fields['operationModel'] = forms.ChoiceField(label="操作模式*",choices=OPERATIONMODEL_CHOICES,initial=('操作员模式','操作员模式'),required=True)
         # template = forms.ChoiceField(label="会议模板*",choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()],initial=('1','1'),required=True)
     template = forms.ChoiceField(label="会议模板*",required=True)
     def clean_template(self):
@@ -83,5 +89,6 @@ class meetingForm(ModelForm):
         model = meeting
         fields = ['name',
         'meetcode',
+        'operationModel',
         'remark'
         ]
