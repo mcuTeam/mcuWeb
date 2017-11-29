@@ -15,6 +15,10 @@ div#meetinfo{
 
 }
 
+div#buttonbox{
+	margin-top: 20px;
+}
+
 /*strong{
 	color: rgb(255,204,0);
 }*/

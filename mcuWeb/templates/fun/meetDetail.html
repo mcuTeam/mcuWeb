@@ -39,23 +39,33 @@
 </div>
 <!-- 按钮框体 -->
 <div class="row-fluid">
-	<div class="span8 offset2" id="button">
-		<button>全部连接</button>
-		<button>全部断开</button>
+	<div class="span8 offset2" id="buttonbox">
 		<div class="row-fluid">
 			<div class="span6" id="">
-				<select>
-				  <option>管理员模式</option>
+				<label>模式选择：
+				<select class="span5">
+				  <option>操作员模式</option>
 				  <option>主席模式</option>
 				  <option>声音激励模式</option>
 				</select>
+				</label>
 			</div>
 			<div class="span6" id="">
-				<select>
-				  <option>管理员模式</option>
-				  <option>主席模式</option>
-				  <option>声音激励模式</option>
-				</select>
+				<label>主席选择：
+					<select>
+						<option>管理员模式</option>
+						<option>主席模式</option>
+						<option>声音激励模式</option>
+					</select>
+				</label>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span12" id="">
+				<button>全部连接</button>
+				<button>全部断开</button>
+				<button>全部静音</button>
+				<button>全部闭麦</button>
 			</div>
 		</div>
 	</div>
@@ -108,10 +118,10 @@ $('document').ready(function(){
 	$('div#pill2').attr('class','accordion-body collapse in');
 	$(function(){
 		function getmeetinfo(){
-			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
-				$('#connect'+pk.toString()).attr('class','connected');
+			// $.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
+			// 	$('#connect'+pk.toString()).attr('class','connected');
 
-			});
+			// });
 		}
 		setInterval(getmeetinfo,2000);// 2秒状态轮询
 	});
