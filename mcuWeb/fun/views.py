@@ -571,6 +571,107 @@ def hungupmemberTask(meetname,membername):
         tcpCliSock = None
         return None
 
+def mutememberTask(meetname,membername,isMuting=0):
+    global tcpCliSock
+    with lock:
+        global seqNumber
+        seqNumber+=1
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+
+    print("mutememberTask task")
+    try:
+        msg = ("SETMEMBERAUDIOMUTING\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nMutingMode:%d\r\n\r\n" \
+            % (seqNumber,meetname,membername,isMuting)).encode('utf8')
+        print(msg)
+        tcpCliSock.send(msg)
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        print("mutememberTask return None")
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("hungupmemberTask BaseException: ",e)
+        tcpCliSock = None
+        return None
+
+def audioblockTask(meetname,membername,isBlock=0):
+    global tcpCliSock
+    with lock:
+        global seqNumber
+        seqNumber+=1
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+
+    print("audioblockTask task")
+    try:
+        msg = ("SETMEMBERAUDIOBLOCKING\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nBlockingMode:%d\r\n\r\n" \
+            % (seqNumber,meetname,membername,isBlock)).encode('utf8')
+        print(msg)
+        tcpCliSock.send(msg)
+        time.sleep(0.2)
+        key = "SeqNumber:"+str(seqNumber)
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        print("audioblockTask return None")
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("audioblockTask BaseException: ",e)
+        tcpCliSock = None
+        return None
+
+def getmemberinfoTask(meetname,membername):
+    global tcpCliSock
+    with lock:
+        global seqNumber
+        seqNumber+=1
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+
+    print("getmemberinfoTask task")
+    try:
+        msg = ("GETMEMBERINFO\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
+            % (seqNumber,meetname,membername)).encode('utf8')
+        tcpCliSock.send(msg)
+        time.sleep(0.05)
+        key = "SeqNumber:"+str(seqNumber)
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        print("getmemberinfoTask return None")
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("getmemberinfoTask BaseException: ",e)
+        tcpCliSock = None
+        return None
+
 def deletememberTask(meetname,membername):
     global tcpCliSock
     with lock:
@@ -902,6 +1003,15 @@ def callmemberAjaxView(request,meetpk,pk):
             # print("callmemberTask return %s" % retDict['RetCode'])
             return HttpResponse(json.dumps({'msgType':"error",'msg':("呼叫终端过程中MCU返回%s！" % retDict['RetCode'])}))
         # time.sleep(0.5)
+
+        # getmemberinfoTask
+        result = getmemberinfoTask(meetname,membername)
+        # print("getmemberinfoTask return: ",result)
+        retcode = returnCode2Dict(result)
+        retcode["pk"] = pk
+        return HttpResponse(json.dumps(retcode))
+        # print(analysis(result))
+
         return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
 
 @login_required
@@ -920,7 +1030,7 @@ def getmeetinfoAjaxView(request,meetpk):
             result = getmeetinfoTask(meetname)
             notifyList = cache.get('notify')
             if notifyList is not None:
-                # print(notifyList)
+                print(notifyList)
                 cache.delete('notify')
             # print("getmeetinfo result is: \n",result)
             if result is not None:
@@ -933,10 +1043,10 @@ def getmeetinfoAjaxView(request,meetpk):
                             analysysResult['pk'].append(terminal.objects.get(name = ename).pk)
                         else:
                             analysysResult['pk'].append("None")
-                print(analysysResult)
+                # print(analysysResult)
                 return HttpResponse(json.dumps(analysysResult))
         except BaseException as e:
-            print("catch getmeetinfo error",e)
+            print("catch getmeetinfo error",e,"-----",result)
             return HttpResponse(json.dumps({'msgType':"error",'msg':"获取会议信息过程中发生通信错误！"}))
         if result is None:
             print("getmeetinfo return None")
@@ -967,18 +1077,68 @@ def hungupAjaxView(request,meetpk,pk):
             result = hungupmemberTask(meetname,membername)
             notifyList = cache.get('notify')
             if notifyList is not None:
-                # print(notifyList)
+                # # print(notifyList)
                 cache.delete('notify')
             if result is None:
                 return HttpResponse(json.dumps({'msgType':"error",'msg':"挂断过程中MCU返回None！"}))
             result = deletememberTask(meetname,membername)
             notifyList = cache.get('notify')
             if notifyList is not None:
-                # print(notifyList)
+                # # print(notifyList)
                 cache.delete('notify')
             if result is None:
                 return HttpResponse(json.dumps({'msgType':"error",'msg':"挂断过程中MCU返回None！"}))
             return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+        except BaseException as e:
+            print("catch hungup error",e)
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"挂断过程中发生通信错误！"}))
+        if result is None:
+            print("hungup return None")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"挂断过程中MCU返回None！"}))
+        retDict = returnCode2Dict(result)
+        if retDict['RetCode'] != "200":
+            # print("getmeetinfo return %s" % retDict['RetCode'])
+            return HttpResponse(json.dumps({'msgType':"error",'msg':("挂断过程中MCU返回%s！" % retDict['RetCode'])}))
+        return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+
+@login_required
+def silencememberAjaxView(request,meetpk,pk):
+    if request.is_ajax():
+        print("recv silencememberAjaxView ajax request")
+        result=""
+        if not meeting.objects.filter(pk=meetpk).exists():
+            print("该会议不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
+        if not terminal.objects.filter(pk=pk).exists():
+            print("该终端不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该终端不存在！"}))
+        meetname = meeting.objects.get(pk=meetpk).name
+        membername = terminal.objects.get(pk=pk).name
+        memberip = terminal.objects.get(pk=pk).terminalIP
+        # hungupAjaxView
+        try:
+
+            result = mutememberTask(meetname,membername,1)
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                # # print(notifyList)
+                cache.delete('notify')
+            if result is None:
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"挂断过程中MCU返回None！"}))
+            print("mutememberTask return: ",result)
+            result = getmemberinfoTask(meetname,membername)
+
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                pass
+                # print(notifyList)
+                # cache.delete('notify')
+            if result is None:
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"挂断过程中MCU返回None！"}))
+            print("getmemberinfoTask return: ",result)
+            retcode = returnCode2Dict(result)
+            retcode["pk"] = pk
+            return HttpResponse(json.dumps(retcode))
         except BaseException as e:
             print("catch getmeetinfo error",e)
             return HttpResponse(json.dumps({'msgType':"error",'msg':"获取会议信息过程中发生通信错误！"}))
@@ -990,6 +1150,57 @@ def hungupAjaxView(request,meetpk,pk):
             # print("getmeetinfo return %s" % retDict['RetCode'])
             return HttpResponse(json.dumps({'msgType':"error",'msg':("获取会议信息过程中MCU返回%s！" % retDict['RetCode'])}))
         return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+
+@login_required
+def audioblockAjaxView(request,meetpk,pk):
+    if request.is_ajax():
+        print("recv audioblockAjaxView ajax request")
+        result=""
+        if not meeting.objects.filter(pk=meetpk).exists():
+            print("该会议不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
+        if not terminal.objects.filter(pk=pk).exists():
+            print("该终端不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该终端不存在！"}))
+        meetname = meeting.objects.get(pk=meetpk).name
+        membername = terminal.objects.get(pk=pk).name
+        memberip = terminal.objects.get(pk=pk).terminalIP
+        # hungupAjaxView
+        try:
+
+            result = audioblockTask(meetname,membername,1)
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                # # print(notifyList)
+                cache.delete('notify')
+            if result is None:
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"禁言过程中MCU返回None！"}))
+            print("mutememberTask return: ",result)
+            result = getmemberinfoTask(meetname,membername)
+
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                pass
+                # print(notifyList)
+                # cache.delete('notify')
+            if result is None:
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"禁言过程中MCU返回None！"}))
+            print("getmemberinfoTask return: ",result)
+            retcode = returnCode2Dict(result)
+            retcode["pk"] = pk
+            return HttpResponse(json.dumps(retcode))
+        except BaseException as e:
+            print("catch getmeetinfo error",e)
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"禁言过程中发生通信错误！"}))
+        if result is None:
+            print("getmeetinfo return None")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"禁言过程中MCU返回None！"}))
+        retDict = returnCode2Dict(result)
+        if retDict['RetCode'] != "200":
+            # print("getmeetinfo return %s" % retDict['RetCode'])
+            return HttpResponse(json.dumps({'msgType':"error",'msg':("禁言过程中MCU返回%s！" % retDict['RetCode'])}))
+        return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+
 
 # ---------------------------------------------------------------------------
 
