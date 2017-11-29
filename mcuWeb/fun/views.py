@@ -1102,7 +1102,7 @@ def hungupAjaxView(request,meetpk,pk):
         return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
 
 @login_required
-def silencememberAjaxView(request,meetpk,pk):
+def silencememberAjaxView(request,meetpk,pk,mode):
     if request.is_ajax():
         print("recv silencememberAjaxView ajax request")
         result=""
@@ -1118,7 +1118,7 @@ def silencememberAjaxView(request,meetpk,pk):
         # hungupAjaxView
         try:
 
-            result = mutememberTask(meetname,membername,1)
+            result = mutememberTask(meetname,membername,int(mode))
             notifyList = cache.get('notify')
             if notifyList is not None:
                 # # print(notifyList)
@@ -1152,7 +1152,7 @@ def silencememberAjaxView(request,meetpk,pk):
         return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
 
 @login_required
-def audioblockAjaxView(request,meetpk,pk):
+def audioblockAjaxView(request,meetpk,pk,mode):
     if request.is_ajax():
         print("recv audioblockAjaxView ajax request")
         result=""
@@ -1168,7 +1168,7 @@ def audioblockAjaxView(request,meetpk,pk):
         # hungupAjaxView
         try:
 
-            result = audioblockTask(meetname,membername,1)
+            result = audioblockTask(meetname,membername,int(mode))
             notifyList = cache.get('notify')
             if notifyList is not None:
                 # # print(notifyList)

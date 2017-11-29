@@ -19,7 +19,7 @@ urlpatterns = [
 	url(r'^mcuHeartBeat/$', fun_view.heartBeatAjaxView),
 	url(r'^callmember/(?P<meetpk>\d+)/(?P<pk>\d+)/$', fun_view.callmemberAjaxView),
 	url(r'^hangup/(?P<meetpk>\d+)/(?P<pk>\d+)/$', fun_view.hungupAjaxView),
-	url(r'^silencemember/(?P<meetpk>\d+)/(?P<pk>\d+)/$', fun_view.silencememberAjaxView),
-	url(r'^shutup/(?P<meetpk>\d+)/(?P<pk>\d+)/$', fun_view.audioblockAjaxView),
+	url(r'^silencemember/(?P<meetpk>\d+)/(?P<pk>\d+)/(?P<mode>\d+)/$', fun_view.silencememberAjaxView),
+	url(r'^shutup/(?P<meetpk>\d+)/(?P<pk>\d+)/(?P<mode>\d+)/$', fun_view.audioblockAjaxView),
 	url(r'^getmeetinfo/(?P<meetpk>\d+)/$', fun_view.getmeetinfoAjaxView),
 ]
