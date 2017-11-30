@@ -126,15 +126,37 @@ $('document').ready(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
+
+				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
+					if (meetinfoJson.MemberState[i]==="0"||meetinfoJson.MemberState[i]==="1") {
+						lightup(meetinfoJson.pk[i]);
+						// $('#connect'+meetinfoJson.pk[i].toString()).attr('class','connected');
+					 //  	$('#callmember'+meetinfoJson.pk[i].toString()).attr('class','callmemberforbid');
+					 //  	$('#hangup'+meetinfoJson.pk[i].toString()).attr('class','hangup1');
+					 //  	$('#silencemember'+meetinfoJson.pk[i].toString()).attr('class','silencemember0');
+					 //  	$('#shutup'+meetinfoJson.pk[i].toString()).attr('class','shutup0');
+					 //  	$('#double'+meetinfoJson.pk[i].toString()).attr('class','double0');
+					}
+					// console.log(meetinfoJson.MemberState[i]);
+				}
 				
 
 			});
 		}
-
+		getmeetinfo();
 		setInterval(getmeetinfo,2000);// 2秒状态轮询
 	});
 });
 
+function lightup(number) {
+	$('#connect'+number.toString()).attr('class','connected');
+	$('#callmember'+number.toString()).attr('class','callmemberforbid');
+	$('#hangup'+number.toString()).attr('class','hangup1');
+	$('#silencemember'+number.toString()).attr('class','silencemember0');
+	$('#shutup'+number.toString()).attr('class','shutup0');
+	$('#double'+number.toString()).attr('class','double0');
+
+}
 function callmember(pk){
 	console.log(pk);
 	if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
@@ -143,25 +165,10 @@ function callmember(pk){
 		  	var parsedJson = jQuery.parseJSON(results);
 		    console.log(parsedJson.MemberState);
 		    if(parsedJson.MemberState==="0"||parsedJson.MemberState==="1"){
-		    	$('#connect'+pk.toString()).attr('class','connected');
-			  	$('#callmember'+pk.toString()).attr('class','callmemberforbid');
-			  	$('#hangup'+pk.toString()).attr('class','hangup1');
-			  	$('#silencemember'+pk.toString()).attr('class','silencemember0');
-			  	$('#shutup'+pk.toString()).attr('class','shutup0');
-			  	$('#double'+pk.toString()).attr('class','double0');
+		    	lightup(pk);
 		    }
-  	
-  	// setTimeout(function(){
-  	// 	$('#connect'+pk.toString()).attr('class','connected');
-  	// $('#callmember'+pk.toString()).attr('class','callmemberforbid');
-  	// $('#hangup'+pk.toString()).attr('class','hangup1');
-  	// $('#silencemember'+pk.toString()).attr('class','silencemember0');
-  	// $('#shutup'+pk.toString()).attr('class','shutup0');
-  	// $('#double'+pk.toString()).attr('class','double0');
-  	// }, 2000);
-  });
-  }
-
+		});
+	}
 };
 
 function hangup(pk){
