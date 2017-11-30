@@ -131,6 +131,8 @@ def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
 
 
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -172,8 +174,9 @@ def addmeetTask(meetName="",meetAlias="",meetRemark=""):
 
 
 
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if meetName is "":
@@ -216,14 +219,9 @@ def addmeetTask(meetName="",meetAlias="",meetRemark=""):
 
 def deletemeetTask(meetName=""):
     global tcpCliSock
-
-
-
-
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -262,11 +260,9 @@ def deletemeetTask(meetName=""):
 def listmeetTask():
     global tcpCliSock
 
-
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -296,10 +292,9 @@ def listmeetTask():
 def addmemberTask(meetName="",memberName="0",memberIP="0"):
     global tcpCliSock
 
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -333,10 +328,9 @@ def addmemberTask(meetName="",memberName="0",memberIP="0"):
 def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
     global tcpCliSock
 
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -370,10 +364,9 @@ def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
 def callmemberTask(meetName="",memberName="0"):
     global tcpCliSock
 
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -408,10 +401,9 @@ def checkNet():
     print("checkNet!")
     global tcpCliSock
 
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is not None:
@@ -443,10 +435,9 @@ def checkNet():
 def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='',videoprotocol='',videoformat='',videoframerate=60):
     global tcpCliSock
 
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -479,10 +470,9 @@ def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='
 def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidth=1024):
     global tcpCliSock
 
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -515,10 +505,9 @@ def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidt
 def getmeetinfoTask(meetName=""):
     global tcpCliSock
 
-
-
-
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -554,6 +543,8 @@ def hungupmemberTask(meetname,membername):
     global tcpCliSock
 
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -588,6 +579,8 @@ def mutememberTask(meetname,membername,isMuting=0):
     global tcpCliSock
 
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -623,6 +616,8 @@ def audioblockTask(meetname,membername,isBlock=0):
     global tcpCliSock
 
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -657,6 +652,8 @@ def getmemberinfoTask(meetname,membername):
     global tcpCliSock
 
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -691,6 +688,8 @@ def deletememberTask(meetname,membername):
     global tcpCliSock
 
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -727,6 +726,8 @@ def setsecondvideosrcTask(meetname,membername,isSecond=0):
     global tcpCliSock
 
     seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
     cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
@@ -757,10 +758,6 @@ def setsecondvideosrcTask(meetname,membername,isSecond=0):
         print("hungupmemberTask BaseException: ",e)
         tcpCliSock = None
         return None
-
-
-
-
 
 # ------------------------------------------------------------------------
 
