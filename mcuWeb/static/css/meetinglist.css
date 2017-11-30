@@ -4,6 +4,10 @@
 	margin-top: 50px; 
 }
 
+div#floattip{
+	position: absolute;
+}
+
 div#meetinfo{
 	padding-top: 10px;
 	padding-left: 20px;
