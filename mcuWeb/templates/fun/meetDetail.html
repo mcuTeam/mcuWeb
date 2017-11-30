@@ -32,7 +32,7 @@
 			<div class="span4">
 				<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
 				<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
-
+				<p><strong>主会场：</strong>{{meetInstance.mainMeetRoom}}</p>
 			</div>
 		</div>
 	</div>
@@ -126,7 +126,7 @@ $('document').ready(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
-				
+
 
 			});
 		}
@@ -150,7 +150,7 @@ function callmember(pk){
 			  	$('#shutup'+pk.toString()).attr('class','shutup0');
 			  	$('#double'+pk.toString()).attr('class','double0');
 		    }
-  	
+
   	// setTimeout(function(){
   	// 	$('#connect'+pk.toString()).attr('class','connected');
   	// $('#callmember'+pk.toString()).attr('class','callmemberforbid');
@@ -236,7 +236,7 @@ function see(pk){
 
 		$.get("/see/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
 
-		
+
 	});
 
 
@@ -248,9 +248,9 @@ function broadcast(pk){
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
 
 		});
-	
 
-	
+
+
 
 };
 </script>

@@ -37,4 +37,5 @@ class meeting(models.Model):
 	dualFormat = models.CharField(max_length=200,blank=False,null=False,default="XGA",verbose_name="双流视频格式*")
 	dualBandWidth = models.IntegerField(blank=False,null=False,default=1024,verbose_name="双流带宽*")
 
+	mainMeetRoom = models.CharField(max_length=200,blank=False,null=False,default="主会场",verbose_name="主会场*")
 	operationModel = models.CharField(max_length=200,blank=False,null=False,default="操作员模式",verbose_name="操作模式*")
