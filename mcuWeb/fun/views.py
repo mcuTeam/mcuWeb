@@ -1023,6 +1023,8 @@ def callmemberAjaxView(request,meetpk,pk):
         # getmemberinfoTask
         result = getmemberinfoTask(meetname,membername)
         # print("getmemberinfoTask return: ",result)
+        if result is None:
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"getmemberinfoTask返回None！"}))
         retcode = returnCode2Dict(result)
         retcode["pk"] = pk
         return HttpResponse(json.dumps(retcode))
