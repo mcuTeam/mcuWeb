@@ -4,9 +4,7 @@
 	margin-top: 50px; 
 }
 
-div#floattip{
-	position: absolute;
-}
+
 
 div#meetinfo{
 	padding-top: 10px;
@@ -19,7 +17,7 @@ div#meetinfo{
 
 }
 
-div#buttonbox{
+div#buttonbox,div#modelcontrol{
 	margin-top: 20px;
 }
 
