@@ -41,32 +41,34 @@
 <div class="row-fluid">
 	<div class="span8 offset2" id="buttonbox">
 		<div class="row-fluid">
-			<div class="span6" id="">
+			<div class="span12" id="">
+				<a class="btn btn-info">全部连接</a>
+				<a class="btn btn-info">全部断开</a>
+
+			</div>
+		</div>
+		<div class="row-fluid" id="modelcontrol">
+			<div class="span6" id="modelselect">
 				<label>模式选择：
 				<select class="span5">
-				  <option>操作员模式</option>
-				  <option>主席模式</option>
-				  <option>声音激励模式</option>
+						<option value="管理员模式">管理员模式</option>
+						<option value="主席模式">主席模式</option>
+						<option value="语音激励模式">语音激励模式</option>
 				</select>
 				</label>
 			</div>
 			<div class="span6" id="">
 				<label>主席选择：
-					<select>
-						<option>管理员模式</option>
-						<option>主席模式</option>
-						<option>声音激励模式</option>
+					<select class="span9">
+						{% for terminal in terminalList %}
+						<option>[{{terminal.name}}]{{terminal.terminalIP}}</option>
+						{% endfor %}
+
 					</select>
 				</label>
 			</div>
 		</div>
-		<div class="row-fluid">
-			<div class="span12" id="">
-				<button>全部连接</button>
-				<button>全部断开</button>
 
-			</div>
-		</div>
 	</div>
 </div>
 
@@ -86,6 +88,8 @@
 		      <th>静音</th>
 		      <th>闭麦</th>
 		      <th>双流</th>
+		      <th>查看</th>
+		      <th>广播</th>
 		    </tr>
 		  </thead>
 		  {% for terminal in terminalList %}
@@ -100,6 +104,8 @@
 		      <td class="silencememberforbid" id="silencemember{{terminal.pk}}"><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
 		      <td class="shutupforbid" id="shutup{{terminal.pk}}"><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
 		      <td class="doubleforbid" id="double{{terminal.pk}}"><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
+		      <td class="seeforbid" id="see{{terminal.pk}}"><a class="btn" onclick="see({{terminal.pk}})" > </a></td>
+		      <td class="broadcastforbid" id="broadcast{{terminal.pk}}"><a class="btn" onclick="broadcast({{terminal.pk}})" > </a></td>
 		    </tr>
 		  </tbody>
 		  {% endfor %}
@@ -115,30 +121,43 @@
 <script type="text/javascript">
 $('document').ready(function(){
 	$('div#pill2').attr('class','accordion-body collapse in');
+	$("#modelselect option[value='{{meetInstance.operationModel}}']").attr("selected","selected");
 	$(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
-				$('#connect'+pk.toString()).attr('class','connected');
+				
 
 			});
 		}
+
 		setInterval(getmeetinfo,2000);// 2秒状态轮询
 	});
 });
 
 function callmember(pk){
-  console.log(pk);
-  if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
-  	  $.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(){
-  	$('#connect'+pk.toString()).attr('class','connecting');
-  	setTimeout(function(){
-  		$('#connect'+pk.toString()).attr('class','connected');
-  	$('#callmember'+pk.toString()).attr('class','callmemberforbid');
-  	$('#hangup'+pk.toString()).attr('class','hangup1');
-  	$('#silencemember'+pk.toString()).attr('class','silencemember0');
-  	$('#shutup'+pk.toString()).attr('class','shutup0');
-  	$('#double'+pk.toString()).attr('class','double0');
-  	}, 2000);
+	console.log(pk);
+	if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
+		$.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(results){
+		  	$('#connect'+pk.toString()).attr('class','connecting');
+		  	var parsedJson = jQuery.parseJSON(results);
+		    console.log(parsedJson.MemberState);
+		    if(parsedJson.MemberState==="0"){
+		    	$('#connect'+pk.toString()).attr('class','connected');
+			  	$('#callmember'+pk.toString()).attr('class','callmemberforbid');
+			  	$('#hangup'+pk.toString()).attr('class','hangup1');
+			  	$('#silencemember'+pk.toString()).attr('class','silencemember0');
+			  	$('#shutup'+pk.toString()).attr('class','shutup0');
+			  	$('#double'+pk.toString()).attr('class','double0');
+		    }
+  	
+  	// setTimeout(function(){
+  	// 	$('#connect'+pk.toString()).attr('class','connected');
+  	// $('#callmember'+pk.toString()).attr('class','callmemberforbid');
+  	// $('#hangup'+pk.toString()).attr('class','hangup1');
+  	// $('#silencemember'+pk.toString()).attr('class','silencemember0');
+  	// $('#shutup'+pk.toString()).attr('class','shutup0');
+  	// $('#double'+pk.toString()).attr('class','double0');
+  	// }, 2000);
   });
   }
 
@@ -211,7 +230,27 @@ function double(pk){
 
 };
 
+function see(pk){
+  console.log(pk);
+
+		$.get("/see/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
+
+		
+	});
 
 
+};
+
+function broadcast(pk){
+  console.log(pk);
+
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
+
+		});
+	
+
+	
+
+};
 </script>
 {% endblock %}
