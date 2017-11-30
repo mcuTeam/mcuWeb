@@ -31,7 +31,8 @@ PORT = 5038
 BUFSIZ = 10240
 ADDR = (HOST,PORT)
 tcpCliSock = None
-seqNumber = 0
+# seqNumber = 0
+cache.set('seqNumber',0)
 recvDict={}
 lock = Lock()
 
@@ -71,7 +72,7 @@ def loop():
             g = re.search('SeqNumber:\d+',data.decode('utf8'))
             if g is not None:
                 # print(g.group())
-                with lock:
+
                     # global recvDict
                     cache.set(g.group(),data.decode('utf8'),10)
                     # recvDict[g.group()] = data.decode('utf8')
@@ -94,9 +95,9 @@ def makeConnection():
 
     global recvDict
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+
+
     if tcpCliSock is not None:
         tcpCliSock.close()
     tcpCliSock = None
@@ -126,10 +127,11 @@ def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
 
+
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -170,9 +172,10 @@ def addmeetTask(meetName="",meetAlias="",meetRemark=""):
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if meetName is "":
         return "param error"
     if tcpCliSock is None:
@@ -216,11 +219,12 @@ def deletemeetTask(meetName=""):
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
 
 
+
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -260,9 +264,10 @@ def listmeetTask():
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
 
     if tcpCliSock is None:
         print("tcpCliSock is None")
@@ -293,9 +298,10 @@ def addmemberTask(meetName="",memberName="0",memberIP="0"):
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -329,9 +335,10 @@ def setmemberavformatparaTask(meetName="",memberName="0",capalityName="1080P"):
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -365,9 +372,10 @@ def callmemberTask(meetName="",memberName="0"):
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -402,9 +410,10 @@ def checkNet():
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is not None:
         try:
             tcpCliSock.send(("HEARTBEAT\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
@@ -436,9 +445,10 @@ def addavformatpara(meetname='',capalityname='',callbandwidth='',audioprotocol='
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -471,9 +481,10 @@ def setdualformatparaTask(meetname="",dualprotocol='',dualformat='',dualBandWidt
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -506,9 +517,10 @@ def getmeetinfoTask(meetName=""):
 
 
 
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -540,9 +552,10 @@ def getmeetinfoTask(meetName=""):
 
 def hungupmemberTask(meetname,membername):
     global tcpCliSock
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -573,9 +586,10 @@ def hungupmemberTask(meetname,membername):
 
 def mutememberTask(meetname,membername,isMuting=0):
     global tcpCliSock
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -585,7 +599,7 @@ def mutememberTask(meetname,membername,isMuting=0):
     try:
         msg = ("SETMEMBERAUDIOMUTING\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nMutingMode:%d\r\n\r\n" \
             % (seqNumber,meetname,membername,isMuting)).encode('utf8')
-        print(msg)
+        # print(msg)
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
@@ -607,9 +621,10 @@ def mutememberTask(meetname,membername,isMuting=0):
 
 def audioblockTask(meetname,membername,isBlock=0):
     global tcpCliSock
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -619,7 +634,6 @@ def audioblockTask(meetname,membername,isBlock=0):
     try:
         msg = ("SETMEMBERAUDIOBLOCKING\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nBlockingMode:%d\r\n\r\n" \
             % (seqNumber,meetname,membername,isBlock)).encode('utf8')
-        print(msg)
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
@@ -641,9 +655,10 @@ def audioblockTask(meetname,membername,isBlock=0):
 
 def getmemberinfoTask(meetname,membername):
     global tcpCliSock
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -674,9 +689,10 @@ def getmemberinfoTask(meetname,membername):
 
 def deletememberTask(meetname,membername):
     global tcpCliSock
-    with lock:
-        global seqNumber
-        seqNumber+=1
+
+    seqNumber = cache.get('seqNumber')
+    cache.set('seqNumber',seqNumber+1)
+
     if tcpCliSock is None:
         print("tcpCliSock is None")
         tcpCliSock = socket(AF_INET,SOCK_STREAM)
@@ -686,7 +702,7 @@ def deletememberTask(meetname,membername):
     try:
         msg = ("DELETEMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
             % (seqNumber,meetname,membername)).encode('utf8')
-        print(msg)
+        # print(msg)
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:"+str(seqNumber)
@@ -1125,7 +1141,7 @@ def silencememberAjaxView(request,meetpk,pk,mode):
                 cache.delete('notify')
             if result is None:
                 return HttpResponse(json.dumps({'msgType':"error",'msg':"挂断过程中MCU返回None！"}))
-            print("mutememberTask return: ",result)
+            # print("mutememberTask return: ",result)
             result = getmemberinfoTask(meetname,membername)
 
             notifyList = cache.get('notify')
@@ -1135,7 +1151,7 @@ def silencememberAjaxView(request,meetpk,pk,mode):
                 # cache.delete('notify')
             if result is None:
                 return HttpResponse(json.dumps({'msgType':"error",'msg':"挂断过程中MCU返回None！"}))
-            print("getmemberinfoTask return: ",result)
+            # print("getmemberinfoTask return: ",result)
             retcode = returnCode2Dict(result)
             retcode["pk"] = pk
             return HttpResponse(json.dumps(retcode))
@@ -1175,7 +1191,7 @@ def audioblockAjaxView(request,meetpk,pk,mode):
                 cache.delete('notify')
             if result is None:
                 return HttpResponse(json.dumps({'msgType':"error",'msg':"禁言过程中MCU返回None！"}))
-            print("mutememberTask return: ",result)
+            # print("mutememberTask return: ",result)
             result = getmemberinfoTask(meetname,membername)
 
             notifyList = cache.get('notify')
@@ -1185,7 +1201,7 @@ def audioblockAjaxView(request,meetpk,pk,mode):
                 # cache.delete('notify')
             if result is None:
                 return HttpResponse(json.dumps({'msgType':"error",'msg':"禁言过程中MCU返回None！"}))
-            print("getmemberinfoTask return: ",result)
+            # print("getmemberinfoTask return: ",result)
             retcode = returnCode2Dict(result)
             retcode["pk"] = pk
             return HttpResponse(json.dumps(retcode))
@@ -1206,6 +1222,9 @@ def audioblockAjaxView(request,meetpk,pk,mode):
 
 @login_required
 def meetDetailsView(request,meetpk):
+    if not meeting.objects.filter(pk=meetpk).exists():
+        print("该会议不存在！")
+        return redirect(meetinglistView)
     meetInstance = meeting.objects.get(pk=meetpk)
     terminalList = terminal.objects.all()
     return render(request,'fun/meetDetail.html',{'meetInstance':meetInstance,'terminalList':terminalList,'msgType':'info','msg':"please add"})

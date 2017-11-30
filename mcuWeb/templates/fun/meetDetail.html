@@ -32,7 +32,7 @@
 			<div class="span4">
 				<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
 				<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
-				
+
 			</div>
 		</div>
 	</div>
@@ -117,10 +117,10 @@ $('document').ready(function(){
 	$('div#pill2').attr('class','accordion-body collapse in');
 	$(function(){
 		function getmeetinfo(){
-			// $.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
-			// 	$('#connect'+pk.toString()).attr('class','connected');
+			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
+				$('#connect'+pk.toString()).attr('class','connected');
 
-			// });
+			});
 		}
 		setInterval(getmeetinfo,2000);// 2秒状态轮询
 	});
@@ -131,13 +131,13 @@ function callmember(pk){
   if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
   	  $.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(){
   	$('#connect'+pk.toString()).attr('class','connecting');
-  	setTimeout(function(){	
+  	setTimeout(function(){
   		$('#connect'+pk.toString()).attr('class','connected');
   	$('#callmember'+pk.toString()).attr('class','callmemberforbid');
   	$('#hangup'+pk.toString()).attr('class','hangup1');
   	$('#silencemember'+pk.toString()).attr('class','silencemember0');
   	$('#shutup'+pk.toString()).attr('class','shutup0');
-  	$('#double'+pk.toString()).attr('class','double0');	
+  	$('#double'+pk.toString()).attr('class','double0');
   	}, 2000);
   });
   }
@@ -153,7 +153,7 @@ function hangup(pk){
   	$('#hangup'+pk.toString()).attr('class','hangupforbid');
   	$('#silencemember'+pk.toString()).attr('class','silencememberforbid');
   	$('#shutup'+pk.toString()).attr('class','shutupforbid');
-  	$('#double'+pk.toString()).attr('class','doubleforbid');	
+  	$('#double'+pk.toString()).attr('class','doubleforbid');
 
   $.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
