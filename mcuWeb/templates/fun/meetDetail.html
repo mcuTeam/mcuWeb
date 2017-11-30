@@ -124,7 +124,8 @@ $('document').ready(function(){
 	$("#modelselect option[value='{{meetInstance.operationModel}}']").attr("selected","selected");
 	$(function(){
 		function getmeetinfo(){
-			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
+			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
+				var meetinfoJson= jQuery.parseJSON(info);
 				
 
 			});
@@ -141,7 +142,7 @@ function callmember(pk){
 		  	$('#connect'+pk.toString()).attr('class','connecting');
 		  	var parsedJson = jQuery.parseJSON(results);
 		    console.log(parsedJson.MemberState);
-		    if(parsedJson.MemberState==="0"){
+		    if(parsedJson.MemberState==="0"||parsedJson.MemberState==="1"){
 		    	$('#connect'+pk.toString()).attr('class','connected');
 			  	$('#callmember'+pk.toString()).attr('class','callmemberforbid');
 			  	$('#hangup'+pk.toString()).attr('class','hangup1');
