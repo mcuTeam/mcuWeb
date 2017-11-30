@@ -9,15 +9,6 @@
 {% endblock %}
 
 {% block content %}
-
-<!-- <div class="row-fluid">
-	<div class="span8 offset1">
-		<div class="alert alert-error" id="floattip">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	呼叫失败
-		</div>
-	</div>
-</div> -->
 <!-- 页标 -->
 <div class="row-fluid">
 	<div class="span8 offset1">
@@ -41,8 +32,7 @@
 			<div class="span4">
 				<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
 				<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
-				<p></p>
-				
+
 			</div>
 		</div>
 	</div>
@@ -54,27 +44,26 @@
 			<div class="span6" id="">
 				<label>模式选择：
 				<select class="span5">
-				  <option value="操作员模式">操作员模式</option>
-				  <option value="主席模式">主席模式</option>
-				  <option value="语音激励模式">语音激励模式</option>
+				  <option>操作员模式</option>
+				  <option>主席模式</option>
+				  <option>声音激励模式</option>
 				</select>
 				</label>
 			</div>
 			<div class="span6" id="">
 				<label>主席选择：
-					<select class="span7">
-						{% for terminal in terminalList %}
-						<option>[{{terminal.name}}]{{terminal.terminalIP}}</option>
-						{% endfor %}
+					<select>
+						<option>管理员模式</option>
+						<option>主席模式</option>
+						<option>声音激励模式</option>
 					</select>
 				</label>
 			</div>
 		</div>
 		<div class="row-fluid">
 			<div class="span12" id="">
-				<a class="btn btn-info"><i class="icon-ok icon-white"></i> 全部连接</a>
-				<a class="btn btn-info"><i class="icon-remove icon-white"></i> 全部断开</a>
-				
+				<button>全部连接</button>
+				<button>全部断开</button>
 
 			</div>
 		</div>
@@ -126,12 +115,10 @@
 <script type="text/javascript">
 $('document').ready(function(){
 	$('div#pill2').attr('class','accordion-body collapse in');
-	// $("option[value='{{meetInstance.operationModel}}']").attr("selected","selected");
 	$(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(){
-				
-				
+				$('#connect'+pk.toString()).attr('class','connected');
 
 			});
 		}
@@ -142,27 +129,18 @@ $('document').ready(function(){
 function callmember(pk){
   console.log(pk);
   if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
-  	  $.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(results){
+  	  $.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(){
   	$('#connect'+pk.toString()).attr('class','connecting');
-  	var parsedJson = jQuery.parseJSON(results);
-    if(parsedJson.MemberState==="1"){
-	    $('#connect'+pk.toString()).attr('class','connected');
-	  	$('#callmember'+pk.toString()).attr('class','callmemberforbid');
-	  	$('#hangup'+pk.toString()).attr('class','hangup1');
-	  	$('#silencemember'+pk.toString()).attr('class','silencemember0');
-	  	$('#shutup'+pk.toString()).attr('class','shutup0');
-	  	$('#double'+pk.toString()).attr('class','double0');	
-
-    }
-    else{
-
-    }
-  		
-
-  	
+  	setTimeout(function(){
+  		$('#connect'+pk.toString()).attr('class','connected');
+  	$('#callmember'+pk.toString()).attr('class','callmemberforbid');
+  	$('#hangup'+pk.toString()).attr('class','hangup1');
+  	$('#silencemember'+pk.toString()).attr('class','silencemember0');
+  	$('#shutup'+pk.toString()).attr('class','shutup0');
+  	$('#double'+pk.toString()).attr('class','double0');
+  	}, 2000);
   });
   }
-    }
 
 };
 
@@ -175,7 +153,7 @@ function hangup(pk){
   	$('#hangup'+pk.toString()).attr('class','hangupforbid');
   	$('#silencemember'+pk.toString()).attr('class','silencememberforbid');
   	$('#shutup'+pk.toString()).attr('class','shutupforbid');
-  	$('#double'+pk.toString()).attr('class','doubleforbid');	
+  	$('#double'+pk.toString()).attr('class','doubleforbid');
 
   $.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 
