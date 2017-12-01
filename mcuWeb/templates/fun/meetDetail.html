@@ -42,23 +42,13 @@
 <div class="row-fluid">
 	<div class="span8 offset2" id="buttonbox">
 		<div class="row-fluid" >
-			<div class="span6" id="modelselect">
-				<label>模式选择：
+			<div id="modelselect">
+				<label>模式切换：
 				<select class="span5">
 						<option value="管理员模式">管理员模式</option>
 						<option value="主席模式">主席模式</option>
 						<option value="语音激励模式">语音激励模式</option>
 				</select>
-				</label>
-			</div>
-			<div class="span6" id="">
-				<label>主席选择：
-					<select class="span9">
-						{% for terminal in terminalList %}
-						<option>[会场{{terminal.name}}]{{terminal.terminalIP}}</option>
-						{% endfor %}
-
-					</select>
 				</label>
 			</div>
 			<div class="row-fluid" id="modelcontrol">
@@ -121,7 +111,6 @@
 <script type="text/javascript">
 $('document').ready(function(){
 	$('div#pill2').attr('class','accordion-body collapse in');
-	$("#modelselect option[value='{{meetInstance.operationModel}}']").attr("selected","selected");
 	function getmeetmemberinfo() {
 		$.get("/getinfolist/"+{{meetInstance.pk}}+"/",function(){
 
@@ -134,14 +123,18 @@ $('document').ready(function(){
 				var meetinfoJson= jQuery.parseJSON(info);
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
-					if (meetinfoJson.MemberState[i]==="0"||meetinfoJson.MemberState[i]==="1") {
-					
-						$('#connect'+meetinfoJson.pk[i].toString()).attr('class','connected');
-					  	$('#callmember'+meetinfoJson.pk[i].toString()).attr('class','callmemberforbid');
-					  	$('#hangup'+meetinfoJson.pk[i].toString()).attr('class','hangup1');
-					  	$('#silencemember'+meetinfoJson.pk[i].toString()).attr('class','silencemember0');
-					  	$('#shutup'+meetinfoJson.pk[i].toString()).attr('class','shutup0');
-					  	$('#double'+meetinfoJson.pk[i].toString()).attr('class','double0');
+					if ((meetinfoJson.MemberState[i]==="0"||meetinfoJson.MemberState[i]==="1")&&($('#silencemember'+meetinfoJson.pk[i].toString()).hasClass('silencememberforbid'))) {
+						  lightup(meetinfoJson.pk[i]);
+					// 	$('#connect'+meetinfoJson.pk[i].toString()).attr('class','connected');
+					//   	$('#callmember'+meetinfoJson.pk[i].toString()).attr('class','callmemberforbid');
+					//   	$('#hangup'+meetinfoJson.pk[i].toString()).attr('class','hangup1');
+					// }
+					// if ($('#silencemember'+meetinfoJson.pk[i].toString()).hasClass('silencememberforbid')) {
+					// 	$('#silencemember'+meetinfoJson.pk[i].toString()).attr('class','silencemember0');
+					// 	$('#shutup'+meetinfoJson.pk[i].toString()).attr('class','shutup0');
+					// 	$('#double'+meetinfoJson.pk[i].toString()).attr('class','double0');
+					// 	$('#see'+meetinfoJson.pk[i].toString()).attr('class','see0');
+					// 	$('#broadcast'+meetinfoJson.pk[i].toString()).attr('class','broadcast0');
 					}
 					// console.log(meetinfoJson.MemberState[i]);
 				}
@@ -160,13 +153,16 @@ function lightup(number) {
 	$('#silencemember'+number.toString()).attr('class','silencemember0');
 	$('#shutup'+number.toString()).attr('class','shutup0');
 	$('#double'+number.toString()).attr('class','double0');
+	$('#see'+number.toString()).attr('class','see0');
+	$('#broadcast'+number.toString()).attr('class','broadcast0');
 
 }
 function callmember(pk){
 	console.log(pk);
 	if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
+		$('#connect'+pk.toString()).attr('class','connecting');
 		$.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(results){
-		  	$('#connect'+pk.toString()).attr('class','connecting');
+		  	
 		  	var parsedJson = jQuery.parseJSON(results);
 		    console.log(parsedJson.MemberState);
 		    if(parsedJson.MemberState==="0"||parsedJson.MemberState==="1"){
@@ -178,32 +174,30 @@ function callmember(pk){
 
 function hangup(pk){
 	if ($('#hangup'+pk.toString()).hasClass('hangup1')) {
-		  console.log(pk);
-
-    $('#connect'+pk.toString()).attr('class','unconnect');
-  	$('#callmember'+pk.toString()).attr('class','callmember1');
-  	$('#hangup'+pk.toString()).attr('class','hangupforbid');
-  	$('#silencemember'+pk.toString()).attr('class','silencememberforbid');
-  	$('#shutup'+pk.toString()).attr('class','shutupforbid');
-  	$('#double'+pk.toString()).attr('class','doubleforbid');
-
-  $.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
-
-  });
-	}
-
-};
-function silencemember(pk){
-  console.log(pk);
-  	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){
-		$('#silencemember'+pk.toString()).attr('class','silencemember1');
-		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-
+		console.log(pk);
+		$.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+			$('#connect'+pk.toString()).attr('class','unconnect');
+			$('#callmember'+pk.toString()).attr('class','callmember1');
+			$('#hangup'+pk.toString()).attr('class','hangupforbid');
+			$('#silencemember'+pk.toString()).attr('class','silencememberforbid');
+			$('#shutup'+pk.toString()).attr('class','shutupforbid');
+			$('#double'+pk.toString()).attr('class','doubleforbid');
+			$('#see'+pk.toString()).attr('class','seeforbid');
+			$('#broadcast'+pk.toString()).attr('class','broadcastforbid');
 		});
 	}
-	else if($('#silencemember'+pk.toString()).hasClass('silencemember1')){
-		$('#silencemember'+pk.toString()).attr('class','silencemember0');
+};
+
+function silencemember(pk){
+  console.log(pk);
+  	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){	
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
+			$('#silencemember'+pk.toString()).attr('class','silencemember1');
+		});
+	}
+	else if($('#silencemember'+pk.toString()).hasClass('silencemember1')){	
 		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
+			$('#silencemember'+pk.toString()).attr('class','silencemember0');
 
 		});
 	}
@@ -211,59 +205,50 @@ function silencemember(pk){
 
 function shutup(pk){
   console.log(pk);
-    if($('#shutup'+pk.toString()).hasClass('shutup0')){
-		$('#shutup'+pk.toString()).attr('class','shutup1');
+    if($('#shutup'+pk.toString()).hasClass('shutup0')){		
 		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-
+			$('#shutup'+pk.toString()).attr('class','shutup1');
 		});
 	}
-	else if($('#shutup'+pk.toString()).hasClass('shutup1')){
-		$('#shutup'+pk.toString()).attr('class','shutup0');
+	else if($('#shutup'+pk.toString()).hasClass('shutup1')){		
 		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
-
+			$('#shutup'+pk.toString()).attr('class','shutup0');
 		});
 	}
-
 };
 
 function double(pk){
   console.log(pk);
-    if($('#double'+pk.toString()).hasClass('double0')){
-		$('#double'+pk.toString()).attr('class','double1');
+    if($('#double'+pk.toString()).hasClass('double0')){		
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-
+			$('#double'+pk.toString()).attr('class','double1');
 		});
 	}
-	else if($('#double'+pk.toString()).hasClass('double1')){
-		$('#double'+pk.toString()).attr('class','double0');
+	else if($('#double'+pk.toString()).hasClass('double1')){		
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
-
+			$('#double'+pk.toString()).attr('class','double0');
 		});
 	}
-
 };
 
 function see(pk){
-  console.log(pk);
-
+	if ($('#see'+pk.toString()).hasClass('see0')) {
 		$.get("/see/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-
-
-	});
-
-
+			$('.see1').attr('class','see0');
+			$('.broadcast1').attr('class','broadcast0');
+			$('#see'+pk.toString()).attr('class','see1');
+		});			
+	}
 };
 
 function broadcast(pk){
-  console.log(pk);
-
+	if ($('#broadcast'+pk.toString()).hasClass('broadcast0')) {
 		$.get("/broadcast/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-
+			$('.see1').attr('class','see0');
+			$('.broadcast1').attr('class','broadcast0');
+			$('#broadcast'+pk.toString()).attr('class','broadcast1');
 		});
-
-
-
-
+	}
 };
 </script>
 {% endblock %}

@@ -48,7 +48,7 @@ a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 }
 
 td.delete > a,td.edit> a ,td.control> a,
-td.callmember1>a,td.hangup1>a,td.silencemember1>a,td.shutup1>a,td.double1>a,
+td.callmember1>a,td.hangup1>a,td.silencemember1>a,td.shutup1>a,td.double1>a,td.see1>a,td.broadcast1>a,
 td.callmemberforbid>a,td.hangupforbid>a,td.silencememberforbid>a,td.shutupforbid>a,td.doubleforbid>a,td.seeforbid>a,td.broadcastforbid>a,
 td.silencemember0>a,td.shutup0>a,td.double0>a,td.see0>a,td.broadcast0>a,
 td.unconnect>button,td.connecting>button,td.connected>button{
@@ -59,11 +59,11 @@ td.unconnect>button,td.connecting>button,td.connected>button{
 }
 
 td.delete > a:hover,td.edit> a:hover ,td.control> a:hover,
-td.callmember1>a:hover,td.hangup1>a:hover,td.silencemember1>a:hover,td.shutup1>a:hover,td.double1>a:hover,
+td.callmember1>a:hover,td.hangup1>a:hover,td.silencemember1>a:hover,td.shutup1>a:hover,td.double1>a:hover,td.see1>a:hover,td.broadcast1>a:hover,
 td.callmemberforbid>a:hover,td.hangupforbid>a:hover,td.silencememberforbid>a:hover,td.shutupforbid>a:hover,td.doubleforbid>a:hover,td.seeforbid>a:hover,td.broadcastforbid>a:hover,
 td.silencemember0>a:hover,td.shutup0>a:hover,td.double0>a:hover,td.see0>a:hover,td.broadcast0>a:hover,
 td.delete > a:focus,td.edit> a:focus ,td.control> a:focus,
-td.callmember1>a:focus,td.hangup1>a:focus,td.silencemember1>a:focus,td.shutup1>a:focus,td.double1>a:focus,
+td.callmember1>a:focus,td.hangup1>a:focus,td.silencemember1>a:focus,td.shutup1>a:focus,td.double1>a:focus,td.see1>a:focus,td.broadcast1>a:focus,
 td.callmemberforbid>a:focus,td.hangupforbid>a:focus,td.silencememberforbid>a:focus,td.shutupforbid>a:focus,td.doubleforbid>a:focus,td.seeforbid>a:focus,td.broadcastforbid>a:focus,
 td.silencemember0>a:focus,td.shutup0>a:focus,td.double0>a:focus,td.see0>a:focus,td.broadcast0>a:focus{
 	background-color: transparent;
