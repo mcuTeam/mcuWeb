@@ -61,7 +61,8 @@ class meetingForm(ModelForm):
         ('语音激励模式','语音激励模式')
         ]
         self.fields['template'].choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()]
-        self.fields['mainMeetRoom'] = forms.ChoiceField(label="主会场*",choices=[(x.pk, x.name) for x in terminal.objects.all()],required=True)
+        self.fields['mainMeetRoom'] = forms.ChoiceField(label="主会场*",choices=[(x.pk, x.name) for x in terminal.objects.all()],required=True,\
+        error_messages = {"invalid_choice":"该终端不存在，请刷新页面"})
         self.fields['operationModel'] = forms.ChoiceField(label="操作模式*",choices=OPERATIONMODEL_CHOICES,initial=('操作员模式','操作员模式'),required=True)
         # template = forms.ChoiceField(label="会议模板*",choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()],initial=('1','1'),required=True)
     template = forms.ChoiceField(label="会议模板*",required=True)
@@ -70,11 +71,12 @@ class meetingForm(ModelForm):
         if not meetingTemplate.objects.filter(pk=int(templatePK)).exists():
             raise forms.ValidationError("模板不存在")
         return templatePK
-    def clean_mainmeetroom(self):
-        templatePK = self.cleaned_data['mainMeetRoom']
-        if not terminal.objects.filter(pk=int(templatePK)).exists():
+    def clean_mainMeetRoom(self):
+        print("clean_mainMeetRoom")
+        terminalPK = self.cleaned_data['mainMeetRoom']
+        if not terminal.objects.filter(pk=int(terminalPK)).exists():
             raise forms.ValidationError("该终端不存在")
-        return templatePK
+        return terminalPK
     def save(self,commit=True):
         meeting = super(meetingForm,self).save(commit=False)
         template = meetingTemplate.objects.get(pk=self.cleaned_data['template'])

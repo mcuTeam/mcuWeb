@@ -22,5 +22,9 @@ urlpatterns = [
 	url(r'^silencemember/(?P<meetpk>\d+)/(?P<pk>\d+)/(?P<mode>\d+)/$', fun_view.audioblockAjaxView),
 	url(r'^shutup/(?P<meetpk>\d+)/(?P<pk>\d+)/(?P<mode>\d+)/$', fun_view.silencememberAjaxView),
 	url(r'^double/(?P<meetpk>\d+)/(?P<pk>\d+)/(?P<mode>\d+)/$', fun_view.setsecondvideosrcAjaxView),
+
+	url(r'^see/(?P<meetpk>\d+)/(?P<pk>\d+)/(?P<mode>\d+)/$', fun_view.seeAjaxView),
+	url(r'^broadcast/(?P<meetpk>\d+)/(?P<pk>\d+)/(?P<mode>\d+)/$', fun_view.broadcastAjaxView),
+
 	url(r'^getmeetinfo/(?P<meetpk>\d+)/$', fun_view.getmeetinfoAjaxView),
 ]

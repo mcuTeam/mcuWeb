@@ -759,6 +759,79 @@ def setsecondvideosrcTask(meetname,membername,isSecond=0):
         tcpCliSock = None
         return None
 
+# 这个函数只有主会场用
+def setmemberidentityTask(meetname,membername):
+    global tcpCliSock
+
+    seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
+    cache.set('seqNumber',seqNumber+1)
+
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+
+    print("setmemberidentityTask task")
+    try:
+        msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
+            % (seqNumber,meetname,membername)).encode('utf8')
+        # print(msg)
+        tcpCliSock.send(msg)
+        time.sleep(0.1)
+        key = "SeqNumber:"+str(seqNumber)
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+
+                return data
+        print("setmemberidentityTask return None")
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("setmemberidentityTask BaseException: ",e)
+        tcpCliSock = None
+        return None
+
+#
+def setmemberidentity_compTask(meetname,lecturename,audiencename):
+    global tcpCliSock
+
+    seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
+    cache.set('seqNumber',seqNumber+1)
+
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+
+    print("setmemberidentity_compTask task")
+    try:
+        msg = ("SETMEMBERIDENTITY_COMP\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nLectureName:%s\r\nAudienceName:%s\r\n\r\n" \
+            % (seqNumber,meetname,lecturename,audiencename)).encode('utf8')
+        tcpCliSock.send(msg)
+        time.sleep(0.1)
+        key = "SeqNumber:"+str(seqNumber)
+        for i in range(0,5):
+            data = cache.get(key)
+            if data is None:
+                time.sleep(0.1)
+                continue
+            else:
+                return data
+        print("setmemberidentity_compTask return None")
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("setmemberidentity_compTask BaseException: ",e)
+        tcpCliSock = None
+        return None
 # ------------------------------------------------------------------------
 
 def syncMeetingListAndDB(result):
@@ -1049,7 +1122,24 @@ def callmemberAjaxView(request,meetpk,pk):
             # print("callmemberTask return %s" % retDict['RetCode'])
             return HttpResponse(json.dumps({'msgType':"error",'msg':("呼叫终端过程中MCU返回%s！" % retDict['RetCode'])}))
         # time.sleep(0.5)
+        # 设为主会场
 
+        if pk == meeting.objects.get(pk=meetpk).mainMeetRoom:
+            print("这是大哥！！")
+            try:
+                result = setmemberidentityTask(meetname,membername)
+                # print("callmemberTask result is: \n",result)
+            except BaseException as e:
+                print("catch setmemberidentityTask error",e)
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"设置主会场过程中发生通信错误！"}))
+            if result is None:
+                print("callmemberTask return None")
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"设置主会场过程中MCU返回None！"}))
+            retDict = returnCode2Dict(result)
+            if retDict['RetCode'] != "200":
+                # print("callmemberTask return %s" % retDict['RetCode'])
+                return HttpResponse(json.dumps({'msgType':"error",'msg':("设置主会场过程中MCU返回%s！" % retDict['RetCode'])}))
+        print(pk,"----------",meeting.objects.get(pk=meetpk).mainMeetRoom)
         # getmemberinfoTask
         result = getmemberinfoTask(meetname,membername)
         # print("getmemberinfoTask return: ",result)
@@ -1301,6 +1391,111 @@ def setsecondvideosrcAjaxView(request,meetpk,pk,mode):
             # print("getmeetinfo return %s" % retDict['RetCode'])
             return HttpResponse(json.dumps({'msgType':"error",'msg':("设置双流过程中MCU返回%s！" % retDict['RetCode'])}))
         return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+
+@login_required
+def seeAjaxView(request,meetpk,pk,mode):
+    if request.is_ajax():
+        print("recv seeAjaxView ajax request")
+        result=""
+        if not meeting.objects.filter(pk=meetpk).exists():
+            print("该会议不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
+        if not terminal.objects.filter(pk=pk).exists():
+            print("该终端不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该终端不存在！"}))
+        meetname = meeting.objects.get(pk=meetpk).name
+        membername = terminal.objects.get(pk=pk).name
+        memberip = terminal.objects.get(pk=pk).terminalIP
+        try:
+            mainMeetRoomPK = meeting.objects.get(pk=meetpk).mainMeetRoom
+            if not terminal.objects.filter(pk=mainMeetRoomPK).exists():
+                print("主会场不存在")
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"主会场不存在！"}))
+            mainMeetRoomName = terminal.objects.get(pk=mainMeetRoomPK).name
+
+
+            # 第二个参数是谁看被查看的对象，第三个参数是被看的是谁
+            result = setmemberidentity_compTask(meetname,mainMeetRoomName,membername)
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                # # print(notifyList)
+                cache.delete('notify')
+            if result is None:
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"设置查看过程中MCU返回None！"}))
+            # print("mutememberTask return: ",result)
+            result = getmemberinfoTask(meetname,membername)
+
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                pass
+                # print(notifyList)
+                # cache.delete('notify')
+            if result is None:
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"设置查看过程中MCU返回None！"}))
+            # print("getmemberinfoTask return: ",result)
+            retcode = returnCode2Dict(result)
+            retcode["pk"] = pk
+            return HttpResponse(json.dumps(retcode))
+        except BaseException as e:
+            print("catch seeAjaxView error",e)
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"设置查看过程中发生通信错误！"}))
+        if result is None:
+            print("getmeetinfo return None")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"设置查看过程中MCU返回None！"}))
+        retDict = returnCode2Dict(result)
+        if retDict['RetCode'] != "200":
+            # print("getmeetinfo return %s" % retDict['RetCode'])
+            return HttpResponse(json.dumps({'msgType':"error",'msg':("设置查看过程中MCU返回%s！" % retDict['RetCode'])}))
+        return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+
+
+@login_required
+def broadcastAjaxView(request,meetpk,pk,mode):
+    if request.is_ajax():
+        print("recv broadcastAjaxView ajax request")
+        result=""
+        if not meeting.objects.filter(pk=meetpk).exists():
+            print("该会议不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
+        if not terminal.objects.filter(pk=pk).exists():
+            print("该终端不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该终端不存在！"}))
+        meetname = meeting.objects.get(pk=meetpk).name
+        membername = terminal.objects.get(pk=pk).name
+        memberip = terminal.objects.get(pk=pk).terminalIP
+        try:
+            mainMeetRoomPK = meeting.objects.get(pk=meetpk).mainMeetRoom
+            if not terminal.objects.filter(pk=mainMeetRoomPK).exists():
+                print("主会场不存在")
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"主会场不存在！"}))
+            mainMeetRoomName = terminal.objects.get(pk=mainMeetRoomPK).name
+
+
+            # 第二个参数是谁看被查看的对象，第三个参数是被看的是谁
+            result = setmemberidentity_compTask(meetname,membername,mainMeetRoomName)
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                # # print(notifyList)
+                cache.delete('notify')
+            if result is None:
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"设置广播过程中MCU返回None！"}))
+            # print("mutememberTask return: ",result)
+            result = getmemberinfoTask(meetname,membername)
+
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                pass
+                # print(notifyList)
+                # cache.delete('notify')
+            if result is None:
+                return HttpResponse(json.dumps({'msgType':"error",'msg':"设置广播过程中MCU返回None！"}))
+            # print("getmemberinfoTask return: ",result)
+            retcode = returnCode2Dict(result)
+            retcode["pk"] = pk
+            return HttpResponse(json.dumps(retcode))
+        except BaseException as e:
+            print("catch broadcastAjaxView error",e)
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"设置广播过程中发生通信错误！"}))
 
 
 # ---------------------------------------------------------------------------
