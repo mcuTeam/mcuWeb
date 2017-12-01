@@ -122,6 +122,12 @@
 $('document').ready(function(){
 	$('div#pill2').attr('class','accordion-body collapse in');
 	$("#modelselect option[value='{{meetInstance.operationModel}}']").attr("selected","selected");
+	function getmeetmemberinfo() {
+		$.get("/getinfolist/"+{{meetInstance.pk}}+"/",function(){
+
+		});
+	}
+	getmeetmemberinfo();
 	$(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
@@ -129,13 +135,13 @@ $('document').ready(function(){
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 					if (meetinfoJson.MemberState[i]==="0"||meetinfoJson.MemberState[i]==="1") {
-						lightup(meetinfoJson.pk[i]);
-						// $('#connect'+meetinfoJson.pk[i].toString()).attr('class','connected');
-					 //  	$('#callmember'+meetinfoJson.pk[i].toString()).attr('class','callmemberforbid');
-					 //  	$('#hangup'+meetinfoJson.pk[i].toString()).attr('class','hangup1');
-					 //  	$('#silencemember'+meetinfoJson.pk[i].toString()).attr('class','silencemember0');
-					 //  	$('#shutup'+meetinfoJson.pk[i].toString()).attr('class','shutup0');
-					 //  	$('#double'+meetinfoJson.pk[i].toString()).attr('class','double0');
+					
+						$('#connect'+meetinfoJson.pk[i].toString()).attr('class','connected');
+					  	$('#callmember'+meetinfoJson.pk[i].toString()).attr('class','callmemberforbid');
+					  	$('#hangup'+meetinfoJson.pk[i].toString()).attr('class','hangup1');
+					  	$('#silencemember'+meetinfoJson.pk[i].toString()).attr('class','silencemember0');
+					  	$('#shutup'+meetinfoJson.pk[i].toString()).attr('class','shutup0');
+					  	$('#double'+meetinfoJson.pk[i].toString()).attr('class','double0');
 					}
 					// console.log(meetinfoJson.MemberState[i]);
 				}
@@ -143,7 +149,6 @@ $('document').ready(function(){
 
 			});
 		}
-		getmeetinfo();
 		setInterval(getmeetinfo,2000);// 2秒状态轮询
 	});
 });
