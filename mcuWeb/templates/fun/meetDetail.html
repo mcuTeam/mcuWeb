@@ -139,7 +139,7 @@ $('document').ready(function(){
 					}
 					// console.log(meetinfoJson.MemberState[i]);
 				}
-				
+
 
 			});
 		}
@@ -243,7 +243,7 @@ function see(pk){
 
 		$.get("/see/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
 
-		
+
 	});
 
 
@@ -252,12 +252,12 @@ function see(pk){
 function broadcast(pk){
   console.log(pk);
 
-		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
+		$.get("/broadcast/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
 
 		});
-	
 
-	
+
+
 
 };
 </script>
