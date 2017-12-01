@@ -1,4 +1,4 @@
-.span8{
+.span8,.span10{
 	color: #dadada;
 	font-size: 15px;
 	margin-top: 50px; 
@@ -45,6 +45,12 @@ a#nav2,a#nav2:focus,a#nav2:active,a#nav2:visited{
 a#meetinglist,a#meetinglist:focus,a#meetinglist:active,a#meetinglist:visited{
 	background-color: transparent;
 	color: rgb(255,153,0);
+}
+
+tr.main{
+	background-color: rgb(255,204,0);
+	color: black;
+
 }
 
 td.delete > a,td.edit> a ,td.control> a,

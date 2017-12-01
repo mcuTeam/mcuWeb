@@ -17,7 +17,7 @@
 </div>
 <!-- 会议信息显示 -->
 <div class="row-fluid">
-	<div class="span8 offset2" id="meetinfo">
+	<div class="span10 offset1" id="meetinfo">
 		<div class="row-fluid">
 			<div class="span4">
 				<p><strong>会议名称：</strong>{{meetInstance.name}}</p>
@@ -32,7 +32,7 @@
 			<div class="span4">
 				<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
 				<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
-				<p><strong>主会场：</strong>会场{{meetInstance.mainMeetRoom}}</p>
+				<p><strong>主会场：</strong></p>
 
 			</div>
 		</div>
@@ -40,7 +40,7 @@
 </div>
 <!-- 按钮框体 -->
 <div class="row-fluid">
-	<div class="span8 offset2" id="buttonbox">
+	<div class="span10 offset1" id="buttonbox">
 		<div class="row-fluid" >
 			<div id="modelselect">
 				<label>模式切换：
@@ -65,7 +65,7 @@
 
 <!-- 列表显示 -->
 <div class="row-fluid">
-	<div class="span8 offset2">
+	<div class="span10 offset1">
 		<table class="table table-condensed">
 		  <thead>
 		    <tr>
@@ -84,7 +84,7 @@
 		  </thead>
 		  {% for terminal in terminalList %}
 		  <tbody>
-		    <tr>
+		    <tr id="tr{{terminal.pk}}">
 		      <td>{{ forloop.counter }}</td>
 		      <td>会场{{terminal.name}}</td>
 		      <td>{{terminal.terminalIP}}</td>
@@ -98,6 +98,12 @@
 		      <td class="broadcastforbid" id="broadcast{{terminal.pk}}"><a class="btn" onclick="broadcast({{terminal.pk}})" > </a></td>
 		    </tr>
 		  </tbody>
+		  <script type="text/javascript">
+		  	if({{meetInstance.mainMeetRoom}}==={{terminal.pk}}){
+		  		$("#tr{{terminal.pk}}").addClass('main');
+		  	}
+		  </script>
+
 		  {% endfor %}
 		</table>
 		<a type="button" class="btn" href="/meetinglist">返回</a>
@@ -221,6 +227,7 @@ function double(pk){
   console.log(pk);
     if($('#double'+pk.toString()).hasClass('double0')){		
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
+			$('.double1').attr('class','double0');
 			$('#double'+pk.toString()).attr('class','double1');
 		});
 	}
