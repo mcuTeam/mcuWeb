@@ -61,7 +61,7 @@
 				<label>主席选择：
 					<select class="span9">
 						{% for terminal in terminalList %}
-						<option>[{{terminal.name}}]{{terminal.terminalIP}}</option>
+						<option>[会场{{terminal.name}}]{{terminal.terminalIP}}</option>
 						{% endfor %}
 
 					</select>
@@ -80,8 +80,8 @@
 		  <thead>
 		    <tr>
 		      <th>#</th>
-		      <th>终端名称</th>
-		      <th>终端IP:</th>
+		      <th>会场名称</th>
+		      <th>会场IP:</th>
 		      <th>连接状态</th>
 		      <th>连接</th>
 		      <th>断开</th>
@@ -96,7 +96,7 @@
 		  <tbody>
 		    <tr>
 		      <td>{{ forloop.counter }}</td>
-		      <td>{{terminal.name}}</td>
+		      <td>会场{{terminal.name}}</td>
 		      <td>{{terminal.terminalIP}}</td>
 		      <td class="unconnect" id="connect{{terminal.pk}}"><button></button></td>
 		      <td class="callmember1" id="callmember{{terminal.pk}}"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
