@@ -32,6 +32,7 @@
 			<div class="span4">
 				<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
 				<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
+				<p><strong>主会场：</strong>会场{{meetInstance.mainMeetRoom}}</p>
 
 			</div>
 		</div>
@@ -40,14 +41,7 @@
 <!-- 按钮框体 -->
 <div class="row-fluid">
 	<div class="span8 offset2" id="buttonbox">
-		<div class="row-fluid">
-			<div class="span12" id="">
-				<a class="btn btn-info">全部连接</a>
-				<a class="btn btn-info">全部断开</a>
-
-			</div>
-		</div>
-		<div class="row-fluid" id="modelcontrol">
+		<div class="row-fluid" >
 			<div class="span6" id="modelselect">
 				<label>模式选择：
 				<select class="span5">
@@ -66,6 +60,12 @@
 
 					</select>
 				</label>
+			</div>
+			<div class="row-fluid" id="modelcontrol">
+				<div class="span12" id="">
+					<a class="btn btn-info">全部连接</a>
+					<a class="btn btn-info">全部断开</a>
+				</div>
 			</div>
 		</div>
 
