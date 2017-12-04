@@ -57,8 +57,8 @@ class meetingForm(ModelForm):
         super(meetingForm, self).__init__(*args, **kwargs)
         OPERATIONMODEL_CHOICES=[
         ('操作员模式','操作员模式'),
-        ('主席模式','主席模式'),
-        ('语音激励模式','语音激励模式')
+        # ('主席模式','主席模式'),
+        # ('语音激励模式','语音激励模式')
         ]
         self.fields['template'].choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()]
         self.fields['mainMeetRoom'] = forms.ChoiceField(label="主会场*",choices=[(x.pk, x.name) for x in terminal.objects.all()],required=True,\

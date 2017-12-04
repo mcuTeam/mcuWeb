@@ -843,10 +843,7 @@ def syncMeetingListAndDB(result):
         if  filtered.exists():
             print("esists!")
             filtered.update(activeInMcu=True)
-        else:
-            meeting(name=result['MeetName'][index],meetcode=result['MeetAlias'][index],remark = result['MeetRemark'][index]).save()
-        # else:
-        #     filtered.update(remark = result['MeetRemark'][index])
+    meeting.objects.filter(activeInMcu=False).delete()
 
 def analysisMeetinfo(retCode):
 	if type(retCode) is not str:
@@ -962,11 +959,34 @@ def delete_meetingView(request,meetpk):
         meetinglist = meeting.objects.all()
         return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
     else:
-        meeting.objects.get(pk=meetpk).delete()
-        msgType = "success"
-        msg = "删除成功"
-        meetinglist = meeting.objects.all()
-        return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+        meet = meeting.objects.get(pk=meetpk)
+        meetname = meet.name
+
+        try:
+            result = deletemeetTask(meetname)
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                # # print(notifyList)
+                cache.delete('notify')
+            if result is None:
+                meeting.objects.get(pk=meetpk).delete()
+                msgType = "error"
+                msg = "删除失败"
+                meetinglist = meeting.objects.all()
+                return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+            meeting.objects.get(pk=meetpk).delete()
+            msgType = "success"
+            msg = "删除成功"
+            meetinglist = meeting.objects.all()
+            return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+        except BaseException as e:
+            print("delete_meetingView error:",e)
+
+            meeting.objects.get(pk=meetpk).delete()
+            msgType = "error"
+            msg = "删除失败"
+            meetinglist = meeting.objects.all()
+            return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
 
 
 @login_required
@@ -1139,7 +1159,7 @@ def callmemberAjaxView(request,meetpk,pk):
             if retDict['RetCode'] != "200":
                 # print("callmemberTask return %s" % retDict['RetCode'])
                 return HttpResponse(json.dumps({'msgType':"error",'msg':("设置主会场过程中MCU返回%s！" % retDict['RetCode'])}))
-        print(pk,"----------",meeting.objects.get(pk=meetpk).mainMeetRoom)
+        print(pk,"is pk----------mainmeetroom is ",meeting.objects.get(pk=meetpk).mainMeetRoom)
         # getmemberinfoTask
         result = getmemberinfoTask(meetname,membername)
         # print("getmemberinfoTask return: ",result)
