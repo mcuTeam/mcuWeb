@@ -122,15 +122,16 @@ $('document').ready(function(){
 
 		});
 	}
-	getmeetmemberinfo();
+	
 	$(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
-					if ((meetinfoJson.MemberState[i]==="0"||meetinfoJson.MemberState[i]==="1")&&($('#silencemember'+meetinfoJson.pk[i].toString()).hasClass('silencememberforbid'))) {
-						  lightup(meetinfoJson.pk[i]);
+					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i]);
+					// if ((meetinfoJson.MemberState[i]==="0"||meetinfoJson.MemberState[i]==="1")&&($('#silencemember'+meetinfoJson.pk[i].toString()).hasClass('silencememberforbid'))) {
+					// 	  lightup(meetinfoJson.pk[i]);
 					// 	$('#connect'+meetinfoJson.pk[i].toString()).attr('class','connected');
 					//   	$('#callmember'+meetinfoJson.pk[i].toString()).attr('class','callmemberforbid');
 					//   	$('#hangup'+meetinfoJson.pk[i].toString()).attr('class','hangup1');
@@ -143,24 +144,60 @@ $('document').ready(function(){
 					// 	$('#broadcast'+meetinfoJson.pk[i].toString()).attr('class','broadcast0');
 					}
 					// console.log(meetinfoJson.MemberState[i]);
-				}
+				
 
 
 			});
 		}
+		getmeetinfo();
 		setInterval(getmeetinfo,2000);// 2秒状态轮询
 	});
 });
 
-function lightup(number) {
-	$('#connect'+number.toString()).attr('class','connected');
-	$('#callmember'+number.toString()).attr('class','callmemberforbid');
-	$('#hangup'+number.toString()).attr('class','hangup1');
-	$('#silencemember'+number.toString()).attr('class','silencemember0');
-	$('#shutup'+number.toString()).attr('class','shutup0');
-	$('#double'+number.toString()).attr('class','double0');
-	$('#see'+number.toString()).attr('class','see0');
-	$('#broadcast'+number.toString()).attr('class','broadcast0');
+// function lightup(number) {
+// 	$('#connect'+number.toString()).attr('class','connected');
+// 	$('#callmember'+number.toString()).attr('class','callmemberforbid');
+// 	$('#hangup'+number.toString()).attr('class','hangup1');
+// 	$('#silencemember'+number.toString()).attr('class','silencemember0');
+// 	$('#shutup'+number.toString()).attr('class','shutup0');
+// 	$('#double'+number.toString()).attr('class','double0');
+// 	$('#see'+number.toString()).attr('class','see0');
+// 	$('#broadcast'+number.toString()).attr('class','broadcast0');
+
+// }
+
+function fresh_icon(number,state,blocking,muting,identity){
+	if (state==="0"||state==="1") {                //此处暂时这样，后面需要修改0,1的不同状态
+		$('#connect'+number.toString()).attr('class','connected');
+		$('#callmember'+number.toString()).attr('class','callmemberforbid');
+		$('#hangup'+number.toString()).attr('class','hangup1');
+		if ($('#double'+number.toString()).hasClass('doubleforbid')) {
+			$('#double'+number.toString()).attr('class','double0');
+		}
+
+	}
+	if (blocking==="0") {                          //block是静音，mute是闭麦
+		$('#silencemember'+number.toString()).attr('class','silencemember0');
+	}
+	else if (blocking==="1") {
+		$('#silencemember'+number.toString()).attr('class','silencemember1');
+	}
+	if (muting==="0") {
+		$('#shutup'+number.toString()).attr('class','shutup0');
+	}
+	else if (muting==="1") {
+		$('#shutup'+number.toString()).attr('class','shutup1');
+	}
+	if (identity==="0") {	                          //0广播，1查看，2普通
+		$('#broadcast'+number.toString()).attr('class','broadcast1');
+	}
+	else if (identity==="1") {	                          //0广播，1查看，2普通
+		$('#see'+number.toString()).attr('class','see1');
+	}	
+	else if (identity==="2") {	                          //0广播，1查看，2普通
+		$('#broadcast'+number.toString()).attr('class','broadcast0');
+		$('#see'+number.toString()).attr('class','see0');
+	}
 
 }
 function callmember(pk){
@@ -168,12 +205,12 @@ function callmember(pk){
 	if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
 		$('#connect'+pk.toString()).attr('class','connecting');
 		$.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(results){
-		  	
 		  	var parsedJson = jQuery.parseJSON(results);
-		    console.log(parsedJson.MemberState);
-		    if(parsedJson.MemberState==="0"||parsedJson.MemberState==="1"){
-		    	lightup(pk);
-		    }
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+		    // $('#double'+pk.toString()).attr('class','double0');
+		    // if(parsedJson.MemberState==="0"||parsedJson.MemberState==="1"){
+		    // 	lightup(pk);
+		    // }
 		});
 	}
 };
@@ -197,13 +234,17 @@ function hangup(pk){
 function silencemember(pk){
   console.log(pk);
   	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){	
-		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-			$('#silencemember'+pk.toString()).attr('class','silencemember1');
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+			// $('#silencemember'+pk.toString()).attr('class','silencemember1');
+			var parsedJson = jQuery.parseJSON(results);
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
 	}
 	else if($('#silencemember'+pk.toString()).hasClass('silencemember1')){	
-		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
-			$('#silencemember'+pk.toString()).attr('class','silencemember0');
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(results){
+			// $('#silencemember'+pk.toString()).attr('class','silencemember0');
+		  	var parsedJson = jQuery.parseJSON(results);
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 
 		});
 	}
@@ -212,13 +253,17 @@ function silencemember(pk){
 function shutup(pk){
   console.log(pk);
     if($('#shutup'+pk.toString()).hasClass('shutup0')){		
-		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-			$('#shutup'+pk.toString()).attr('class','shutup1');
+		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+			// $('#shutup'+pk.toString()).attr('class','shutup1');
+		  	var parsedJson = jQuery.parseJSON(results);
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
 	}
 	else if($('#shutup'+pk.toString()).hasClass('shutup1')){		
-		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
-			$('#shutup'+pk.toString()).attr('class','shutup0');
+		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(results){
+			// $('#shutup'+pk.toString()).attr('class','shutup0');
+		  	var parsedJson = jQuery.parseJSON(results);
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
 	}
 };
@@ -226,34 +271,42 @@ function shutup(pk){
 function double(pk){
   console.log(pk);
     if($('#double'+pk.toString()).hasClass('double0')){		
-		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
 			$('.double1').attr('class','double0');
 			$('#double'+pk.toString()).attr('class','double1');
+			var parsedJson = jQuery.parseJSON(results);
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
 	}
 	else if($('#double'+pk.toString()).hasClass('double1')){		
-		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(){
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(results){
 			$('#double'+pk.toString()).attr('class','double0');
+		  	var parsedJson = jQuery.parseJSON(results);
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
 	}
 };
 
 function see(pk){
 	if ($('#see'+pk.toString()).hasClass('see0')) {
-		$.get("/see/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-			$('.see1').attr('class','see0');
-			$('.broadcast1').attr('class','broadcast0');
-			$('#see'+pk.toString()).attr('class','see1');
+		$.get("/see/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+			// $('.see1').attr('class','see0');
+			// $('.broadcast1').attr('class','broadcast0');
+			// $('#see'+pk.toString()).attr('class','see1');
+		  	var parsedJson = jQuery.parseJSON(results);
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});			
 	}
 };
 
 function broadcast(pk){
 	if ($('#broadcast'+pk.toString()).hasClass('broadcast0')) {
-		$.get("/broadcast/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(){
-			$('.see1').attr('class','see0');
-			$('.broadcast1').attr('class','broadcast0');
-			$('#broadcast'+pk.toString()).attr('class','broadcast1');
+		$.get("/broadcast/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+			// $('.see1').attr('class','see0');
+			// $('.broadcast1').attr('class','broadcast0');
+			// $('#broadcast'+pk.toString()).attr('class','broadcast1');
+			var parsedJson = jQuery.parseJSON(results);
+		    fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
 	}
 };
