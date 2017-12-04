@@ -4,7 +4,42 @@
 	margin-top: 50px; 
 }
 
+div#modelcover{
 
+	position: absolute; 
+	border-radius: 10px;
+
+	width: 60%; 
+	height: 80%; 
+	background: rgba(50,50,50,0.5);
+	z-index: 6;
+}
+
+div#title{
+	padding-top: 10px;
+	text-align: center;
+	font-size: 24px;
+	margin-top:10px; 
+	position: absolute; 
+	border-radius: 10px;
+	width: 60%; 
+	height: 35px; 
+	background: rgba(50,50,50,0.5);
+	z-index: 6;
+}
+
+div#title1{
+	padding-top: 10px;
+	text-align: center;
+	font-size: 24px;
+	margin-top:10px; 
+	position: absolute; 
+	border-radius: 10px;
+	width: 60%; 
+	height: 35px; 
+	background: rgba(50,50,50,0.5);
+	z-index: 5;
+}
 
 div#meetinfo{
 	padding-top: 10px;
