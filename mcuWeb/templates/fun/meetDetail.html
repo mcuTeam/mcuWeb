@@ -172,7 +172,7 @@ $('document').ready(function(){
 function modelfun(){
 	var num = $("#modelmenu").val();
 	modellayout();
-		$.get("/model/"+ num+"/",function(){
+		$.get("/model/"+{{meetInstance.pk}}+"/"+ num+"/",function(){
 
 		});
 }
