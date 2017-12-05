@@ -25,3 +25,23 @@ a#templatelist,a#templatelist:focus,a#templatelist:active,a#templatelist:visited
 	background-color: transparent;
 	color: rgb(255,153,0)
 }
+
+td.delete>a,td.edit>a{
+	padding: 0px;
+    border: 0px;
+	height: 20px;
+	width: 20px;
+}
+
+td.delete > a:hover,td.edit> a:hover ,td.delete > a:focus,td.edit> a:focus {
+	background-color: transparent;
+	background-position:0px;
+}
+
+td.delete>a{
+	background: url(../images/delete.png) center no-repeat;
+}
+
+td.edit>a{
+	background: url(../images/edit.png) center no-repeat;
+}

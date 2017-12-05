@@ -44,6 +44,7 @@
 						<th>视频帧率:</th>
 						<th>视频分辨率:</th>
 						<th>音频协议:</th>
+						<th>删除</th>
 					</tr>
 				</thead>
 			{% for template in templatelist %}
@@ -56,6 +57,7 @@
 							<td>{{template.videoFrameRate}}</td>
 							<td>{{template.capalityname}}</td>
 							<td>{{template.audioProtocol}}</td>
+							<td class="delete"><a class="btn"> </a></td>
 					</tr>
 				</tbody>
 			{% endfor %}
