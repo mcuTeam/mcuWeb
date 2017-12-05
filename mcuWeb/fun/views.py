@@ -1526,13 +1526,28 @@ def broadcastAjaxView(request,meetpk,pk,mode):
 # ---------------------------------------------------------------------------
 
 @login_required
-def setoperationmodeAjaxView(request,mode):
+def setoperationmodeAjaxView(request,meetpk,mode):
     if request.is_ajax():
-        print(type(mode))
+        if not meeting.objects.filter(pk=meetpk).exists():
+            print("该会议不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
+        meetInstance = meeting.objects.get(pk=meetpk)
+        meetname = meetInstance.name
         if mode in ['0','1','2']:
             print("set operation model: ",mode)
             if mode == '0':
-                pass
+                meetInstance.operationModel = "操作员模式"
+                meetInstance.save()
+            if mode == '1':
+                meetInstance.operationModel = "主席模式"
+                meetInstance.save()
+            if mode == '2':
+                meetInstance.operationModel = "语音激励模式"
+                meetInstance.save()
+            return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
+        else:
+            meetInstance.operationModel = "操作员模式"
+            meetInstance.save()
             return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
 
 @login_required
