@@ -46,9 +46,9 @@
 				<form class="form-inline">
 					<label>模式切换：</label>
 					<select class="span3" id="modelmenu">
-							<option value="0">管理员模式</option>
-							<option value="1">主席模式</option>
-							<option value="2">语音激励模式</option>
+							<option class="操作员模式" value="0">操作员模式</option>
+							<option class="主席模式" value="1">主席模式</option>
+							<option class="语音激励模式" value="2">语音激励模式</option>
 					</select>
 					<a class="btn btn-info" onclick="modelfun()">确定</a>
 				</form>
@@ -123,6 +123,7 @@
 {% block js %}
 <script type="text/javascript">
 $('document').ready(function(){
+	$('#modelmenu').attr('class','{{meetInstance.operationModel}');
 	modellayout();
 	$('div#pill2').attr('class','accordion-body collapse in');
 	function getmeetmemberinfo() {
@@ -171,8 +172,10 @@ $('document').ready(function(){
 // }
 function modelfun(){
 	var num = $("#modelmenu").val();
-	modellayout();
+	console.log('{{meetInstance.operationModel}}');
+	
 		$.get("/model/"+{{meetInstance.pk}}+"/"+ num+"/",function(){
+			modellayout();
 
 		});
 }
