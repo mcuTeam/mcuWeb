@@ -125,11 +125,6 @@ def setmeetgeneraparaTask(meetName="",meetMode="0",meetType="0"):
     print("running task")
     global tcpCliSock
 
-
-
-
-
-
     seqNumber = cache.get('seqNumber')
     if seqNumber is None:
         seqNumber = 0
@@ -1148,7 +1143,6 @@ def callmemberAjaxView(request,meetpk,pk):
             print("这是大哥！！")
             try:
                 result = setmemberidentityTask(meetname,membername)
-                # print("callmemberTask result is: \n",result)
             except BaseException as e:
                 print("catch setmemberidentityTask error",e)
                 return HttpResponse(json.dumps({'msgType':"error",'msg':"设置主会场过程中发生通信错误！"}))
@@ -1182,13 +1176,24 @@ def getmeetinfoAjaxView(request,meetpk):
             return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
 
         meetname = meeting.objects.get(pk=meetpk).name
+        mainMeetRoom = meeting.objects.get(pk=meetpk).mainMeetRoom
+        if not terminal.objects.filter(pk=mainMeetRoom).exists():
+            print("该会议不存在！")
+            mainMeetRoomName = None
+        else:
+            mainMeetRoomName = terminal.objects.get(pk=mainMeetRoom).name
         # getmeetinfo
         try:
 
             result = getmeetinfoTask(meetname)
             notifyList = cache.get('notify')
             if notifyList is not None:
-                print(notifyList)
+                # print(notifyList)
+                for notify in notifyList:
+                    if 'RESP_NOTIFYONLINE' in  notify:
+                        if ('MeetName:%s' % meetname) in notify and ('MemberName:%s' % mainMeetRoomName) in notify:
+                            print("mainMeetRoom online!!!!!!!!!")
+                            setmemberidentityTask(meetname,mainMeetRoomName)
                 cache.delete('notify')
             # print("getmeetinfo result is: \n",result)
             if result is not None:

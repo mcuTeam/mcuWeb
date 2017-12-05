@@ -32,7 +32,7 @@
 			<div class="span4">
 				<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
 				<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
-				<p><strong>主会场：</strong></p>
+				<p><strong>主会场：</strong>{{meetInstance.mainMeetRoomName}}</p>
 
 			</div>
 		</div>
@@ -192,8 +192,8 @@ function modellayout(){
 	else{
 		$('#modelcover').show();
 		$('#title').hide();
-		$('#title1').show();		
-	} 
+		$('#title1').show();
+	}
 }
 
 function fresh_icon(number,state,blocking,muting,identity){
@@ -209,7 +209,7 @@ function fresh_icon(number,state,blocking,muting,identity){
 
 
 	}
-	else if (state==="1") {                
+	else if (state==="1") {
 			$('#connect'+number.toString()).attr('class','connected');
 			$('#callmember'+number.toString()).attr('class','callmemberforbid');
 			$('#hangup'+number.toString()).attr('class','hangup1');

@@ -90,6 +90,9 @@ class meetingForm(ModelForm):
         meeting.dualFormat = template.dualFormat
         meeting.dualBandWidth = template.dualBandWidth
 
+        terminalInstance = terminal.objects.get(pk=self.cleaned_data['mainMeetRoom'])
+        meeting.mainMeetRoomName = terminalInstance.name
+
         if commit:
             meeting.save()
         return meeting
