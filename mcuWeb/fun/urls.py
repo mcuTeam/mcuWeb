@@ -27,4 +27,6 @@ urlpatterns = [
 	url(r'^broadcast/(?P<meetpk>\d+)/(?P<pk>\d+)/(?P<mode>\d+)/$', fun_view.broadcastAjaxView),
 
 	url(r'^getmeetinfo/(?P<meetpk>\d+)/$', fun_view.getmeetinfoAjaxView),
+
+	url(r'^model/(?P<meetpk>\d+)/(?P<mode>\d+)/$', fun_view.setoperationmodeAjaxView),
 ]
