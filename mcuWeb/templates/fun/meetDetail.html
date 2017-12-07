@@ -128,7 +128,6 @@ $('document').ready(function(){
 	$('div#pill2').attr('class','accordion-body collapse in');
 	function getmeetmemberinfo() {
 		$.get("/getinfolist/"+{{meetInstance.pk}}+"/",function(){
-
 		});
 	}
 
@@ -139,18 +138,6 @@ $('document').ready(function(){
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i]);
-					// if ((meetinfoJson.MemberState[i]==="0"||meetinfoJson.MemberState[i]==="1")&&($('#silencemember'+meetinfoJson.pk[i].toString()).hasClass('silencememberforbid'))) {
-					// 	  lightup(meetinfoJson.pk[i]);
-					// 	$('#connect'+meetinfoJson.pk[i].toString()).attr('class','connected');
-					//   	$('#callmember'+meetinfoJson.pk[i].toString()).attr('class','callmemberforbid');
-					//   	$('#hangup'+meetinfoJson.pk[i].toString()).attr('class','hangup1');
-					// }
-					// if ($('#silencemember'+meetinfoJson.pk[i].toString()).hasClass('silencememberforbid')) {
-					// 	$('#silencemember'+meetinfoJson.pk[i].toString()).attr('class','silencemember0');
-					// 	$('#shutup'+meetinfoJson.pk[i].toString()).attr('class','shutup0');
-					// 	$('#double'+meetinfoJson.pk[i].toString()).attr('class','double0');
-					// 	$('#see'+meetinfoJson.pk[i].toString()).attr('class','see0');
-					// 	$('#broadcast'+meetinfoJson.pk[i].toString()).attr('class','broadcast0');
 				}
 			});
 		}
@@ -159,25 +146,12 @@ $('document').ready(function(){
 	});
 });
 
-// function lightup(number) {
-// 	$('#connect'+number.toString()).attr('class','connected');
-// 	$('#callmember'+number.toString()).attr('class','callmemberforbid');
-// 	$('#hangup'+number.toString()).attr('class','hangup1');
-// 	$('#silencemember'+number.toString()).attr('class','silencemember0');
-// 	$('#shutup'+number.toString()).attr('class','shutup0');
-// 	$('#double'+number.toString()).attr('class','double0');
-// 	$('#see'+number.toString()).attr('class','see0');
-// 	$('#broadcast'+number.toString()).attr('class','broadcast0');
-
-// }
 function modelfun(){
 	var num = $("#modelmenu").val();
-	console.log('{{meetInstance.operationModel}}');
-	
-		$.get("/model/"+{{meetInstance.pk}}+"/"+ num+"/",function(){
-			modellayout();
-
-		});
+	console.log('{{meetInstance.operationModel}}');	
+	$.get("/model/"+{{meetInstance.pk}}+"/"+ num+"/",function(){
+		modellayout();
+	});
 }
 
 function modellayout(){
@@ -213,42 +187,39 @@ function fresh_icon(number,state,blocking,muting,identity){
 
 	}
 	else if (state==="1") {
-			$('#connect'+number.toString()).attr('class','connected');
-			$('#callmember'+number.toString()).attr('class','callmemberforbid');
-			$('#hangup'+number.toString()).attr('class','hangup1');
-			if ($('#double'+number.toString()).hasClass('doubleforbid')) {
-				$('#double'+number.toString()).attr('class','double0');
-			}
-			if (blocking==="0") {                          //block是静音，mute是闭麦
-				$('#silencemember'+number.toString()).attr('class','silencemember0');
-			}
-			else if (blocking==="1") {
-				$('#silencemember'+number.toString()).attr('class','silencemember1');
-			}
-			if (muting==="0") {
-				$('#shutup'+number.toString()).attr('class','shutup0');
-			}
-			else if (muting==="1") {
-				$('#shutup'+number.toString()).attr('class','shutup1');
-			}
-			if (identity==="0") {	                          //0广播，1查看，2普通
-				$('#broadcast'+number.toString()).attr('class','broadcast1');
-				$('#see'+number.toString()).attr('class','see0');
-			}
-			else if (identity==="1") {	                          //0广播，1查看，2普通
-				$('#see'+number.toString()).attr('class','see1');
-				$('#broadcast'+number.toString()).attr('class','broadcast0');
-			}
-			else if (identity==="2") {	                          //0广播，1查看，2普通
-				$('#broadcast'+number.toString()).attr('class','broadcast0');
-				$('#see'+number.toString()).attr('class','see0');
-			}
+		$('#connect'+number.toString()).attr('class','connected');
+		$('#callmember'+number.toString()).attr('class','callmemberforbid');
+		$('#hangup'+number.toString()).attr('class','hangup1');
+		if ($('#double'+number.toString()).hasClass('doubleforbid')) {
+			$('#double'+number.toString()).attr('class','double0');
 		}
-
-
-
-
+		if (blocking==="0") {                          //block是静音，mute是闭麦
+			$('#silencemember'+number.toString()).attr('class','silencemember0');
+		}
+		else if (blocking==="1") {
+			$('#silencemember'+number.toString()).attr('class','silencemember1');
+		}
+		if (muting==="0") {
+			$('#shutup'+number.toString()).attr('class','shutup0');
+		}
+		else if (muting==="1") {
+			$('#shutup'+number.toString()).attr('class','shutup1');
+		}
+		if (identity==="0") {	                          //0广播，1查看，2普通
+			$('#broadcast'+number.toString()).attr('class','broadcast1');
+			$('#see'+number.toString()).attr('class','see0');
+		}
+		else if (identity==="1") {	                          //0广播，1查看，2普通
+			$('#see'+number.toString()).attr('class','see1');
+			$('#broadcast'+number.toString()).attr('class','broadcast0');
+		}
+		else if (identity==="2") {	                          //0广播，1查看，2普通
+			$('#broadcast'+number.toString()).attr('class','broadcast0');
+			$('#see'+number.toString()).attr('class','see0');
+		}
+	}
 }
+
 function callmember(pk){
 	console.log(pk);
 	if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
