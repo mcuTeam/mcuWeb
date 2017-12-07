@@ -55,7 +55,7 @@ def loop():
                 tcpCliSock.connect(ADDR)
 
             data=tcpCliSock.recv(BUFSIZ)
-            # print("loop recv:",data)
+            print("loop recv:",data)
             if "RESP_NOTIFY" in data.decode('utf8'):
                 print("recv notify!")
                 if cache.get('notify') is not None:
@@ -226,7 +226,7 @@ def deletemeetTask(meetName=""):
     print("deletemeetTask task")
     try:
         tcpCliSock.send(("DELETEMEET\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" % (seqNumber,meetName)).encode('utf8'))
-        time.sleep(0.2)
+        time.sleep(0.5)
         key = "SeqNumber:"+str(seqNumber)
         for i in range(0,5):
             data = cache.get(key)
@@ -234,7 +234,6 @@ def deletemeetTask(meetName=""):
                 time.sleep(0.1)
                 continue
             else:
-
                 return data
         return None
     # 开始连接成功，后来MCU断开连接了
@@ -524,7 +523,7 @@ def getmeetinfoTask(meetName=""):
                 time.sleep(0.1)
                 continue
             else:
-
+                print(data)
                 return data
         return None
     # 开始连接成功，后来MCU断开连接了
@@ -1026,7 +1025,7 @@ def delete_meetingView(request,meetpk):
                 meetinglist = meeting.objects.all()
                 return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
 
-            if('1' in analysysResult['MemberState'] or '2' in analysysResult['MemberState']):
+            if 'MemberState' in analysysResult.keys() and ('1' in analysysResult['MemberState'] or '2' in analysysResult['MemberState']):
                 print("还有终端没挂断！")
                 msgType = "error"
                 msg = "存在未挂断的终端，请进入会控页面挂断"
@@ -1056,7 +1055,7 @@ def delete_meetingView(request,meetpk):
 
             meeting.objects.get(pk=meetpk).delete()
             msgType = "error"
-            msg = "删除失败"
+            msg = "删除失败1"
             meetinglist = meeting.objects.all()
             return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
 
@@ -1598,6 +1597,29 @@ def broadcastAjaxView(request,meetpk,pk,mode):
         except BaseException as e:
             print("catch broadcastAjaxView error",e)
             return HttpResponse(json.dumps({'msgType':"error",'msg':"设置广播过程中发生通信错误！"}))
+
+
+@login_required
+def hungupallAjaxView(request,meetpk):
+    if request.is_ajax():
+        print("recv hungupallAjaxView ajax request")
+        result=""
+        if not meeting.objects.filter(pk=meetpk).exists():
+            print("该会议不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
+
+        meetname = meeting.objects.get(pk=meetpk).name
+
+        try:
+            result = hungallTask(meetname)
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                # # print(notifyList)
+                cache.delete('notify')
+            return HttpResponse(json.dumps({'msgType':"success",'msg':"成功发送挂断所有消息，请耐心等待"}))
+        except BaseException as e:
+            print("catch hungupallAjaxView error",e)
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"设置挂断过程中发生通信错误！"}))
 
 
 # ---------------------------------------------------------------------------

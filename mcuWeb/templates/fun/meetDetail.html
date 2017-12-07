@@ -136,6 +136,7 @@ $('document').ready(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
+				console.log( meetinfoJson.AllMemberCount);
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i]);
@@ -173,7 +174,7 @@ $('document').ready(function(){
 
 function hungup_all(){
 			$.get("/hungupall/"+{{meetInstance.pk}}+"/",function(){
-			
+
 
 		});
 }
