@@ -2,6 +2,7 @@
 from system.models import *
 from django.forms import ModelForm,ValidationError,TextInput
 from django import forms
+import datetime
 
 class terminalForm(ModelForm):
     class Meta:
@@ -60,6 +61,8 @@ class meetingForm(ModelForm):
         # ('主席模式','主席模式'),
         # ('语音激励模式','语音激励模式')
         ]
+        self.fields['name'] = forms.CharField(label='会议名称*',initial=datetime.date.today(),required=True)
+        self.fields['meetcode'] = forms.CharField(label='会议编号*',initial=datetime.date.today(),required=True)
         self.fields['template'].choices=[(x.pk, x.name) for x in meetingTemplate.objects.all()]
         self.fields['mainMeetRoom'] = forms.ChoiceField(label="主会场*",choices=[(x.pk, x.name) for x in terminal.objects.all()],required=True,\
         error_messages = {"invalid_choice":"该终端不存在，请刷新页面"})
