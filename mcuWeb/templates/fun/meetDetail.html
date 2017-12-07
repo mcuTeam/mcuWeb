@@ -329,8 +329,9 @@ function double(pk){
 	// console.log(pk);
 	if($('#double'+pk.toString()).hasClass('double0')){
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
-			$('.double1').attr('class','double0');
+			
 			$('#double'+pk.toString()).attr('class','double1');
+			$('.double0').attr('class','doubleforbid');
 			var parsedJson = jQuery.parseJSON(results);
 			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
@@ -338,6 +339,7 @@ function double(pk){
 	else if($('#double'+pk.toString()).hasClass('double1')){
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(results){
 			$('#double'+pk.toString()).attr('class','double0');
+			$('.doubleforbid').attr('class','double0');
 			var parsedJson = jQuery.parseJSON(results);
 			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
