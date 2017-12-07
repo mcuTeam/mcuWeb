@@ -56,7 +56,7 @@
 			<div class="row-fluid" id="modelcontrol">
 				<div class="span12" id="">
 					<a class="btn btn-info">全部连接</a>
-					<a class="btn btn-info">全部断开</a>
+					<a class="btn btn-info" onclick="hungup_all()">全部断开</a>
 					<div id="title">
 						<p>主席模式 </p>
 					</div>
@@ -170,6 +170,14 @@ $('document').ready(function(){
 // 	$('#broadcast'+number.toString()).attr('class','broadcast0');
 
 // }
+
+function hungup_all(){
+			$.get("/hungupall/"+{{meetInstance.pk}}+"/",function(){
+			
+
+		});
+}
+
 function modelfun(){
 	var num = $("#modelmenu").val();
 	// console.log('{{meetInstance.operationModel}}');
