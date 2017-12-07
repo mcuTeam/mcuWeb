@@ -827,6 +827,32 @@ def setmemberidentity_compTask(meetname,lecturename,audiencename):
         print("setmemberidentity_compTask BaseException: ",e)
         tcpCliSock = None
         return None
+
+def hungallTask(meetname):
+    global tcpCliSock
+
+    seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
+    cache.set('seqNumber',seqNumber+1)
+
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+
+    print("hungallTask task")
+    try:
+        msg = ("HUNGUPALL\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" \
+            % (seqNumber,meetname)).encode('utf8')
+        tcpCliSock.send(msg)
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("hungallTask BaseException: ",e)
+        tcpCliSock = None
+        return None
+
 # ------------------------------------------------------------------------
 
 def syncMeetingListAndDB(result):
@@ -958,17 +984,68 @@ def delete_meetingView(request,meetpk):
         meetname = meet.name
 
         try:
-            result = deletemeetTask(meetname)
-            notifyList = cache.get('notify')
-            if notifyList is not None:
-                # # print(notifyList)
-                cache.delete('notify')
-            if result is None:
-                meeting.objects.get(pk=meetpk).delete()
+            # hungallTask(meetname)
+            # time.sleep(0.2)
+
+            # result = getmeetinfoTask(meetname)
+            # notifyList = cache.get('notify')
+            # if notifyList is not None:
+            #     # print(notifyList)
+            #     for notify in notifyList:
+            #         if 'RESP_NOTIFYONLINE' in  notify:
+            #             if ('MeetName:%s' % meetname) in notify and ('MemberName:%s' % mainMeetRoomName) in notify:
+            #                 print("mainMeetRoom online!!!!!!!!!")
+            #                 setmemberidentityTask(meetname,mainMeetRoomName)
+            #     cache.delete('notify')
+            # # print("getmeetinfo result is: \n",result)
+            # if result is not None:
+            #     analysysResult = analysisMeetinfo(result)
+            #     # analysysResult['']
+            #     if "EPName" in analysysResult.keys():
+            #         analysysResult['pk'] = []
+            #         for ename in analysysResult['EPName']:
+            #             if terminal.objects.filter(name = ename).exists():
+            #                 analysysResult['pk'].append(terminal.objects.get(name = ename).pk)
+            #             else:
+            #                 analysysResult['pk'].append("None")
+            #     # print(analysysResult)
+            #     return HttpResponse(json.dumps(analysysResult))
+            # else:
+            #     print("--------------------------------------------")
+
+            result = getmeetinfoTask(meetname)
+            print(meetname," getmeetinfoTask return: ",result)
+
+            if result is not None:
+                analysysResult = analysisMeetinfo(result)
+                print(analysysResult)
+
+            else:
                 msgType = "error"
-                msg = "删除失败"
+                msg = "获取会议信息失败"
                 meetinglist = meeting.objects.all()
                 return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+
+            if('1' in analysysResult['MemberState'] or '2' in analysysResult['MemberState']):
+                print("还有终端没挂断！")
+                msgType = "error"
+                msg = "存在未挂断的终端，请进入会控页面挂断"
+                meetinglist = meeting.objects.all()
+                return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+
+            else:
+                result = deletemeetTask(meetname)
+                notifyList = cache.get('notify')
+                if notifyList is not None:
+                    # # print(notifyList)
+                    cache.delete('notify')
+                if result is None:
+                    meeting.objects.get(pk=meetpk).delete()
+                    msgType = "error"
+                    msg = "删除失败"
+                    meetinglist = meeting.objects.all()
+                    return render(request,'fun/meetinglist.html',{'meetinglist':meetinglist,'msgType':msgType,'msg':msg})
+
             meeting.objects.get(pk=meetpk).delete()
             msgType = "success"
             msg = "删除成功"
@@ -988,7 +1065,7 @@ def delete_meetingView(request,meetpk):
 def meetinglistView(request,msgType='',msg=''):
     try:
         data = listmeetTask()
-
+        print(data)
     except BaseException as e:
         print("timeout error: ",e)
         msgType = "error"

@@ -172,8 +172,8 @@ $('document').ready(function(){
 // }
 function modelfun(){
 	var num = $("#modelmenu").val();
-	console.log('{{meetInstance.operationModel}}');
-	
+	// console.log('{{meetInstance.operationModel}}');
+
 		$.get("/model/"+{{meetInstance.pk}}+"/"+ num+"/",function(){
 			modellayout();
 
@@ -250,7 +250,7 @@ function fresh_icon(number,state,blocking,muting,identity){
 
 }
 function callmember(pk){
-	console.log(pk);
+	// console.log(pk);
 	if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
 		$('#connect'+pk.toString()).attr('class','connecting');
 		$.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(results){
@@ -266,7 +266,7 @@ function callmember(pk){
 
 function hangup(pk){
 	if ($('#hangup'+pk.toString()).hasClass('hangup1')) {
-		console.log(pk);
+		// console.log(pk);
 		$.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
 			$('#connect'+pk.toString()).attr('class','unconnect');
 			$('#callmember'+pk.toString()).attr('class','callmember1');
@@ -281,7 +281,7 @@ function hangup(pk){
 };
 
 function silencemember(pk){
-	console.log(pk);
+	// console.log(pk);
 	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){
 		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
 			// $('#silencemember'+pk.toString()).attr('class','silencemember1');
@@ -300,7 +300,7 @@ function silencemember(pk){
 };
 
 function shutup(pk){
-	console.log(pk);
+	// console.log(pk);
 	if($('#shutup'+pk.toString()).hasClass('shutup0')){
 		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
 			// $('#shutup'+pk.toString()).attr('class','shutup1');
@@ -318,7 +318,7 @@ function shutup(pk){
 };
 
 function double(pk){
-	console.log(pk);
+	// console.log(pk);
 	if($('#double'+pk.toString()).hasClass('double0')){
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
 			$('.double1').attr('class','double0');
