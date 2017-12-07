@@ -55,7 +55,7 @@ def loop():
                 tcpCliSock.connect(ADDR)
 
             data=tcpCliSock.recv(BUFSIZ)
-            print("loop recv:",data)
+            # print("loop recv:",data)
             if "RESP_NOTIFY" in data.decode('utf8'):
                 print("recv notify!")
                 if cache.get('notify') is not None:
@@ -520,10 +520,11 @@ def getmeetinfoTask(meetName=""):
         for i in range(0,5):
             data = cache.get(key)
             if data is None:
-                time.sleep(0.1)
+                time.sleep(0.1+i/10)
+                print(key,"-----------wait for cache in getmeetinfotask-------------")
                 continue
             else:
-                print(data)
+                # print(data)
                 return data
         return None
     # 开始连接成功，后来MCU断开连接了
@@ -639,6 +640,27 @@ def audioblockTask(meetname,membername,isBlock=0):
     # 开始连接成功，后来MCU断开连接了
     except BaseException as e:
         print("audioblockTask BaseException: ",e)
+        tcpCliSock = None
+        return None
+
+def setcontrolmodeTask(meetname,membername,mode=0):
+    global tcpCliSock
+
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+
+    print("setcontrolmodeTask task")
+    try:
+        msg = ("MEETCONTROL\r\nMeetName:%s\r\nConMode:%d\r\nMemberName:%s\r\n\r\n" \
+            % (meetname,int(mode),membername)).encode('utf8')
+        print(msg)
+        tcpCliSock.send(msg)
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("setcontrolmodeTask BaseException: ",e)
         tcpCliSock = None
         return None
 
@@ -1173,34 +1195,38 @@ def callmemberAjaxView(request,meetpk,pk):
         # add member
         try:
             result = addmemberTask(meetname,membername,memberip)
-            # print("add member check result is: \n",result)
-        except BaseException as e:
-            print("catch add member error",e)
-            return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端过程中发生通信错误！"}))
-        if result is None:
-            print("add member return None")
-            return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端过程中MCU返回None！"}))
-        retDict = returnCode2Dict(result)
-        if retDict['RetCode'] != "200":
-            # print("addmemberTask return %s" % retDict['RetCode'])
-            return HttpResponse(json.dumps({'msgType':"error",'msg':("向会议中添加终端过程中MCU返回%s！" % retDict['RetCode'])}))
-        # setmemberavformatpara
-        try:
+            time.sleep(0.1)
             result = setmemberavformatparaTask(meetname,membername,capability)
-            # print("setmemberavformatpara check result is: \n",result)
-        except BaseException as e:
-            print("catch setmemberavformatpara error",e)
-            return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端参数过程中发生通信错误！"}))
-        if result is None:
-            print("setmemberavformatpara return None")
-            return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端参数过程中MCU返回None！"}))
-        retDict = returnCode2Dict(result)
-        if retDict['RetCode'] != "200":
-            print("setmemberavformatpara return %s" % retDict['RetCode'])
-            return HttpResponse(json.dumps({'msgType':"error",'msg':("向会议中添加终端参数过程中MCU返回%s！" % retDict['RetCode'])}))
-        # callmember
-        try:
+            time.sleep(0.1)
             result = callmemberTask(meetname,membername)
+        #     # print("add member check result is: \n",result)
+        # except BaseException as e:
+        #     print("catch add member error",e)
+        #     return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端过程中发生通信错误！"}))
+        # if result is None:
+        #     print("add member return None")
+        #     return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端过程中MCU返回None！"}))
+        # retDict = returnCode2Dict(result)
+        # if retDict['RetCode'] != "200":
+        #     # print("addmemberTask return %s" % retDict['RetCode'])
+        #     return HttpResponse(json.dumps({'msgType':"error",'msg':("向会议中添加终端过程中MCU返回%s！" % retDict['RetCode'])}))
+        # # setmemberavformatpara
+        # try:
+        #     result = setmemberavformatparaTask(meetname,membername,capability)
+        #     # print("setmemberavformatpara check result is: \n",result)
+        # except BaseException as e:
+        #     print("catch setmemberavformatpara error",e)
+        #     return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端参数过程中发生通信错误！"}))
+        # if result is None:
+        #     print("setmemberavformatpara return None")
+        #     return HttpResponse(json.dumps({'msgType':"error",'msg':"向会议中添加终端参数过程中MCU返回None！"}))
+        # retDict = returnCode2Dict(result)
+        # if retDict['RetCode'] != "200":
+        #     print("setmemberavformatpara return %s" % retDict['RetCode'])
+        #     return HttpResponse(json.dumps({'msgType':"error",'msg':("向会议中添加终端参数过程中MCU返回%s！" % retDict['RetCode'])}))
+        # # callmember
+        # try:
+        #     result = callmemberTask(meetname,membername)
             # print("callmemberTask result is: \n",result)
         except BaseException as e:
             print("catch callmemberTask error",e)
@@ -1632,19 +1658,30 @@ def setoperationmodeAjaxView(request,meetpk,mode):
             return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
         meetInstance = meeting.objects.get(pk=meetpk)
         meetname = meetInstance.name
+
+        mainMeetRoomPK = meeting.objects.get(pk=meetpk).mainMeetRoom
+        if not terminal.objects.filter(pk=mainMeetRoomPK).exists():
+            print("主会场不存在")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"主会场不存在！"}))
+        mainMeetRoomName = terminal.objects.get(pk=mainMeetRoomPK).name
+
         if mode in ['0','1','2']:
             print("set operation model: ",mode)
             if mode == '0':
+                setcontrolmodeTask(meetname,mainMeetRoomName,0)
                 meetInstance.operationModel = "操作员模式"
                 meetInstance.save()
             if mode == '1':
-                meetInstance.operationModel = "主席模式"
+                setcontrolmodeTask(meetname,mainMeetRoomName,1)
+                meetInstance.operationModel = "语音激励模式"
                 meetInstance.save()
             if mode == '2':
-                meetInstance.operationModel = "语音激励模式"
+                setcontrolmodeTask(meetname,mainMeetRoomName,2)
+                meetInstance.operationModel = "主席模式"
                 meetInstance.save()
             return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
         else:
+            setcontrolmodeTask(meetname,mainMeetRoomName,0)
             meetInstance.operationModel = "操作员模式"
             meetInstance.save()
             return HttpResponse(json.dumps({'msgType':"success",'msg':"操作成功！"}))
