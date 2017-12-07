@@ -76,6 +76,9 @@
 			<div id="modelcover"></div>
 			<thead>
 				<tr>
+					<th><label class="checkbox">
+						<input type="checkbox" value="全选" id="all">
+						</label></th>
 					<th>#</th>
 					<th>会场名称</th>
 					<th>会场IP:</th>
@@ -92,6 +95,9 @@
 			{% for terminal in terminalList %}
 			<tbody>
 				<tr id="tr{{terminal.pk}}">
+					<td><label class="checkbox">
+						<input type="checkbox" name="items">
+						</label></td>
 					<td>{{ forloop.counter }}</td>
 					<td>会场{{terminal.name}}</td>
 					<td>{{terminal.terminalIP}}</td>
@@ -136,7 +142,7 @@ $('document').ready(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
-				console.log( meetinfoJson.AllMemberCount);
+				
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i]);
@@ -160,17 +166,18 @@ $('document').ready(function(){
 	});
 });
 
-// function lightup(number) {
-// 	$('#connect'+number.toString()).attr('class','connected');
-// 	$('#callmember'+number.toString()).attr('class','callmemberforbid');
-// 	$('#hangup'+number.toString()).attr('class','hangup1');
-// 	$('#silencemember'+number.toString()).attr('class','silencemember0');
-// 	$('#shutup'+number.toString()).attr('class','shutup0');
-// 	$('#double'+number.toString()).attr('class','double0');
-// 	$('#see'+number.toString()).attr('class','see0');
-// 	$('#broadcast'+number.toString()).attr('class','broadcast0');
+$('#all').click(function(){	
+	if ($('#all').val() == "全选"){
+		$("[name=items]:checkbox").each(function() { this.checked = true; });
+		$('#all').val("取消");
 
-// }
+	}
+	else  if($('#all').val() == "取消"){
+		$("[name=items]:checkbox").each(function() { this.checked = false; });
+		$('#all').val("全选");
+
+	}  
+});
 
 function hungup_all(){
 			$.get("/hungupall/"+{{meetInstance.pk}}+"/",function(){
