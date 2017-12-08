@@ -1,52 +1,142 @@
-# from __future__ import absolute_import, unicode_literals
-# import os
-# from celery import Celery
-# import celery.bin.amqp
-# import sys
-# import time
-# import socket
-# from socket import *
-#
-# # set the default Django settings module for the 'celery' program.
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mcuWeb.settings')
-#
-# app = Celery('mcuWeb', backend='rpc://', broker='pyamqp://')
-# app.conf.result_backend = 'rpc://'
-#
-# app.conf.beat_schedule = {
-#     'checkNet-every-10-seconds': {
-#         'task': 'mcuWeb.celery.checkNet',
-#         'schedule': 10.0,
-#     },
-# }
-# app.conf.timezone = 'UTC'
-#
-# amqp = celery.bin.amqp.amqp(app = app)
-#
-#
-# HOST = "127.0.0.1"
-# PORT = 5038
-# BUFSIZ = 10240
-# ADDR = (HOST,PORT)
-# tcpCliSock = None
-# seqNumber = 0
-# try:
-#     tcpCliSock = socket(AF_INET,SOCK_STREAM)
-#     tcpCliSock.connect(ADDR)
-#     tcpCliSock.settimeout(3)
-# except BaseException as e:
-#     tcpCliSock = None
-#     print(e)
-#     print("1")
+from __future__ import absolute_import, unicode_literals
+import os
+from celery import Celery
+import celery.bin.amqp
+import sys
+import time
+import socket
+from socket import *
+import json
+
+# set the default Django settings module for the 'celery' program.
+os.chdir('E:/workspace/mcuWeb/mcuWeb')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mcuWeb.settings')
+from django.conf import settings
+# from system.models import *
+
+app = Celery('mcuWeb', backend='rpc://', broker='pyamqp://')
+app.conf.result_backend = 'rpc://'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_SERIALIZER = ['json']
+CELERY_TASK_SERIALIZER = ['json']
+app.conf.beat_schedule = {
+    'checkNet-every-10-seconds': {
+        'task': 'mcuWeb.celery.checkNet',
+        'schedule': 10.0,
+    },
+}
+app.conf.timezone = 'UTC'
+
+amqp = celery.bin.amqp.amqp(app = app)
+
 #
 # # Using a string here means the worker doesn't have to serialize
 # # the configuration object to child processes.
 # # - namespace='CELERY' means all celery-related configuration keys
 # #   should have a `CELERY_` prefix.
-# app.config_from_object('django.conf:settings', namespace='CELERY')
+app.config_from_object('django.conf:settings', namespace='CELERY')
 #
 # # Load task modules from all registered Django app configs.
-# app.autodiscover_tasks()
+app.autodiscover_tasks()
+
+HOST = "127.0.0.1"
+PORT = 5038
+BUFSIZ = 10240
+ADDR = (HOST,PORT)
+tcpCliSock = None
+try:
+    tcpCliSock = socket(AF_INET,SOCK_STREAM)
+    tcpCliSock.connect(ADDR)
+    tcpCliSock.settimeout(3)
+except BaseException as e:
+    tcpCliSock = None
+
+@app.task(bind=True)
+def callallCeleryTask(self,meetName="",chairMan="",memberList=""):
+    global tcpCliSock
+
+    memberList = json.loads(memberList)
+    print("callallTask task",memberList,type(memberList))
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+        tcpCliSock.settimeout(3)
+    try:
+        for member in memberList:
+            # first addmember
+            # second setmemberavformatparaTask
+
+            memberName = member['name']
+            memberIP = member['terminalIP']
+            capalityName = member['capalityName']
+            msg = ("ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
+                % (meetName,memberName,memberIP,memberName,memberName))
+
+            tcpCliSock.send(msg.encode('utf8'))
+            time.sleep(0.05)
+            msg = ("SETMEMBERAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nCapabilityName:%s\r\n\r\n" \
+                % (meetName,memberName,capalityName))
+
+            tcpCliSock.send(msg.encode('utf8'))
+
+            # if memberName == chairMan:
+            #     print("-------------chairMan------------")
+            #     time.sleep(0.05)
+            #     msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
+            #         % (1,meetName,memberName)).encode('utf8')
+            #     tcpCliSock.send(msg)
+        # third callall
+        # optional setidentity
+        time.sleep(0.1)
+        msg = "CALLALL\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % (meetName)
+        tcpCliSock.send(msg.encode('utf8'))
+        print("wait",len(memberList))
+        time.sleep(len(memberList)+2)
+        print("wait")
+        msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
+            % (1,meetName,chairMan)).encode('utf8')
+        tcpCliSock.send(msg)
+
+    except BaseException as e:
+        print("BaseException: ",e)
+        tcpCliSock = None
+
+
+@app.task(bind=True)
+def hungallCeleryTask(self,meetName="",memberList=""):
+    global tcpCliSock
+
+    memberList = json.loads(memberList)
+    print("hungallCeleryTask task",memberList,type(memberList))
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+        tcpCliSock.settimeout(3)
+    try:
+        msg = ("HUNGUPALL\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" \
+            % (1,meetName)).encode('utf8')
+        tcpCliSock.send(msg)
+        time.sleep(0.5*len(memberList))
+        for member in memberList:
+            # first addmember
+            # second setmemberavformatparaTask
+
+            msg = ("DELETEMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
+                % (1,meetName,member)).encode('utf8')
+            # print(msg)
+            tcpCliSock.send(msg)
+            time.sleep(0.1)
+        return None
+
+    except BaseException as e:
+        print("BaseException: ",e)
+        tcpCliSock = None
+
+
+
+
 #
 # def brokenpipeHandle():
 #     pass

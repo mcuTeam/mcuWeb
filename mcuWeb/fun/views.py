@@ -13,6 +13,7 @@ from system.models import *
 from system.views import *
 import re
 from django.core.cache import cache
+from mcuWeb.celery import *
 # Create your views here.
 
 
@@ -874,6 +875,31 @@ def hungallTask(meetname):
         tcpCliSock = None
         return None
 
+def callallTask(meetname):
+    global tcpCliSock
+
+    seqNumber = cache.get('seqNumber')
+    if seqNumber is None:
+        seqNumber = 0
+    cache.set('seqNumber',seqNumber+1)
+
+    if tcpCliSock is None:
+        print("tcpCliSock is None")
+        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock.connect(ADDR)
+
+    print("callallTask task")
+    try:
+        msg = ("CALLALL\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" \
+            % (seqNumber,meetname)).encode('utf8')
+        tcpCliSock.send(msg)
+        return None
+    # 开始连接成功，后来MCU断开连接了
+    except BaseException as e:
+        print("callallTask BaseException: ",e)
+        tcpCliSock = None
+        return None
+
 # ------------------------------------------------------------------------
 
 def syncMeetingListAndDB(result):
@@ -1291,11 +1317,11 @@ def getmeetinfoAjaxView(request,meetpk):
             notifyList = cache.get('notify')
             if notifyList is not None:
                 # print(notifyList)
-                for notify in notifyList:
-                    if 'RESP_NOTIFYONLINE' in  notify:
-                        if ('MeetName:%s' % meetname) in notify and ('MemberName:%s' % mainMeetRoomName) in notify:
-                            print("mainMeetRoom online!!!!!!!!!")
-                            setmemberidentityTask(meetname,mainMeetRoomName)
+                # for notify in notifyList:
+                #     if 'RESP_NOTIFYONLINE' in  notify:
+                #         if ('MeetName:%s' % meetname) in notify and ('MemberName:%s' % mainMeetRoomName) in notify:
+                #             print("mainMeetRoom online!!!!!!!!!")
+                #             setmemberidentityTask(meetname,mainMeetRoomName)
                 cache.delete('notify')
             # print("getmeetinfo result is: \n",result)
             if result is not None:
@@ -1637,16 +1663,70 @@ def hungupallAjaxView(request,meetpk):
         meetname = meeting.objects.get(pk=meetpk).name
 
         try:
-            result = hungallTask(meetname)
-            notifyList = cache.get('notify')
-            if notifyList is not None:
-                # # print(notifyList)
-                cache.delete('notify')
+            result = getmeetinfoTask(meetname)
+            if result is not None:
+                analysysResult = analysisMeetinfo(result)
+            else:
+                print("NONE!!!!!!!!!!!!!")
+            memberList = []
+            if analysysResult is not None:
+                memberList = analysysResult["EPName"]
+
+            hungallCeleryTask.apply_async((meetname,json.dumps(memberList)),serializer='json')
+
             return HttpResponse(json.dumps({'msgType':"success",'msg':"成功发送挂断所有消息，请耐心等待"}))
         except BaseException as e:
             print("catch hungupallAjaxView error",e)
             return HttpResponse(json.dumps({'msgType':"error",'msg':"设置挂断过程中发生通信错误！"}))
 
+@login_required
+def callallAjaxView(request,meetpk):
+    if request.method == "POST" and request.is_ajax():
+        print("recv callallAjaxView ajax request")
+        result=""
+        if not meeting.objects.filter(pk=meetpk).exists():
+            print("该会议不存在！")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"该会议不存在！"}))
+
+        meetname = meeting.objects.get(pk=meetpk).name
+        mainMeetRoomPK = meeting.objects.get(pk=meetpk).mainMeetRoom
+        if not terminal.objects.filter(pk=mainMeetRoomPK).exists():
+            print("主会场不存在")
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"主会场不存在！"}))
+
+        mainMeetRoomName = terminal.objects.get(pk=mainMeetRoomPK).name
+
+        memberList = request.POST['checked']
+
+        memberList = json.loads(memberList)
+
+        if memberList is None:
+            memberList = []
+            return HttpResponse(json.dumps({'msgType':"success",'msg':"成功发送挂断所有消息，请耐心等待"}))
+        if len(memberList) == 0:
+            return HttpResponse(json.dumps({'msgType':"success",'msg':"成功发送挂断所有消息，请耐心等待"}))
+        memberInfoList = []
+        for member in memberList:
+            pk = int(member)
+            print(pk)
+            if not terminal.objects.filter(pk=pk).exists():
+                print("该终端不存在！")
+                continue
+            tmp = terminal.objects.get(pk=pk)
+            tmpDict={}
+            tmpDict['name'] = tmp.name
+            tmpDict['terminalIP'] = tmp.terminalIP
+            tmpDict['capalityName'] = tmp.capalityname
+            memberInfoList.append(tmpDict)
+
+        jsonMemberInfoList = json.dumps(memberInfoList)
+        print(jsonMemberInfoList)
+        try:
+            callallCeleryTask.apply_async((meetname,mainMeetRoomName,jsonMemberInfoList),serializer='json')
+            return HttpResponse(json.dumps({'msgType':"success",'msg':"成功发送挂断所有消息，请耐心等待"}))
+        except BaseException as e:
+            print("catch callallAjaxView error",e)
+            return HttpResponse(json.dumps({'msgType':"error",'msg':"设置挂断过程中发生通信错误！"}))
 
 # ---------------------------------------------------------------------------
 

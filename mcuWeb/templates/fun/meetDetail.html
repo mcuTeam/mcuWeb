@@ -142,7 +142,7 @@ $('document').ready(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
-				
+
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i]);
@@ -166,7 +166,7 @@ $('document').ready(function(){
 	});
 });
 
-$('#all').click(function(){	
+$('#all').click(function(){
 	if ($('#all').val() == "全选"){
 		$("[name=items]:checkbox").each(function() { this.checked = true; });
 		$('#all').val("取消");
@@ -176,7 +176,7 @@ $('#all').click(function(){
 		$("[name=items]:checkbox").each(function() { this.checked = false; });
 		$('#all').val("全选");
 
-	}  
+	}
 });
 
 function callall(){
@@ -186,8 +186,8 @@ function callall(){
 	});
 	var checked = JSON.stringify(arr);
 
-	$.get("/callall/"+{{meetInstance.pk}}+"/",checked,function(){
-		
+	$.post("/callall/"+{{meetInstance.pk}}+"/",{"checked":checked,csrfmiddlewaretoken:'{{ csrf_token }}'},function(){
+
 	});
 }
 
@@ -348,7 +348,7 @@ function double(pk){
 	// console.log(pk);
 	if($('#double'+pk.toString()).hasClass('double0')){
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
-			
+
 			$('#double'+pk.toString()).attr('class','double1');
 			$('.double0').attr('class','doubleforbid');
 			var parsedJson = jQuery.parseJSON(results);
