@@ -9,7 +9,7 @@ from socket import *
 import json
 
 # set the default Django settings module for the 'celery' program.
-os.chdir('E:/workspace/mcuWeb/mcuWeb')
+# os.chdir('E:/workspace/mcuWeb/mcuWeb')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mcuWeb.settings')
 from django.conf import settings
 # from system.models import *
