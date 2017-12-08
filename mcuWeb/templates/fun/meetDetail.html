@@ -56,7 +56,7 @@
 			<div class="row-fluid" id="modelcontrol">
 				<div class="span12" id="">
 					<a class="btn btn-info" id="callall" onclick="callall()">全部连接</a>
-					<a class="btn btn-info disabled" id="hungall" onclick="hungup_all()">全部断开</a>
+					<a class="btn btn-info" id="hungall" onclick="hungup_all()">全部断开</a>
 					<div class="progress">
 						<div class="bar" ></div>
 					</div>
@@ -149,7 +149,7 @@ $('document').ready(function(){
 
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
-					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i]);
+					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i],meetinfoJson.IsDualSender[i]);
 				}
 			});
 		}
@@ -172,7 +172,7 @@ $('#all').click(function(){
 });
 
 function callall(){
-	if (!($('#callall').hasClass('btn btn-info disabled'))) {
+
 		var arr=[];
 		$("[name=items]:checked").each(function(){
 			arr.push(this.id);
@@ -195,29 +195,26 @@ function callall(){
 			else if(i>arr.length){
 				$('div.progress').hide();
 				$('#modelcover').hide();
-				$('#callall').attr('class','btn btn-info disabled');
+				$('#callall').attr('class','btn btn-info');
 		        $('#callall').text('全部连接');
-		        $('#hungall').attr('class','btn btn-info');
+		        
 
 				return;
 			}
 		}
 		bar();
-		$.get("/callall/"+{{meetInstance.pk}}+"/",checked,function(){
 
-		});
 
 	$.post("/callall/"+{{meetInstance.pk}}+"/",{"checked":checked,csrfmiddlewaretoken:'{{ csrf_token }}'},function(){
 
 	});
-}
+
 }
 
 function hungup_all(){
 	if ($('#hungall').hasClass('btn btn-info')) {
 		$.get("/hungupall/"+{{meetInstance.pk}}+"/",function(){
-			$('#hungall').attr('class','btn btn-info disabled');
-			$('#callall').attr('class','btn btn-info');
+
 
 		});
 	}
@@ -252,7 +249,7 @@ function modellayout(){
 	}
 }
 
-function fresh_icon(number,state,blocking,muting,identity){
+function fresh_icon(number,state,blocking,muting,identity,double){
 	if (state==="0") {
 		$('#connect'+number.toString()).attr('class','unconnect');
 		$('#callmember'+number.toString()).attr('class','callmember1');
@@ -269,8 +266,12 @@ function fresh_icon(number,state,blocking,muting,identity){
 			$('#connect'+number.toString()).attr('class','connected');
 			$('#callmember'+number.toString()).attr('class','callmemberforbid');
 			$('#hangup'+number.toString()).attr('class','hangup1');
-			if ($('#double'+number.toString()).hasClass('doubleforbid')) {
+			if (double==="0") {
 				$('#double'+number.toString()).attr('class','double0');
+			}
+			else if (double==="1"){
+				$('#double'+number.toString()).attr('class','double1');
+
 			}
 			if (blocking==="0") {                          //block是静音，mute是闭麦
 				$('#silencemember'+number.toString()).attr('class','silencemember0');
@@ -308,7 +309,7 @@ function callmember(pk){
 		$('#connect'+pk.toString()).attr('class','connecting');
 		$.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(results){
 			var parsedJson = jQuery.parseJSON(results);
-			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity,parsedJson.IsDualSender);
 			// $('#double'+pk.toString()).attr('class','double0');
 			// if(parsedJson.MemberState==="0"||parsedJson.MemberState==="1"){
 			// 	lightup(pk);
@@ -376,7 +377,7 @@ function double(pk){
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
 
 			$('#double'+pk.toString()).attr('class','double1');
-			$('.double0').attr('class','doubleforbid');
+			
 			var parsedJson = jQuery.parseJSON(results);
 			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
@@ -384,7 +385,7 @@ function double(pk){
 	else if($('#double'+pk.toString()).hasClass('double1')){
 		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(results){
 			$('#double'+pk.toString()).attr('class','double0');
-			$('.doubleforbid').attr('class','double0');
+			
 			var parsedJson = jQuery.parseJSON(results);
 			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
 		});
