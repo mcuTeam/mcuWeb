@@ -182,11 +182,12 @@ $('#all').click(function(){
 function callall(){
 	var arr=[];
 	$("[name=items]:checked").each(function(){
-		checked+= ($(this).attr("id")+",");
+		arr.push(this.id);
 	});
 	var checked = JSON.stringify(arr);
+
 	$.get("/callall/"+{{meetInstance.pk}}+"/",checked,function(){
-		arr.push(this.id);
+		
 	});
 }
 
