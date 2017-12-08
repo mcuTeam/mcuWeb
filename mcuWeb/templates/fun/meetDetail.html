@@ -47,16 +47,19 @@
 					<label>模式切换：</label>
 					<select class="span3" id="modelmenu">
 							<option id="操作员模式" value="0">操作员模式</option>
-							<option id="主席模式" value="1">主席模式</option>
-							<option id="语音激励模式" value="2">语音激励模式</option>
+							<option id="语音激励模式" value="1">语音激励模式</option>
+							<option id="主席模式" value="2">主席模式</option>
 					</select>
 					<a class="btn btn-info" onclick="modelfun()">确定</a>
 				</form>
 			</div>
 			<div class="row-fluid" id="modelcontrol">
 				<div class="span12" id="">
-					<a class="btn btn-info" onclick="callall()">全部连接</a>
-					<a class="btn btn-info" onclick="hungup_all()">全部断开</a>
+					<a class="btn btn-info" id="callall" onclick="callall()">全部连接</a>
+					<a class="btn btn-info disabled" id="hungall" onclick="hungup_all()">全部断开</a>
+					<div class="progress">
+						<div class="bar" ></div>
+					</div>
 					<div id="title">
 						<p>主席模式 </p>
 					</div>
@@ -132,6 +135,7 @@ $('document').ready(function(){
 	$('#{{meetInstance.operationModel}}').attr('selected','selected');
 	modellayout();
 	$('div#pill2').attr('class','accordion-body collapse in');
+	$('div.progress').hide();
 	function getmeetmemberinfo() {
 		$.get("/getinfolist/"+{{meetInstance.pk}}+"/",function(){
 
@@ -146,18 +150,6 @@ $('document').ready(function(){
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i]);
-					// if ((meetinfoJson.MemberState[i]==="0"||meetinfoJson.MemberState[i]==="1")&&($('#silencemember'+meetinfoJson.pk[i].toString()).hasClass('silencememberforbid'))) {
-					// 	  lightup(meetinfoJson.pk[i]);
-					// 	$('#connect'+meetinfoJson.pk[i].toString()).attr('class','connected');
-					//   	$('#callmember'+meetinfoJson.pk[i].toString()).attr('class','callmemberforbid');
-					//   	$('#hangup'+meetinfoJson.pk[i].toString()).attr('class','hangup1');
-					// }
-					// if ($('#silencemember'+meetinfoJson.pk[i].toString()).hasClass('silencememberforbid')) {
-					// 	$('#silencemember'+meetinfoJson.pk[i].toString()).attr('class','silencemember0');
-					// 	$('#shutup'+meetinfoJson.pk[i].toString()).attr('class','shutup0');
-					// 	$('#double'+meetinfoJson.pk[i].toString()).attr('class','double0');
-					// 	$('#see'+meetinfoJson.pk[i].toString()).attr('class','see0');
-					// 	$('#broadcast'+meetinfoJson.pk[i].toString()).attr('class','broadcast0');
 				}
 			});
 		}
@@ -180,21 +172,53 @@ $('#all').click(function(){
 });
 
 function callall(){
-	var arr=[];
-	$("[name=items]:checked").each(function(){
-		arr.push(this.id);
-	});
-	var checked = JSON.stringify(arr);
+	if (!($('#callall').hasClass('btn btn-info disabled'))) {
+		var arr=[];
+		$("[name=items]:checked").each(function(){
+			arr.push(this.id);
+		});
+		var checked = JSON.stringify(arr);
 
-	$.get("/callall/"+{{meetInstance.pk}}+"/",checked,function(){
-		
-	});
+		$('#callall').attr('class','btn btn-warning');
+		$('#callall').text('连接中');
+
+		var i=0;
+		function bar(){
+			$('div.progress').show();
+			$('#modelcover').show();
+			if ( i <= arr.length) {		
+				setTimeout(bar, 500);
+				$("div.bar").css("width",String((100/arr.length)*i)+"%");
+				console.log(i);
+				i++;
+			}
+			else if(i>arr.length){
+				$('div.progress').hide();
+				$('#modelcover').hide();
+				$('#callall').attr('class','btn btn-info disabled');
+		        $('#callall').text('全部连接');
+		        $('#hungall').attr('class','btn btn-info');
+
+				return;
+			}
+		}
+		bar();
+		$.get("/callall/"+{{meetInstance.pk}}+"/",checked,function(){	
+			
+		});
+
+	}
+	
 }
 
 function hungup_all(){
-			$.get("/hungupall/"+{{meetInstance.pk}}+"/",function(){
+	if ($('#hungall').hasClass('btn btn-info')) {
+		$.get("/hungupall/"+{{meetInstance.pk}}+"/",function(){
+			$('#hungall').attr('class','btn btn-info disabled');
+			$('#callall').attr('class','btn btn-info');
 
 		});
+	}
 }
 
 function modelfun(){
@@ -216,13 +240,13 @@ function modellayout(){
 	}
 	else if(el==="1"){
 		$('#modelcover').show();
-		$('#title').show();
-		$('#title1').hide();
+		$('#title1').show();
+		$('#title').hide();
 	}
 	else{
 		$('#modelcover').show();
-		$('#title').hide();
-		$('#title1').show();
+		$('#title1').hide();
+		$('#title').show();
 	}
 }
 

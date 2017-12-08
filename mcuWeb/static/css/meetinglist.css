@@ -4,6 +4,13 @@
 	margin-top: 50px; 
 }
 
+div.progress{
+	position: absolute; 
+	margin-top: 20px;
+	width: 60%
+
+}
+
 div#modelcover{
 
 	position: absolute; 
