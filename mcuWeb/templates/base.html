@@ -169,13 +169,16 @@
 					$('#loading').hide();
 					$(function(){
 						function heartbeat(){
-						   $.get(/mcuHeartBeat/,function(date){
+						   $.get(/mcuHeartBeat/).done(function(date){
 						   	if(date==="False"){
 						   		$('#cover').hide();
 						   	}
 						   	else{
 						   		$('#cover').show();
 						   	}
+						   }).fail(function(){
+						   	alert("web服务器无响应");
+
 						   });
 						}
 						heartbeat();

@@ -104,14 +104,14 @@
 					<td>{{ forloop.counter }}</td>
 					<td>会场{{terminal.name}}</td>
 					<td>{{terminal.terminalIP}}</td>
-					<td class="unconnect" id="connect{{terminal.pk}}"><button></button></td>
-					<td class="callmember1" id="callmember{{terminal.pk}}"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
-					<td class="hangupforbid" id="hangup{{terminal.pk}}"><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
-					<td class="silencememberforbid" id="silencemember{{terminal.pk}}"><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
-					<td class="shutupforbid" id="shutup{{terminal.pk}}"><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
-					<td class="doubleforbid" id="double{{terminal.pk}}"><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
-					<td class="seeforbid" id="see{{terminal.pk}}"><a class="btn" onclick="see({{terminal.pk}})" > </a></td>
-					<td class="broadcastforbid" id="broadcast{{terminal.pk}}"><a class="btn" onclick="broadcast({{terminal.pk}})" > </a></td>
+					<td class="unconnect" id="connect{{terminal.pk}}" title="state"><button></button></td>
+					<td class="callmember1" id="callmember{{terminal.pk}}" title="call"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
+					<td class="hangupforbid" id="hangup{{terminal.pk}}" title="hung"><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
+					<td class="silencememberforbid" id="silencemember{{terminal.pk}}" title="silence"><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
+					<td class="shutupforbid" id="shutup{{terminal.pk}}" title="shutup"><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
+					<td class="doubleforbid" id="double{{terminal.pk}}" title="double"><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
+					<td class="seeforbid" id="see{{terminal.pk}}" title="see"><a class="btn" onclick="see({{terminal.pk}})" > </a></td>
+					<td class="broadcastforbid" id="broadcast{{terminal.pk}}" title="broadcast"><a class="btn" onclick="broadcast({{terminal.pk}})" > </a></td>
 				</tr>
 			</tbody>
 			<script type="text/javascript">
@@ -144,13 +144,17 @@ $('document').ready(function(){
 
 	$(function(){
 		function getmeetinfo(){
-			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
+			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/").done(function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
-
-
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i],meetinfoJson.IsDualSender[i]);
 				}
+				if (meetinfoJson.AllMemberCount==="0") {
+					light_off();
+				}
+			}).fail(function(){
+				alert("guaile");
+
 			});
 		}
 		getmeetinfo();
@@ -173,51 +177,79 @@ $('#all').click(function(){
 
 function callall(){
 
-		var arr=[];
-		$("[name=items]:checked").each(function(){
-			arr.push(this.id);
-		});
-		var checked = JSON.stringify(arr);
-
-		$('#callall').attr('class','btn btn-warning');
-		$('#callall').text('连接中');
-
-		var i=0;
-		function bar(){
-			$('div.progress').show();
-			$('#modelcover').show();
-			if ( i <= arr.length) {
-				setTimeout(bar, 500);
-				$("div.bar").css("width",String((100/arr.length)*i)+"%");
-				console.log(i);
-				i++;
-			}
-			else if(i>arr.length){
-				$('div.progress').hide();
-				$('#modelcover').hide();
-				$('#callall').attr('class','btn btn-info');
-		        $('#callall').text('全部连接');
-		        
-
-				return;
-			}
-		}
-		bar();
-
+	var arr=[];
+	$("[name=items]:checked").each(function(){
+		arr.push(this.id);
+	});
+	var checked = JSON.stringify(arr);
 
 	$.post("/callall/"+{{meetInstance.pk}}+"/",{"checked":checked,csrfmiddlewaretoken:'{{ csrf_token }}'},function(){
+			$('#callall').attr('class','btn btn-warning');
+			$('#callall').text('连接中');
+
+			var i=0;
+			function bar(){
+				$('div.progress').show();
+				$('#modelcover').show();
+				if ( i <= arr.length) {
+					setTimeout(bar, 500);
+					$("div.bar").css("width",String((100/arr.length)*i)+"%");
+					console.log(i);
+					i++;
+				}
+				else if(i>arr.length){
+					$('div.progress').hide();
+					$('#modelcover').hide();
+					$('#callall').attr('class','btn btn-info');
+			        $('#callall').text('全部连接');
+			        
+
+					return;
+				}
+			}
+			bar();
 
 	});
 
 }
 
 function hungup_all(){
-	if ($('#hungall').hasClass('btn btn-info')) {
+	$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
+		var meetinfoJson= jQuery.parseJSON(info);
+		var online=meetinfoJson.AllMemberCount;
+		
 		$.get("/hungupall/"+{{meetInstance.pk}}+"/",function(){
+			$('#hungall').attr('class','btn btn-warning');
+			$('#hungall').text('断开中');
+
+			var i=0;
+			function bar(){
+				$('div.progress').show();
+				$('#modelcover').show();
+				if ( i <= online) {
+					setTimeout(bar, 500);
+					$("div.bar").css("width",String((100/online)*i)+"%");
+					console.log(i);
+					i++;
+				}
+				else if(i>online){
+					$('div.progress').hide();
+					$('#modelcover').hide();
+					$('#hungall').attr('class','btn btn-info');
+			        $('#hungall').text('全部断开');
+			        
+
+					return;
+				}
+			}
+			bar();
+
 
 
 		});
-	}
+	});
+
+	
 }
 
 function modelfun(){
@@ -303,6 +335,20 @@ function fresh_icon(number,state,blocking,muting,identity,double){
 
 
 }
+
+function light_off(){
+	$("td[title='state']").attr('class','unconnect');
+	$("td[title='call']").attr('class','callmember1');
+	$("td[title='hung']").attr('class','hangupforbid');
+	$("td[title='silence']").attr('class','silencememberforbid');
+	$("td[title='shutup']").attr('class','shutupforbid');
+	$("td[title='double']").attr('class','doubleforbid');
+	$("td[title='see']").attr('class','seeforbid');
+	$("td[title='broadcast']").attr('class','broadcastforbid');
+
+}
+
+
 function callmember(pk){
 	// console.log(pk);
 	if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
@@ -322,6 +368,7 @@ function hangup(pk){
 	if ($('#hangup'+pk.toString()).hasClass('hangup1')) {
 		// console.log(pk);
 		$.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+			
 			$('#connect'+pk.toString()).attr('class','unconnect');
 			$('#callmember'+pk.toString()).attr('class','callmember1');
 			$('#hangup'+pk.toString()).attr('class','hangupforbid');
