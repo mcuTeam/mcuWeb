@@ -1,4 +1,11 @@
+div#alter{
+	position: fixed; 
+	top:50%; 
+	left:40%;
+	 
+	width: 20%;
 
+}
 
 .loading { 
 	

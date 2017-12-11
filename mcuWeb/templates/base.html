@@ -15,6 +15,9 @@
  <div class="loading" id="loading">
 
  </div>
+ <div class="alert alert-error" id="alter">
+	<p>web服务器无响应</p>
+</div>
 
 <div class="container-fluid">
 	<div class="row-fluid">
@@ -167,9 +170,13 @@
 			<script type="text/javascript">
 				$('document').ready(function(){
 					$('#loading').hide();
+					$('#alter').hide();
+
 					$(function(){
 						function heartbeat(){
 						   $.get(/mcuHeartBeat/).done(function(date){
+						   	$('#alter').hide();
+
 						   	if(date==="False"){
 						   		$('#cover').hide();
 						   	}
@@ -177,7 +184,7 @@
 						   		$('#cover').show();
 						   	}
 						   }).fail(function(){
-						   	alert("web服务器无响应");
+						   	$('#alter').show();
 
 						   });
 						}

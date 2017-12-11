@@ -146,6 +146,8 @@ $('document').ready(function(){
 		function getmeetinfo(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/").done(function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
+				$('#alter').hide();
+
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i],meetinfoJson.IsDualSender[i]);
 				}
@@ -153,7 +155,7 @@ $('document').ready(function(){
 					light_off();
 				}
 			}).fail(function(){
-				alert("guaile");
+				$('#alter').show();
 
 			});
 		}
