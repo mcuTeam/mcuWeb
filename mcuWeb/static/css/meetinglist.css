@@ -4,6 +4,15 @@
 	margin-top: 50px; 
 }
 
+div#error{
+	position: fixed; 
+	top:50%; 
+	left:40%;
+	 
+	width: 20%;
+
+}
+
 div.progress{
 	position: absolute; 
 	margin-top: 20px;

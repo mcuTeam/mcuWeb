@@ -9,6 +9,9 @@
 {% endblock %}
 
 {% block content %}
+ <div class="alert alert-error" id="error">
+	<p>与MCU通信出错</p>
+</div>
 <!-- 页标 -->
 <div class="row-fluid">
 	<div class="span8 offset1">
@@ -136,6 +139,7 @@ $('document').ready(function(){
 	modellayout();
 	$('div#pill2').attr('class','accordion-body collapse in');
 	$('div.progress').hide();
+	$('#error').hide();
 	function getmeetmemberinfo() {
 		$.get("/getinfolist/"+{{meetInstance.pk}}+"/",function(){
 
@@ -147,13 +151,24 @@ $('document').ready(function(){
 			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/").done(function(info){
 				var meetinfoJson= jQuery.parseJSON(info);
 				$('#alter').hide();
+				if(meetinfoJson.msgType==="error"){
+					light_off();
+					$('#error').show();
+				}
+				else{
+					$('#error').hide();
+
+
 
 				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
+					
 					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i],meetinfoJson.IsDualSender[i]);
 				}
 				if (meetinfoJson.AllMemberCount==="0") {
 					light_off();
 				}
+				}
+
 			}).fail(function(){
 				$('#alter').show();
 
