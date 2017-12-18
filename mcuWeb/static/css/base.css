@@ -7,6 +7,23 @@ div#alter{
 
 }
 
+a#top{
+	position: fixed;
+	top: 95%;
+	 left: 95%; 
+	 z-index: 6;
+	 display: inline-block;
+	 width: 30px;
+	 height: 30px;
+	 background: url(../images/top.png) center no-repeat;
+
+}
+
+html{
+	background-color: rgb(51,51,51);
+
+}
+
 .loading { 
 	
 	position: fixed; 
@@ -20,6 +37,8 @@ div#alter{
 
 .container-fluid{
 	background-color: rgb(51,51,51);
+
+
 }
 
 .span1{
@@ -46,9 +65,10 @@ div#cover{
 
 div.span9{
 	border-radius: 30px;
-	height: 960px;
 	background-color: rgb(68,68,68);
-	margin-bottom: 60px;
+	padding-bottom: 20px;
+	margin-top: 30px;
+	margin-bottom: 30px;
 }
 ul#list1,#list2,#list3,#list4{
 	margin: 0px;

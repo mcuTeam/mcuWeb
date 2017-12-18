@@ -20,33 +20,40 @@
 </div>
 <!-- 会议信息显示 -->
 <div class="row-fluid">
-	<div class="span10 offset1" id="meetinfo">
-		<div class="row-fluid">
-			<div class="span4">
-				<p><strong>会议名称：</strong>{{meetInstance.name}}</p>
-				<p><strong>带宽：</strong>{{meetInstance.bandwidth}}</p>
-				<p><strong>视频分辨率：</strong>{{meetInstance.capalityname}}</p>
-			</div>
-			<div class="span4">
-				<p><strong>会议编号：</strong>{{meetInstance.meetcode}}</p>
-				<p><strong>视频协议：</strong>{{meetInstance.videoProtocol}}</p>
-				<p><strong>音频协议：</strong>{{meetInstance.audioProtocol}}</p>
-			</div>
-			<div class="span4">
-				<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
-				<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
-				<p><strong>主会场：</strong>会场{{meetInstance.mainMeetRoomName}}</p>
 
-			</div>
+	<button type="button" class="btn btn-info offset1" data-toggle="collapse" data-target="#demo">
+  会议信息
+</button>
+ 
+<div id="demo" class="collapse">
+		<div class="span10 offset1" id="meetinfo">		
+		<div class="span4">
+			<p><strong>会议名称：</strong>{{meetInstance.name}}</p>
+			<p><strong>带宽：</strong>{{meetInstance.bandwidth}}</p>
+			<p><strong>视频分辨率：</strong>{{meetInstance.capalityname}}</p>
 		</div>
+		<div class="span4">
+			<p><strong>会议编号：</strong>{{meetInstance.meetcode}}</p>
+			<p><strong>视频协议：</strong>{{meetInstance.videoProtocol}}</p>
+			<p><strong>音频协议：</strong>{{meetInstance.audioProtocol}}</p>
+		</div>
+		<div class="span4">
+			<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
+			<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
+			<p><strong>主会场：</strong>会场{{meetInstance.mainMeetRoomName}}</p>
+		</div>		
 	</div>
+
+</div>
+
 </div>
 <!-- 按钮框体 -->
 <div class="row-fluid">
 	<div class="span10 offset1" id="buttonbox">
-		<div class="row-fluid" >
-			<div id="modelselect">
+			<div id="modelselect" class="span7">
 				<form class="form-inline">
+					<a class="btn btn-info" id="callall" onclick="callall()">连接选中会场</a>
+					<a class="btn btn-info" id="hungall" onclick="hungup_all()">全部断开</a>
 					<label>模式切换：</label>
 					<select class="span3" id="modelmenu">
 							<option id="操作员模式" value="0">操作员模式</option>
@@ -58,18 +65,14 @@
 			</div>
 			<div class="row-fluid" id="modelcontrol">
 				<div class="span12" id="">
-					<a class="btn btn-info" id="callall" onclick="callall()">全部连接</a>
-					<a class="btn btn-info" id="hungall" onclick="hungup_all()">全部断开</a>
 					<div class="progress">
 						<div class="bar" ></div>
 					</div>
-					<div id="title">
-						<p>主席模式 </p>
-					</div>
+					<div id="title"><p>主席模式 </p></div>
 					<div id="title1"><p>语音激励模式</p></div>
 				</div>
 			</div>
-		</div>
+		
 
 	</div>
 </div>
@@ -77,13 +80,13 @@
 
 <!-- 列表显示 -->
 <div class="row-fluid">
-	<div class="span10 offset1">
+	<div class="span10 offset1" id="table">
 		<table class="table table-condensed">
-			<div id="modelcover"></div>
+			<div id="modelcover">
 			<thead>
 				<tr>
 					<th><label class="checkbox">
-						<input type="checkbox" value="全选" id="all">
+						<input type="checkbox" value="全选" id="all" title="全选">
 						</label></th>
 					<th>#</th>
 					<th>会场名称</th>
@@ -107,7 +110,7 @@
 					<td>{{ forloop.counter }}</td>
 					<td>会场{{terminal.name}}</td>
 					<td>{{terminal.terminalIP}}</td>
-					<td class="unconnect" id="connect{{terminal.pk}}" title="state"><button></button></td>
+					<td class="unconnect" id="connect{{terminal.pk}}" title="state"><a></a></td>
 					<td class="callmember1" id="callmember{{terminal.pk}}" title="call"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
 					<td class="hangupforbid" id="hangup{{terminal.pk}}" title="hung"><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
 					<td class="silencememberforbid" id="silencemember{{terminal.pk}}" title="silence"><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
@@ -124,6 +127,7 @@
 			</script>
 
 			{% endfor %}
+			</div>
 		</table>
 		<a type="button" class="btn" href="/meetinglist">返回</a>
 	</div>

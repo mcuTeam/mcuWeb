@@ -4,6 +4,10 @@
 	margin-top: 50px; 
 }
 
+.span10.offset1{
+	height: auto;
+}
+
 span.tips{
 	color: red;
 }
