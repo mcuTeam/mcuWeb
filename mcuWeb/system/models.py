@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 
 class terminal(models.Model):
-	name = models.IntegerField(unique=True,blank=False,null=False,verbose_name=u"E164 Alias*")
+	name = models.CharField(max_length=200,unique=True,blank=False,null=False,verbose_name=u"E164 Alias*")
 	terminalIP = models.GenericIPAddressField(unique=True,max_length=200,blank=False,null=False,verbose_name=u"IP*",error_messages={'unique':u"重复IP,请重新输入!"})
 	capalityname = models.CharField(max_length=200,blank=False,null=False,default="1080P",verbose_name="视频分辨率*")
 

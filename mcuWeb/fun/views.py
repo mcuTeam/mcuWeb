@@ -1270,6 +1270,7 @@ def callmemberAjaxView(request,meetpk,pk):
         if pk == meeting.objects.get(pk=meetpk).mainMeetRoom:
             print("这是大哥！！")
             try:
+                time.sleep(0.3)
                 result = setmemberidentityTask(meetname,membername)
             except BaseException as e:
                 print("catch setmemberidentityTask error",e)
