@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from mcuWeb.celery import *
+from system.forms import *
 import datetime
 import re
+import os
+import wmi
+import pythoncom
 # Create your views here.
 
 def returnCode2Dict(retCode):
@@ -47,6 +51,10 @@ def analysisListMeetResult(retCode):
 				retDict[deep2[0]].append(deep2[1])
 	return retDict
 
+def checkSystem():
+	if mcuAttributes.objects.count()<1:
+		tmp = mcuAttributes(alias="default",logLevel=0)
+		tmp.save()
 # --------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required
@@ -59,6 +67,7 @@ def homeView(request):
 	# except BaseException as e:
 	# 	print("catch heartbeat error",e)
 	# 	print(result)
+	checkSystem()
 	return render(request,'home.html')
 
 @login_required
@@ -130,12 +139,91 @@ def system_infoView(request):
 
 @login_required
 def MCU_configView(request):
-	return render(request,'system_manage/MCU_config.html')
+	if request.POST:
+		curTime = request.POST['curTime']
+		curDate = request.POST['curDate']
+		print(curDate,curTime)
+		os.system("date %s" % curDate)
+		os.system("time %s" % curTime)
+		if mcuAttributes.objects.count()<1:
+			tmp = mcuAttributes(alias="default",logLevel=0)
+			tmp.save()
+		mcuInstance = mcuAttributes.objects.get(pk=1)
+		# print(request.POST)
+		form = mcuAttributesForm(data=request.POST,instance=mcuInstance)
+		# print(form)
+		if form.is_valid():
+			print("is valid")
+		return render(request,'system_manage/MCU_config.html',{'form':form})
+	else:
+		if mcuAttributes.objects.count()<1:
+			tmp = mcuAttributes(alias="default",logLevel=0)
+			tmp.save()
+		mcuInstance = mcuAttributes.objects.get(pk=1)
+		form = mcuAttributesForm(instance=mcuInstance)
+		print(form)
+		return render(request,'system_manage/MCU_config.html',{'form':form})
+
+def getNetworkInfo():
+	pythoncom.CoInitialize()
+	nic_configs = wmi.WMI('').Win32_NetworkAdapterConfiguration(IPEnabled=True)
+	if len(nic_configs) == 0:
+		return None
+	tmplist=[]
+	for interface in nic_configs:
+		print(interface)
+		tmpdict = {}
+		# Index
+		tmpdict["Index"] = interface.Index
+		# IP
+		tmpdict["IP"] = interface.IPAddress[0]
+		# 描述
+		tmpdict["Description"] = interface.Description
+		# 掩码
+		tmpdict["IPSubnet"] = interface.IPSubnet[0]
+		# 网关
+		if interface.DefaultIPGateway !=None:
+			tmpdict["DefaultIPGateway"] = interface.DefaultIPGateway[0]
+		else:
+			tmpdict["DefaultIPGateway"] = ""
+		# DNS
+		if interface.DNSServerSearchOrder != None:
+			tmpdict["DNSServerSearchOrder"] = interface.DNSServerSearchOrder[0]
+		else:
+			tmpdict["DNSServerSearchOrder"] = ""
+		# MAC
+		tmpdict["MAC"] = interface.MacAddress
+		tmplist.append(tmpdict)
+	return tmplist
+
 
 
 @login_required
 def port_configView(request):
-	return render(request,'system_manage/port_config.html')
+	if request.POST:
+		return render(request,'system_manage/port_config.html')
+	else:
+		ret = getNetworkInfo()
+		if ret is None:
+			print("no network!")
+		if ret is None:
+			networkAdapter1 = None
+			networkAdapter2 = None
+		elif len(ret)==2:
+			data1 = ret[0]
+			data2 = ret[1]
+			networkAdapter1 = networkAdapterForm(data1)
+			networkAdapter2 = networkAdapterForm(data2)
+		elif len(ret) == 1:
+			data1 = ret[0]
+			networkAdapter1 = networkAdapterForm(data1)
+			networkAdapter2 = None
+		else:
+			data1 = ret[0]
+			data2 = ret[1]
+			networkAdapter1 = networkAdapterForm(data1)
+			networkAdapter2 = networkAdapterForm(data2)
+		return render(request,'system_manage/port_config.html',{'networkAdapter1':networkAdapter1,'networkAdapter2':networkAdapter2})
 
 @login_required
 def GK_configView(request):

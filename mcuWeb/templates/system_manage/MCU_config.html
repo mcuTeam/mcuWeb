@@ -14,8 +14,10 @@
 		<p>MCU配置</p>
 	</div>
 	<div class="span8 offset2">
-		<form class="form-horizontal">
-			<div class="control-group">
+		<form class="form-horizontal" action="/MCU_config/" role="form" method="post">
+			{% csrf_token %}
+			{{form}}
+			<!-- <div class="control-group">
 				<label class="control-label">MCU别名</label>
 				<div class="controls">
 					<input type="text" id="name" >
@@ -41,7 +43,7 @@
 						<option>DEBUG</option>
 					</select>
 				</div>
-			</div>
+			</div> -->
 			<div class="form-actions">
 				<button type="submit" class="btn btn-info"><i class="icon-folder-close icon-white"></i> 保存</button>
 				<button type="button" class="btn"><i class="icon-repeat"></i> 取消</button>
@@ -57,6 +59,6 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill1').attr('class','accordion-body collapse in');
-		});	
+		});
 	</script>
 {% endblock %}

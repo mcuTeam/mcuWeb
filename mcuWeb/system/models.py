@@ -40,3 +40,7 @@ class meeting(models.Model):
 	mainMeetRoom = models.CharField(max_length=200,blank=False,null=False,default="",verbose_name="主会场*")
 	mainMeetRoomName = models.CharField(max_length=200,blank=False,null=False,default="",verbose_name="主会场名称*")
 	operationModel = models.CharField(max_length=200,blank=False,null=False,default="操作员模式",verbose_name="操作模式*")
+
+class mcuAttributes(models.Model):
+	alias = models.CharField(unique=True,max_length=200,blank=False,null=False,verbose_name="MCU别名*")
+	logLevel = models.IntegerField(blank=False,null=False,default=0,verbose_name="日志级别*")
