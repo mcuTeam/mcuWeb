@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 
 class terminal(models.Model):
-	name = models.IntegerField(unique=True,blank=False,null=False,verbose_name=u"E164 Alias*")
+	name = models.CharField(max_length=200,unique=True,blank=False,null=False,verbose_name=u"E164 Alias*")
 	terminalIP = models.GenericIPAddressField(unique=True,max_length=200,blank=False,null=False,verbose_name=u"IP*",error_messages={'unique':u"重复IP,请重新输入!"})
 	capalityname = models.CharField(max_length=200,blank=False,null=False,default="1080P",verbose_name="视频分辨率*")
 
@@ -40,3 +40,7 @@ class meeting(models.Model):
 	mainMeetRoom = models.CharField(max_length=200,blank=False,null=False,default="",verbose_name="主会场*")
 	mainMeetRoomName = models.CharField(max_length=200,blank=False,null=False,default="",verbose_name="主会场名称*")
 	operationModel = models.CharField(max_length=200,blank=False,null=False,default="操作员模式",verbose_name="操作模式*")
+
+class mcuAttributes(models.Model):
+	alias = models.CharField(unique=True,max_length=200,blank=False,null=False,verbose_name="MCU别名*")
+	logLevel = models.IntegerField(blank=False,null=False,default=0,verbose_name="日志级别*")
