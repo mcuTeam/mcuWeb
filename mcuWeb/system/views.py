@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import redirect,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from mcuWeb.celery import *
 from system.forms import *
@@ -196,12 +197,49 @@ def getNetworkInfo():
 		tmplist.append(tmpdict)
 	return tmplist
 
-
+# 根据输入的参数配置网卡参数
+# 输入：包含参数的字典
+# 输出：True代表配置成功；失败则返回具体原因
+def setNetworkInfo(paramDict):
+	pythoncom.CoInitialize()
+	c = wmi.WMI ()
+	tmplist=[]
+	colNicConfigs = c.Win32_NetworkAdapterConfiguration (IPEnabled=1)
+	if len(colNicConfigs) < 1:
+		return u"没有可用网卡"
+	arrIPAddresses = [paramDict['IP']]
+	arrSubnetMasks = [paramDict['IPSubnet']]
+	arrDefaultGateways = [paramDict['DefaultIPGateway']]
+	arrGatewayCostMetrics = [1]
+	intReboot = 0
+	for interface in colNicConfigs:
+		if interface.Description == paramDict['Description'] and interface.Index == paramDict['Index']:
+			returnValue = interface.EnableStatic(IPAddress = arrIPAddresses, SubnetMask = arrSubnetMasks)
+			if returnValue[0] == 0:
+				print("  ")
+			elif returnValue[0] == 1:
+				intReboot+=1
+			else:
+				return u"修改IP失败"
+			returnValue = interface.SetGateways(DefaultIPGateway = arrDefaultGateways, GatewayCostMetric = arrGatewayCostMetrics)
+			if returnValue[0] == 0 or returnValue[0] == 1:
+				print("  ")
+			elif returnValue[0] == 1:
+				intReboot+=1
+			else:
+				return u"修改网关失败"
+			if intReboot>0:
+				print("need reboot")
+	return True
 
 @login_required
 def port_configView(request):
 	if request.POST:
-		return render(request,'system_manage/port_config.html')
+		adapterInstance = networkAdapterForm(request.POST)
+		if adapterInstance.is_valid():
+			print ("is valid")
+			ret = setNetworkInfo(adapterInstance.cleaned_data)
+		return HttpResponseRedirect('/port_config/')
 	else:
 		ret = getNetworkInfo()
 		if ret is None:
