@@ -14,18 +14,19 @@
 		<p>请选择升级安装包</p>
 	</div>
 	<div class="span8 offset2">
-		<form class="form-horizontal">
+		<form class="form-horizontal" method="post" action="/sw_manage/">
+			{% csrf_token %}
 			<div class="control-group">
 				<div class="controls">
 					<div class="input-append">
 					  <input class="span10" id="appendedInputButton" type="text">
-					  <button class="btn" type="button">浏览</button>	
+					  <button class="btn" type="button">浏览</button>
 					</div>
 			    </div>
 			</div>
 			<div class="form-actions">
-				<button type="button" class="btn btn-info"><i class="icon-circle-arrow-up icon-white"></i> 升级</button>
-				<button type="button" class="btn btn-warning"><i class="icon-circle-arrow-down icon-white"></i> 降级</button>
+				<button type="submit" class="btn btn-info"><i class="icon-circle-arrow-up icon-white"></i> 升级</button>
+				<button type="submit" class="btn btn-warning"><i class="icon-circle-arrow-down icon-white"></i> 降级</button>
 			</div>
 		</form>
 	</div>
@@ -36,6 +37,6 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill1').attr('class','accordion-body collapse in');
-		});	
+		});
 	</script>
 {% endblock %}
