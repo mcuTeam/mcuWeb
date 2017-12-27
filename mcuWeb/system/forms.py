@@ -42,3 +42,9 @@ class networkAdapterForm(forms.Form):
 	IP = forms.GenericIPAddressField(label = 'IP Address',required = True,widget=forms.TextInput(attrs={'class':'text-input small-input',}))
 	IPSubnet = forms.GenericIPAddressField(label = 'IPSubnet',required = True,widget=forms.TextInput(attrs={'class':'text-input small-input',}))
 	DefaultIPGateway = forms.GenericIPAddressField(label = 'DefaultIPGateway',required = True,widget=forms.TextInput(attrs={'class':'text-input small-input',}))
+
+class gkForm(ModelForm):
+    active = forms.BooleanField(label='是否启用GK',required=False)
+    class Meta:
+        model = gkAttributes
+        fields = '__all__'

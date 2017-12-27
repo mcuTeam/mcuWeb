@@ -44,3 +44,7 @@ class meeting(models.Model):
 class mcuAttributes(models.Model):
 	alias = models.CharField(unique=True,max_length=200,blank=False,null=False,verbose_name="MCU别名*")
 	logLevel = models.IntegerField(blank=False,null=False,default=0,verbose_name="日志级别*")
+
+class gkAttributes(models.Model):
+	ip = models.GenericIPAddressField(unique=True,max_length=200,blank=False,null=False,verbose_name=u"IP*")
+	active = models.BooleanField(default=False)
