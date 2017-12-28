@@ -35,7 +35,6 @@
 	<div class="row-fluid" id="toptag">
 		<div class="span2 ">
 		  <!--Sidebar content-->
-
 			<ul class="nav nav-pills nav-stacked ">
 				<li><a id="nav" href="/home" style="width:auto">首页</a></li>
 				<div class="accordion" id="selector">
@@ -88,19 +87,6 @@
 								<ul id="list3" class="nav nav-pills nav-stacked">
 									<li><a href="#down_log">日志下载</a></li>
 									<li><a href="#myModal3" data-toggle="modal" >清除日志</a></li>
-									<div id="myModal3" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-											<h3 id="myModalLabel">清除日志</h3>
-										</div>
-										<div class="modal-body">
-											<p>您确定要清除日志么？</p>
-										</div>
-										<div class="modal-footer">
-											<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-											<button class="btn btn-warning">确定</button>
-										</div>
-									</div>
 								</ul>
 						    </div>
 						</div>
@@ -116,47 +102,11 @@
 								</ul>
 								<ul id="list4" class="nav nav-pills nav-stacked">
 									<li><a href="#myModal" data-toggle="modal" >系统重启</a></li>
-									<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-											<h3 id="myModalLabel">系统重启</h3>
-										</div>
-										<div class="modal-body">
-											<p>您确定要重新启动系统么？</p>
-										</div>
-										<div class="modal-footer">
-											<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-											<button class="btn btn-warning">确定</button>
-										</div>
-									</div>
+
 									<li><a href="#myModal1" data-toggle="modal" >设备重启</a></li>
-									<div id="myModal1" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-											<h3 id="myModalLabel">设备重启</h3>
-										</div>
-										<div class="modal-body">
-											<p>您确定要重新启动设备么？</p>
-										</div>
-										<div class="modal-footer">
-											<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-											<button class="btn btn-warning">确定</button>
-										</div>
-									</div>
+
 									<li><a href="#myModal2" data-toggle="modal">设备关机</a></li>
-									<div id="myModal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-											<h3 id="myModalLabel">设备关机</h3>
-										</div>
-										<div class="modal-body">
-											<p>您确定要关闭设备么？</p>
-										</div>
-										<div class="modal-footer">
-											<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-											<button class="btn btn-warning">确定</button>
-										</div>
-									</div>
+
 								</ul>
 							</div>
 						</div>
@@ -166,6 +116,61 @@
 				<li><a id="nav5" href="/accounts/signout/">退出</a></li>
 			</ul>
 		</div>
+		<div id="myModal3" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">清除日志</h3>
+			</div>
+			<div class="modal-body">
+				<p>您确定要清除日志么？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-warning">确定</button>
+			</div>
+		</div>
+		<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">系统重启</h3>
+			</div>
+			<div class="modal-body">
+				<p>您确定要重新启动系统么？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-warning">确定</button>
+			</div>
+		</div>
+		<div id="myModal1" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">设备重启</h3>
+			</div>
+			<div class="modal-body">
+				<p>您确定要重新启动设备么？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-warning">确定</button>
+			</div>
+		</div>
+		<div id="myModal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">设备关机</h3>
+			</div>
+			<div class="modal-body">
+				<p>您确定要关闭设备么？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-warning">确定</button>
+			</div>
+		</div>
+
+
+
 		<div class="span9 offset2">
 		  <!--Body content-->
 			{% block content %}{% endblock %}

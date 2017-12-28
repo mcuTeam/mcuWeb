@@ -16,34 +16,35 @@
 	<div class="span8 offset2">
 		<form class="form-horizontal" action="/MCU_config/" role="form" method="post">
 			{% csrf_token %}
-			{{form}}
-			<!-- <div class="control-group">
-				<label class="control-label">MCU别名</label>
+			
+			<div class="control-group">
+				<label class="control-label">{{form.alias.label_tag}}</label>
 				<div class="controls">
-					<input type="text" id="name" >
+					{{form.alias}}
+					<span>{{form.alias.errors.0}}</span>
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label">日期</label>
+				<label class="control-label">{{form.logLevel.label_tag}}</label>
 				<div class="controls">
-					<input type="date" id="date" >
+					{{form.logLevel}}
+					<span>{{form.logLevel.errors.0}}</span>
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label">时间</label>
+				<label class="control-label">{{form.curDate.label_tag}}</label>
 				<div class="controls">
-					<input type="time" id="time" >
+					{{form.curDate}}
+					<span>{{form.curDate.errors.0}}</span>
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label">日志级别</label>
+				<label class="control-label">{{form.curTime.label_tag}}</label>
 				<div class="controls">
-					<select>
-						<option>INFO</option>
-						<option>DEBUG</option>
-					</select>
+					{{form.curTime}}
+					<span>{{form.curTime.errors.0}}</span>
 				</div>
-			</div> -->
+			</div>
 			<div class="form-actions">
 				<button type="submit" class="btn btn-info"><i class="icon-folder-close icon-white"></i> 保存</button>
 				<button type="button" class="btn"><i class="icon-repeat"></i> 取消</button>
