@@ -14,46 +14,72 @@
 		<p>网口配置</p>
 	</div>
 	<div id="content" class="span8 offset2">
-		<form class="form-horizontal">
-			{{networkAdapter1}}
-		<hr>
-			{{networkAdapter2}}
+		<form class="form-horizontal" id="one">
+			
+		
+			
 			<p>本地连接1</p>
 			<div class="control-group">
-				<label class="control-label">IP地址</label>
+				<label class="control-label">{{networkAdapter1.Index.label_tag}}</label>
 				<div class="controls">
-					<input type="text" id="ip" >
+					{{networkAdapter1.Index}}
+					<span>{{networkAdapter1.Index.errors.0}}</span>
+				</div>
+		    </div>			
+		    <div class="control-group">
+				<label class="control-label">{{networkAdapter1.Description.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter1.Description}}
+					<span>{{networkAdapter1.Description.errors.0}}</span>
+				</div>
+		    </div>
+			<div class="control-group">
+				<label class="control-label">{{networkAdapter1.IP.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter1.IP}}
+					<span>{{networkAdapter1.IP.errors.0}}</span>
 				</div>
 		    </div>
 		    <div class="control-group">
-				<label class="control-label">子网掩码</label>
+				<label class="control-label">{{networkAdapter1.IPSubnet.label_tag}}</label>
 				<div class="controls">
-					<input type="text" id="ip" >
+					{{networkAdapter1.IPSubnet}}
+					<span>{{networkAdapter1.IPSubnet.errors.0}}</span>
 				</div>
 		    </div>
 		    <div class="control-group">
-				<label class="control-label">网关</label>
+				<label class="control-label">{{networkAdapter1.DefaultIPGateway.label_tag}}</label>
 				<div class="controls">
-					<input type="text" id="ip" >
+					{{networkAdapter1.DefaultIPGateway}}
+					<span>{{networkAdapter1.DefaultIPGateway.errors.0}}</span>
 				</div>
 		    </div>
+		    <div class="form-actions">
+				<button type="submit" class="btn btn-info"><i class="icon-folder-close icon-white"></i> 保存</button>
+				<button type="button" class="btn"><i class="icon-repeat"></i> 取消</button>
+			</div>
+		</form>
+
+		<form class="form-horizontal">
+
+            {{networkAdapter2}}
 		    <p>本地连接2</p>
 			<div class="control-group">
 				<label class="control-label">IP地址</label>
 				<div class="controls">
-					<input type="text" id="ip" >
+					<input type="text" id="" >
 				</div>
 		    </div>
 		    <div class="control-group">
 				<label class="control-label">子网掩码</label>
 				<div class="controls">
-					<input type="text" id="ip" >
+					<input type="text" id="" >
 				</div>
 		    </div>
 		    <div class="control-group">
 				<label class="control-label">网关</label>
 				<div class="controls">
-					<input type="text" id="ip" >
+					<input type="text" id="" >
 				</div>
 		    </div>
 		    <div class="form-actions">
