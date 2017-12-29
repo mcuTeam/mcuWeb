@@ -54,6 +54,10 @@
 									<li><a id="system_info" href="/system_info">系统信息</a></li>
 									<li><a id="sw_manage" href="/sw_manage">软件管理</a></li>
 									<li><a id="configfile" href="/configfile">配置文件</a></li>
+                  <!-- WuNL -->
+                  {% if user.is_authenticated %}
+                  <li><a id="modifyPW" href="/accounts/{{user.get_username}}/password/">修改密码</a></li>
+                  {% endif %}
 								</ul>
 						    </div>
 						</div>
