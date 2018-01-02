@@ -10,24 +10,39 @@
 
 {% block content %}
 <div class="row-fluid">
+	{% if msgType == 'info' %}
+	<div class="alert alert-info">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{msg}}
+	</div>
+
+	{% elif msgType == 'success' %}
+	<div class="alert alert-success">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{msg}}
+	</div>
+
+	{% elif msgType == 'error' %}
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{msg}}
+	</div>
+
+	{% endif %}
 	<div class="span8 offset1">
 		<p>请选择升级安装包</p>
 	</div>
 	<div class="span8 offset2">
-		<form class="form-horizontal" method="post" action="/sw_manage/">
+		<form enctype="multipart/form-data"  class="form-horizontal" method="post" action="/sw_manage/">
 			{% csrf_token %}
-			<div class="control-group">
-				<div class="controls">
-					  <input type="file" name="file_upload" id="file_upload" />
-					
-			    </div>
-			</div>
+			{{form}}
+
 			<div class="form-actions">
 				<button type="submit" class="btn btn-info"><i class="icon-circle-arrow-up icon-white"></i> 升级</button>
 				<button type="submit" class="btn btn-warning"><i class="icon-circle-arrow-down icon-white"></i> 降级</button>
 			</div>
 		</form>
-		
+
 	</div>
 </div>
 {% endblock %}

@@ -48,3 +48,6 @@ class gkForm(ModelForm):
     class Meta:
         model = gkAttributes
         fields = '__all__'
+
+class uploadFileForm(forms.Form):
+    file = forms.FileField(label="请选择上传文件：update.zip")

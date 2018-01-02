@@ -14,19 +14,19 @@
 		<p>网口配置</p>
 	</div>
 	<div id="content" class="span8 offset2">
-		<form class="form-horizontal" id="one">
-			
-		
-			
-			<p>本地连接1</p>
-			<div class="control-group">
+		<form class="form-horizontal" id="one" method="post">
+			{% csrf_token %}
+
+
+			<p>{{networkAdapter1.Description.value}}</p>
+			<div class="control-group" hidden="hidden">
 				<label class="control-label">{{networkAdapter1.Index.label_tag}}</label>
 				<div class="controls">
 					{{networkAdapter1.Index}}
 					<span>{{networkAdapter1.Index.errors.0}}</span>
 				</div>
-		    </div>			
-		    <div class="control-group">
+		    </div>
+		    <div class="control-group" hidden="hidden">
 				<label class="control-label">{{networkAdapter1.Description.label_tag}}</label>
 				<div class="controls">
 					{{networkAdapter1.Description}}

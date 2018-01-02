@@ -10,9 +10,11 @@ urlpatterns = [
 
 	url(r'^terminallist/$', fun_view.terminallistView,{'msg':""},name='terminallist'),
 	url(r'^addterminal/$', fun_view.addterminalView),
+	url(r'^deleteterminal/(?P<terminalpk>\d+)/$', fun_view.deleteterminalView),
 
 	url(r'^templatelist/$', fun_view.templatelistView),
 	url(r'^addtemplate/$', fun_view.addtemplateView),
+	url(r'^deletetemplate/(?P<templatepk>\d+)/$', fun_view.deletetemplateView),
 
 	url(r'^meetDetails/(?P<meetpk>\d+)/$', fun_view.meetDetailsView),
 
