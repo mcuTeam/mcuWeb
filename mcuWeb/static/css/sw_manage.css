@@ -17,3 +17,10 @@ a#sw_manage,a#sw_manage:focus,a#sw_manage:active,a#sw_manage:visited{
 	background-color: transparent;
 	color: rgb(255,153,0)
 }
+
+#id_file{
+	
+	
+	position: absolute;
+	opacity: 0;
+}

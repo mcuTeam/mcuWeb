@@ -30,12 +30,22 @@
 
 	{% endif %}
 	<div class="span8 offset1">
-		<p>请选择升级安装包</p>
+		<p>{{form.file.label_tag}}</p>
 	</div>
 	<div class="span8 offset2">
 		<form enctype="multipart/form-data"  class="form-horizontal" method="post" action="/sw_manage/">
-			{% csrf_token %}
-			{{form}}
+			<div class="control-group">
+				<div class="controls">
+					<div class="input-append">
+					    {% csrf_token %}
+						{{form.file}}
+					    <input  id="inputfile" type="text">
+					    <button class="btn" type="button">浏览</button>
+	
+					</div>
+			    </div>
+			</div>
+			
 
 			<div class="form-actions">
 				<button type="submit" class="btn btn-info"><i class="icon-circle-arrow-up icon-white"></i> 升级</button>
@@ -51,6 +61,10 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill1').attr('class','accordion-body collapse in');
+		});
+	
+		$('#id_file').change(function(){
+			document.getElementById('inputfile').value=this.value;
 		});
 
 
