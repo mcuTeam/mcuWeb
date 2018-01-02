@@ -15,11 +15,11 @@
 		<p>系统信息</p>
 	</div>
 	<div class="span8 offset3">
-		<p>设备生产商：</p>
-		<p>最大在线数：</p>
-		<p>版本号：</p>
-		<p>系列号：</p>
-		<p>备注：</p>
+		<p>设备生产商：{{productname}}</p>
+		<p>最大在线数：{{maxactivecallnumber}}</p>
+		<p>版本号：{{MCUVersion}}</p>
+		<p>系列号：{{seris}}</p>
+		<p>备注：{{remark}}</p>
 	</div>
 </div>
 {% endblock %}
@@ -28,6 +28,6 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill1').attr('class','accordion-body collapse in');
-		});	
+		});
 	</script>
 {% endblock %}

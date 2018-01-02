@@ -33,16 +33,16 @@
 		  	{{msg}}
 		</div>
 
-		{% endif %}		
+		{% endif %}
 
-			
+
 		<table class="table table-condensed">
 			<thead>
 				<tr>
 					<th>#</th>
 					<th>会场名称</th>
 					<th>会场IP:</th>
-					
+
 					<th>删除</th>
 				</tr>
 			</thead>
@@ -52,8 +52,8 @@
 					<td>{{ forloop.counter }}</td>
 				    <td>会场{{terminal.name}}</td>
 				    <td>{{terminal.terminalIP}}</td>
-				    
-				    <td class="delete"><a class="btn"> </a></td>
+
+				    <td class="delete"><a class="btn" href="/deleteterminal/{{terminal.pk}}/"> </a></td>
 				</tr>
 			</tbody>
 		{% endfor %}
@@ -69,6 +69,6 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill2').attr('class','accordion-body collapse in');
-		});	
+		});
 	</script>
 {% endblock %}

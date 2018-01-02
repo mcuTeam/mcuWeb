@@ -8,6 +8,7 @@ import re
 import os
 import wmi
 import pythoncom
+import configparser
 # Create your views here.
 
 def returnCode2Dict(retCode):
@@ -136,7 +137,24 @@ def test(request):
 
 @login_required
 def system_infoView(request):
-    return render(request,'system_manage/system_info.html')
+    cf = configparser.ConfigParser()
+    productname = ""
+    maxactivecallnumber = ""
+    MCUVersion = ''
+    seris = ""
+    remark = ""
+    try:
+        # os.chdir("C:\SVCMMCUAutoStart")
+        cf.read("C:\SVCMMCUAutoStart\svcmmcu.ini")
+        productname = cf.get("svcmmcu::main","productname")
+        maxactivecallnumber = cf.get("svcmmcu::main","maxactivecallnumber")
+        MCUVersion = cf.get("svcmmcu::main","MCUVersion")
+        remark = cf.get("svcmmcu::main","remark")
+        seris = cf.get("svcmmcu::main","MCUVersion")
+    except BaseException as e:
+        print("system_infoView error occurs: ",e)
+    return render(request,'system_manage/system_info.html',{'productname':productname,'maxactivecallnumber':maxactivecallnumber,\
+    'MCUVersion':MCUVersion,'remark':remark,'seris':seris})
 
 @login_required
 def MCU_configView(request):
@@ -240,6 +258,7 @@ def port_configView(request):
         if adapterInstance.is_valid():
             print ("is valid")
             ret = setNetworkInfo(adapterInstance.cleaned_data)
+            return HttpResponseRedirect('/port_config/')
         else:
             return HttpResponseRedirect('/port_config/')
     else:
@@ -285,11 +304,36 @@ def GK_configView(request):
         form = gkForm(instance=gk)
         return render(request,'system_manage/GK_config.html',{'form':form})
 
+def handle_upload_file(f):
+    if f.name != "update.zip":
+        return "请输入update.zip升级包"
+    else:
+        return True
 
 @login_required
 def sw_manageView(request):
-    return render(request,'system_manage/sw_manage.html')
+    if request.POST:
+        form = uploadFileForm(request.POST,request.FILES)
+        print(form)
+        if form.is_valid():
+            print("file form is valid!")
+            handleFileResult = handle_upload_file(request.FILES['file'])
+            if handleFileResult != True:
+                return render(request,'system_manage/sw_manage.html',{'form':form,'msgType':"error",'msg':handleFileResult})
+            return render(request,'system_manage/sw_manage.html',{'form':form,'msgType':"success",'msg':"上传成功"})
+        else:
+            print(form)
+            return render(request,'system_manage/sw_manage.html',{'form':form,'msgType':"error",'msg':"填写错误！"})
+    form = uploadFileForm()
+    return render(request,'system_manage/sw_manage.html',{'form':form})
 
 @login_required
 def configfileView(request):
+    if request.POST:
+        form = uploadFileForm(request.POST,request.FILES)
+        if form.is_valid():
+            print("file form is valid!")
+            return render(request,'system_manage/configfile.html',{'msgType':"success",'msg':"上传成功"})
+        else:
+            return render(request,'system_manage/configfile.html',{'msgType':"error",'msg':"填写错误！"})
     return render(request,'system_manage/configfile.html')

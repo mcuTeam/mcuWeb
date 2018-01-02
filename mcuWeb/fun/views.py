@@ -1161,6 +1161,21 @@ def addterminalView(request):
         return render(request,'fun/addterminal.html',{'terminalform':terminalform,'msgType':'info','msg':"please add"})
 
 @login_required
+def deleteterminalView(request,terminalpk):
+    if not terminal.objects.filter(pk=terminalpk).exists():
+        print("该终端不存在！")
+        msgType = "error"
+        msg = "该终端不存在"
+        terminalList = terminal.objects.all()
+        return render(request,'fun/terminallist.html',{'terminallist':terminalList,'msgType':'info','msg':msg})
+    else:
+        terminal.objects.get(pk=terminalpk).delete()
+        terminalList = terminal.objects.all()
+        msgType = "success"
+        msg = "删除成功"
+        return render(request,'fun/terminallist.html',{'terminallist':terminalList,'msgType':'info','msg':msg})
+
+@login_required
 def terminallistViewP(request,msg):
     terminalList = terminal.objects.all()
     return render(request,'fun/terminallist.html',{'terminallist':terminalList,'msgType':'info','msg':msg})
@@ -1184,6 +1199,18 @@ def addtemplateView(request):
         templateform = meetingTemplateForm()
         return render(request,'fun/addtemplate.html',{'templateform':templateform,'msgType':'info','msg':"please add"})
 
+@login_required
+def deletetemplateView(request,templatepk):
+    if not meetingTemplate.objects.filter(pk=templatepk).exists():
+        print("该模板不存在！")
+        msgType = "error"
+        msg = "该模板不存在"
+        templateList = meetingTemplate.objects.all()
+        return render(request,'fun/templatelist.html',{'templatelist':templateList,'msgType':msgType,'msg':msg})
+    else:
+        meetingTemplate.objects.get(pk=templatepk).delete()
+        templateList = meetingTemplate.objects.all()
+        return render(request,'fun/templatelist.html',{'templatelist':templateList,'msgType':'success','msg':'删除成功'})
 # Ajax Views
 # ---------------------------------------------------------------------------
 
