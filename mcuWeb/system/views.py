@@ -9,6 +9,7 @@ import os
 import wmi
 import pythoncom
 import configparser
+import zipfile
 # Create your views here.
 
 def returnCode2Dict(retCode):
@@ -305,9 +306,37 @@ def GK_configView(request):
         return render(request,'system_manage/GK_config.html',{'form':form})
 
 def handle_upload_file(f):
+    updateDirectory="C:/SVCMMCUAutoStart/"
     if f.name != "update.zip":
         return "请输入update.zip升级包"
     else:
+        if zipfile.is_zipfile(f):
+            pass
+            try:
+                zp = zipfile.ZipFile(f,'r')
+                # zp.extractall(updateDirectory)
+                for filename in zp.namelist():
+                    strname = filename.encode('cp437').decode('gbk')
+                    if '/' in strname:
+                        print(os.path.dirname(updateDirectory+strname))
+                        if not os.path.exists(os.path.dirname(updateDirectory+strname)):
+                            os.makedirs(os.path.dirname(updateDirectory+strname))
+                        f_handle=open(updateDirectory+strname,"w+b")
+                        f_handle.write(zp.read(filename))
+                        f_handle.close()
+                    else:
+                        f_handle=open(updateDirectory+strname,"w+b")
+                        f_handle.write(zp.read(filename))
+                        f_handle.close()
+                zp.close()
+                return True
+            except BaseException as e:
+                print(e)
+                return e
+        else:
+            return "请输入update.zip升级包"
+
+
         return True
 
 @login_required
