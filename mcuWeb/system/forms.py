@@ -51,3 +51,4 @@ class gkForm(ModelForm):
 
 class uploadFileForm(forms.Form):
     file = forms.FileField(label="请选择上传文件：update.zip")
+    file.widget.attrs.update({'onchange':r'document.getElementById("textfield").value=this.value'})
