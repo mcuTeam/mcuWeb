@@ -349,6 +349,7 @@ def sw_manageView(request):
             handleFileResult = handle_upload_file(request.FILES['file'])
             if handleFileResult != True:
                 return render(request,'system_manage/sw_manage.html',{'form':form,'msgType':"error",'msg':handleFileResult})
+            form = uploadFileForm()
             return render(request,'system_manage/sw_manage.html',{'form':form,'msgType':"success",'msg':"上传成功"})
         else:
             print(form)
@@ -356,13 +357,34 @@ def sw_manageView(request):
     form = uploadFileForm()
     return render(request,'system_manage/sw_manage.html',{'form':form})
 
+def handle_config_file(f):
+    print(f)
+    print(type(f))
+    updateDirectory="C:/SVCMMCUAutoStart/"
+    if f.name != "svcmmcu.ini":
+        return "请输入配置文件：svcmmcu.ini"
+    else:
+        try:
+            f_handle=open(updateDirectory+f.name,"w+b")
+            for chunk in f.chunks():
+                f_handle.write(chunk)
+            f_handle.close()
+        except BaseException as e:
+            return e
+    return True
+
 @login_required
 def configfileView(request):
     if request.POST:
         form = uploadConfigFileForm(request.POST,request.FILES)
         if form.is_valid():
-            print("file form is valid!")
-            return render(request,'system_manage/configfile.html',{'msgType':"success",'msg':"上传成功"})
+            print("configfile form is valid!")
+            handleFileResult = handle_config_file(request.FILES['file'])
+            if handleFileResult != True:
+                return render(request,'system_manage/configfile.html',{'form':form,'msgType':"error",'msg':handleFileResult})
+            form = uploadConfigFileForm()
+            return render(request,'system_manage/configfile.html',{'form':form,'msgType':"success",'msg':"上传成功"})
         else:
-            return render(request,'system_manage/configfile.html',{'msgType':"error",'msg':"填写错误！"})
-    return render(request,'system_manage/configfile.html')
+            return render(request,'system_manage/configfile.html',{'form':form,'msgType':"error",'msg':"填写错误！"})
+    form = uploadConfigFileForm()
+    return render(request,'system_manage/configfile.html',{'form':form})
