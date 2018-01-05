@@ -14,17 +14,20 @@
 		<p>请选择上传配置文件</p>
 	</div>
 	<div class="span8 offset2">
-		<form class="form-horizontal">
+		<form enctype="multipart/form-data"  class="form-horizontal" method="post" action="/configfile/">
 			<div class="control-group">
 				<div class="controls">
 					<div class="input-append">
-					  <input class="span10" id="appendedInputButton" type="text">
-					  <button class="btn" type="button">浏览</button>	
+					    {% csrf_token %}
+						{{form.file}}
+					    <input  id="inputfile" type="text">
+					    <button class="btn" type="button">浏览</button>
+
 					</div>
 			    </div>
 			</div>
 			<div class="form-actions">
-				<button type="button" class="btn btn-info"><i class="icon-upload icon-white"></i> 上传</button>
+				<button type="submit" class="btn btn-info"><i class="icon-upload icon-white"></i> 上传</button>
 				<button type="button" class="btn btn-warning"><i class="icon-download icon-white"></i> 下载</button>
 			</div>
 		</form>
@@ -36,6 +39,10 @@
 	<script type="text/javascript">
 		$('document').ready(function(){
 			$('div#pill1').attr('class','accordion-body collapse in');
-		});	
+		});
+
+		$('#id_file').change(function(){
+			document.getElementById('inputfile').value=this.value;
+		});
 	</script>
 {% endblock %}

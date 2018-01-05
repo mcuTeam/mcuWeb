@@ -359,7 +359,7 @@ def sw_manageView(request):
 @login_required
 def configfileView(request):
     if request.POST:
-        form = uploadFileForm(request.POST,request.FILES)
+        form = uploadConfigFileForm(request.POST,request.FILES)
         if form.is_valid():
             print("file form is valid!")
             return render(request,'system_manage/configfile.html',{'msgType':"success",'msg':"上传成功"})
