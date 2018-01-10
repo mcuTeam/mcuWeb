@@ -18,8 +18,9 @@
 			<div class="control-group">
 				<div class="controls">
 					<div class="input-append">
-					  <input id="appendedInputButton" type="text">
-					  <button class="btn" type="button">浏览</button>	
+						<input type="file" name="file" id="IDfile" >
+						<input class="span10" id="appendedInputButton" type="text">
+					    <button class="btn" type="button">浏览</button>	
 					</div>
 			    </div>
 			</div>
@@ -37,5 +38,8 @@
 		$('document').ready(function(){
 			$('div#pill1').attr('class','accordion-body collapse in');
 		});	
+		$('#IDfile').change(function(){
+			document.getElementById('appendedInputButton').value=this.value;
+		});
 	</script>
 {% endblock %}
