@@ -385,6 +385,7 @@ def configfileView(request):
             form = uploadConfigFileForm()
             return render(request,'system_manage/configfile.html',{'form':form,'msgType':"success",'msg':"上传成功"})
         else:
+            print("configfile form is not valid!",form)
             return render(request,'system_manage/configfile.html',{'form':form,'msgType':"error",'msg':"填写错误！"})
     form = uploadConfigFileForm()
     return render(request,'system_manage/configfile.html',{'form':form})
