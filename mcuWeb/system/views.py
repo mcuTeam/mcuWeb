@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.shortcuts import redirect,HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from mcuWeb.celery import *
@@ -10,6 +11,8 @@ import wmi
 import pythoncom
 import configparser
 import zipfile
+import io
+import datetime
 # Create your views here.
 
 def returnCode2Dict(retCode):
@@ -390,6 +393,33 @@ def configfileView(request):
     form = uploadConfigFileForm()
     return render(request,'system_manage/configfile.html',{'form':form})
 
+logDir = "C:/SVCMMCUAutoStart/LOGFILE/"
+def getFileNames():
+	fileSet =set()
+	for dir_, _, files in os.walk(logDir):
+		for fileName in files:
+			# relDir = os.path.relpath(dir_, rootDir)
+			relFile = os.path.join( fileName)
+			fileSet.add(relFile)
+	return list(fileSet)
+
 @login_required
 def downloadLogView(request):
-    pass
+	fileNames=[]
+	files = getFileNames()
+	for names in files:
+		fileNames.append(logDir+names)
+	# print fileNames
+	zip_subdir = str(datetime.date.today()) # name of the zip file to be
+	zip_filename = "%s.zip" % zip_subdir
+	zip_filename += ".zip"
+	s = io.BytesIO()
+	zf = zipfile.ZipFile(s, "w")
+	for fpath in fileNames:
+		fdir, fname = os.path.split(fpath)
+		zip_path = os.path.join(zip_subdir, fname)
+		zf.write(fpath, zip_path)
+	zf.close()
+	resp = HttpResponse(s.getvalue(),content_type = "application/x-zip-compressed")
+	resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+	return resp
