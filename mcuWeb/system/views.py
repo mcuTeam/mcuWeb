@@ -412,7 +412,6 @@ def downloadLogView(request):
 	# print fileNames
 	zip_subdir = str(datetime.date.today()) # name of the zip file to be
 	zip_filename = "%s.zip" % zip_subdir
-	zip_filename += ".zip"
 	s = io.BytesIO()
 	zf = zipfile.ZipFile(s, "w")
 	for fpath in fileNames:
