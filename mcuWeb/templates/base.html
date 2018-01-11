@@ -54,7 +54,7 @@
 									<li><a id="system_info" href="/system_info">系统信息</a></li>
 									<li><a id="sw_manage" href="/sw_manage">软件管理</a></li>
 									<li><a id="configfile" href="/configfile">配置文件</a></li>
-									<!-- <li><a id="password" href="/password">修改密码</a></li> -->
+									
                   <!-- WuNL -->
                   {% if user.is_authenticated %}
                   <li><a id="modifyPW" href="/accounts/{{user.get_username}}/password/">修改密码</a></li>
@@ -144,7 +144,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-				<button class="btn btn-warning">确定</button>
+				<button class="btn btn-warning" id="restart">确定</button>
 			</div>
 		</div>
 		<div id="myModal1" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -157,7 +157,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-				<button class="btn btn-warning">确定</button>
+				<button class="btn btn-warning" id="reboot">确定</button>
 			</div>
 		</div>
 		<div id="myModal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -170,7 +170,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
-				<button class="btn btn-warning">确定</button>
+				<button class="btn btn-warning" id="shutdown">确定</button>
 			</div>
 		</div>
 
@@ -180,40 +180,57 @@
 		  <!--Body content-->
 			{% block content %}{% endblock %}
 		</div>
-			<script type="text/javascript">
-				$('document').ready(function(){
-					$('#loading').hide();
-					$('#alter').hide();
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('#loading').hide();
+		$('#alter').hide();
 
-					$(function(){
-						function heartbeat(){
-						   $.get(/mcuHeartBeat/).done(function(date){
-						   	$('#alter').hide();
+		$(function(){
+			function heartbeat(){
+			   $.get(/mcuHeartBeat/).done(function(date){
+			   	$('#alter').hide();
 
-						   	if(date==="False"){
-						   		$('#cover').hide();
-						   	}
-						   	else{
-						   		$('#cover').show();
-						   	}
-						   }).fail(function(){
-						   	$('#alter').show();
+			   	if(date==="False"){
+			   		$('#cover').hide();
+			   	}
+			   	else{
+			   		$('#cover').show();
+			   	}
+			   }).fail(function(){
+			   	$('#alter').show();
 
-						   });
-						}
-						heartbeat();
-						setInterval(heartbeat,10000);// 心跳10秒
-					});
-				});
-
-		$('#meetinglist,.btn[href="/meetinglist"]').on('click',function(){
-			$('#loading').show();
-
+			   });
+			}
+			heartbeat();
+			setInterval(heartbeat,10000);// 心跳10秒
 		});
+	});
+
+$('#meetinglist,.btn[href="/meetinglist"]').on('click',function(){
+	$('#loading').show();
+
+});
+
+$('#restart').click(function(){
+	$.get("/restart/",function(){
+	});
+
+});
+
+$('#reboot').click(function(){
+	$.get("/reboot/",function(){
+	});
+
+});
+
+$('#shutdown').click(function(){
+	$.get("/shutdown/",function(){
+	});
+
+});
 
 
-
-	</script>
+</script>
 		{% block js %}{% endblock %}
 	</div>
 </div>
