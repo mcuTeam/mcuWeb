@@ -5,7 +5,7 @@
 {% block title %}配置文件{% endblock %}
 
 {% block csss %}
-<link href="{% static "css/sw_manage.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/configfile.css" %}" rel="stylesheet" media="screen">
 {% endblock %}
 
 {% block content %}
@@ -42,7 +42,7 @@
 					<div class="input-append">
 					    {% csrf_token %}
 						{{form.file}}
-					    <input class="span10"  id="inputfile" type="text">
+					    <input class="span10"  id="file" type="text">
 					    <button class="btn" type="button">浏览</button>
 
 					</div>
@@ -62,8 +62,8 @@
 		$('document').ready(function(){
 			$('div#pill1').attr('class','accordion-body collapse in');
 		});
-		$('#IDfile').change(function(){
-			document.getElementById('appendedInputButton').value=this.value;
+		$('#id_file').change(function(){
+			document.getElementById('file').value=this.value;
 		});
 	</script>
 {% endblock %}
