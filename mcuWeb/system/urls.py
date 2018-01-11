@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^sw_manage/$', system_view.sw_manageView),
     url(r'^configfile/$', system_view.configfileView),
 
+    url(r'^down_log/$', system_view.downloadLogView),
+
     url(r'^addmeet/$', system_view.addMeetView),
     url(r'^deletemeet/$', system_view.delMeetView),
     url(r'^listmeet/$', system_view.listMeetView),

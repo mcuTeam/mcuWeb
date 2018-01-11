@@ -388,3 +388,7 @@ def configfileView(request):
             return render(request,'system_manage/configfile.html',{'form':form,'msgType':"error",'msg':"填写错误！"})
     form = uploadConfigFileForm()
     return render(request,'system_manage/configfile.html',{'form':form})
+
+@login_required
+def downloadLogView(request):
+    pass
