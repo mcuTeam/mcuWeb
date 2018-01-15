@@ -195,7 +195,6 @@ def getNetworkInfo():
         return None
     tmplist=[]
     for interface in nic_configs:
-        print(interface)
         tmpdict = {}
         # Index
         tmpdict["Index"] = interface.Index
@@ -262,6 +261,7 @@ def port_configView(request):
         if adapterInstance.is_valid():
             print ("is valid")
             ret = setNetworkInfo(adapterInstance.cleaned_data)
+            print(ret)
             return HttpResponseRedirect('/port_config/')
         else:
             return HttpResponseRedirect('/port_config/')
@@ -422,3 +422,23 @@ def downloadLogView(request):
 	resp = HttpResponse(s.getvalue(),content_type = "application/x-zip-compressed")
 	resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
 	return resp
+
+import shutil
+@login_required
+def clearLogView(request):
+    try:
+        shutil.rmtree("C:/SVCMMCUAutoStart/LOGFILE")
+    except PermissionError as e:
+        return HttpResponse("部分文件占用，删除失败")
+    return HttpResponse("操作成功")
+
+@login_required
+def rebootView(request):
+    os.system("shutdown -r -t 5")
+    return HttpResponse("操作成功")
+
+
+@login_required
+def shutdownView(request):
+    os.system("shutdown -s -t 5")
+    return HttpResponse("操作成功")
