@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^listmeet/$', system_view.listMeetView),
 
     url(r'^clear/$', system_view.clearLogView),
+    url(r'^restart/$', system_view.restartMCUView),
     url(r'^reboot/$', system_view.rebootView),
     url(r'^shutdown/$', system_view.shutdownView),
 ]

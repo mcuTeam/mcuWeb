@@ -437,8 +437,11 @@ def rebootView(request):
     os.system("shutdown -r -t 5")
     return HttpResponse("操作成功")
 
-
 @login_required
 def shutdownView(request):
     os.system("shutdown -s -t 5")
+    return HttpResponse("操作成功")
+
+@login_required
+def restartMCUView(request):
     return HttpResponse("操作成功")
