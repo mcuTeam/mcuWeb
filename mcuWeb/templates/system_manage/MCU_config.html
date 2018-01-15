@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}MCU配置{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/MCU_config.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>MCU配置</p>
+	</div>
+	<div class="span8 offset2">
+		<form class="form-horizontal" action="/MCU_config/" role="form" method="post">
+			{% csrf_token %}
+			
+			<div class="control-group">
+				<label class="control-label">{{form.alias.label_tag}}</label>
+				<div class="controls">
+					{{form.alias}}
+					<span>{{form.alias.errors.0}}</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{{form.logLevel.label_tag}}</label>
+				<div class="controls">
+					{{form.logLevel}}
+					<span>{{form.logLevel.errors.0}}</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{{form.curDate.label_tag}}</label>
+				<div class="controls">
+					{{form.curDate}}
+					<span>{{form.curDate.errors.0}}</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{{form.curTime.label_tag}}</label>
+				<div class="controls">
+					{{form.curTime}}
+					<span>{{form.curTime.errors.0}}</span>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-info"><i class="icon-folder-close icon-white"></i> 保存</button>
+				<button type="button" class="btn"><i class="icon-repeat"></i> 取消</button>
+			</div>
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill1').attr('class','accordion-body collapse in');
+		});
+	</script>
+{% endblock %}

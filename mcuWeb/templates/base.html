@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>{% block title %}{% endblock %}</title>
+<script src="{% static "js/jquery.js" %}"></script>
+<script src="{% static "js/bootstrap.min.js" %}"></script>
+<!-- <script src="{% static "js/jquery-heartbeat.js" %}"></script> -->
+{% block csss %}{% endblock %}
+<link href="{% static "css/base.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+</head>
+<body>
+
+ <div class="loading" id="loading">
+
+ </div>
+ <div  >
+ 	<a href="#toptag" id="top" title="回到顶部"></a>
+ </div>
+ <div class="alert alert-error" id="alter">
+	<p>web服务器无响应</p>
+</div>
+
+<div class="container-fluid">
+<!-- 	<div class="row-fluid">
+		<div class="span1"></div>
+		<div class="span10"></div>
+		<div id="errortips" class="span1">
+			<div id="cover" class="span1"></div>
+
+		</div>
+
+	</div> -->
+	<div class="row-fluid" id="toptag">
+		<div class="span2 ">
+		  <!--Sidebar content-->
+			<ul class="nav nav-pills nav-stacked ">
+				<li><a id="nav" href="/home" style="width:auto">首页</a></li>
+				<div class="accordion" id="selector">
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<li><a id="nav1" href="#" data-toggle="collapse" data-target="#pill1" data-parent="#selector" style="width:auto">系统管理</a></li>
+						</div>
+						<div id="pill1" class="accordion-body collapse">
+							<div class="accordion-inner">
+								<ul class="nav nav-list">
+								<li class="divider"></li>
+								</ul>
+								<ul id="list1" class="nav nav-pills nav-stacked">
+									<li><a id="MCU_config" href="/MCU_config">MCU配置</a></li>
+									<li><a id="port_config" href="/port_config">网口配置</a></li>
+									<li><a id="GK_config" href="/GK_config">GK配置</a></li>
+									<li><a id="system_info" href="/system_info">系统信息</a></li>
+									<li><a id="sw_manage" href="/sw_manage">软件管理</a></li>
+									<li><a id="configfile" href="/configfile">配置文件</a></li>
+									
+                  <!-- WuNL -->
+                  {% if user.is_authenticated %}
+                  <li><a id="modifyPW" href="/accounts/{{user.get_username}}/password/">修改密码</a></li>
+                  {% endif %}
+								</ul>
+						    </div>
+						</div>
+				    </div>
+				    <div class="accordion-group">
+				    	<div class="accordion-heading">
+							<li><a id="nav2" href="#" data-toggle="collapse" data-target="#pill2" data-parent="#selector">会议管理</a></li>
+					    </div>
+						<div id="pill2" class="accordion-body collapse">
+							<div class="accordion-inner">
+								<ul class="nav nav-list">
+								<li class="divider"></li>
+								</ul>
+								<ul id="list2" class="nav nav-pills nav-stacked">
+									<li><a id="meetinglist" href="/meetinglist">会议列表</a></li>
+									<li><a id="terminallist" href="/terminallist">会场列表</a></li>
+									<li><a id="templatelist" href="/templatelist">会议模板</a></li>
+								</ul>
+						    </div>
+						</div>
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<li><a id="nav3" href="#" data-toggle="collapse" data-target="#pill3" data-parent="#selector">日志管理</a></li>
+					    </div>
+						<div id="pill3" class="accordion-body collapse">
+							<div class="accordion-inner">
+								<ul class="nav nav-list">
+								<li class="divider"></li>
+								</ul>
+								<ul id="list3" class="nav nav-pills nav-stacked">
+									<li><a href="/down_log/">日志下载</a></li>
+									<li><a href="#myModal3" data-toggle="modal" >清除日志</a></li>
+								</ul>
+						    </div>
+						</div>
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<li><a id="nav4" href="#" data-toggle="collapse" data-target="#pill4" data-parent="#selector">设备管理</a></li>
+						</div>
+						<div id="pill4" class="accordion-body collapse">
+							<div class="accordion-inner">
+								<ul class="nav nav-list">
+								<li class="divider"></li>
+								</ul>
+								<ul id="list4" class="nav nav-pills nav-stacked">
+									<li><a href="#myModal" data-toggle="modal" >系统重启</a></li>
+
+									<li><a href="#myModal1" data-toggle="modal" >设备重启</a></li>
+
+									<li><a href="#myModal2" data-toggle="modal">设备关机</a></li>
+
+								</ul>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<li><a id="nav5" href="/accounts/signout/">退出</a></li>
+			</ul>
+		</div>
+		<div id="myModal3" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">清除日志</h3>
+			</div>
+			<div class="modal-body">
+				<p>您确定要清除日志么？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-warning" id="clear">确定</button>
+			</div>
+		</div>
+		<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">系统重启</h3>
+			</div>
+			<div class="modal-body">
+				<p>您确定要重新启动系统么？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-warning" id="restart">确定</button>
+			</div>
+		</div>
+		<div id="myModal1" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">设备重启</h3>
+			</div>
+			<div class="modal-body">
+				<p>您确定要重新启动设备么？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-warning" id="reboot">确定</button>
+			</div>
+		</div>
+		<div id="myModal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">设备关机</h3>
+			</div>
+			<div class="modal-body">
+				<p>您确定要关闭设备么？</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+				<button class="btn btn-warning" id="shutdown">确定</button>
+			</div>
+		</div>
+
+
+
+		<div class="span9 offset2">
+		  <!--Body content-->
+			{% block content %}{% endblock %}
+		</div>
+<script type="text/javascript">
+	$('document').ready(function(){
+		$('#loading').hide();
+		$('#alter').hide();
+
+		$(function(){
+			function heartbeat(){
+			   $.get(/mcuHeartBeat/).done(function(date){
+			   	$('#alter').hide();
+
+			   	if(date==="False"){
+			   		$('#cover').hide();
+			   	}
+			   	else{
+			   		$('#cover').show();
+			   	}
+			   }).fail(function(){
+			   	$('#alter').show();
+
+			   });
+			}
+			heartbeat();
+			setInterval(heartbeat,10000);// 心跳10秒
+		});
+	});
+
+$('#meetinglist,.btn[href="/meetinglist"]').on('click',function(){
+	$('#loading').show();
+
+});
+
+$('#clear').click(function(){
+	$.get("/clear/",function(){
+	});
+
+});
+
+$('#reboot').click(function(){
+	$.get("/reboot/",function(){
+	});
+
+});
+
+$('#shutdown').click(function(){
+	$.get("/shutdown/",function(){
+	});
+
+});
+
+$('#restart').click(function(){
+	$.get("/restart/",function(){
+	});
+
+});
+
+
+</script>
+		{% block js %}{% endblock %}
+	</div>
+</div>
+</body>
+</html>

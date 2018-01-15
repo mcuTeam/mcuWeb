@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}会议模板列表{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/templatelist.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>会议模板列表</p>
+	</div>
+	<div class="span10 offset1">
+		{% if msgType == 'info' %}
+		<div class="alert alert-info">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
+
+		{% elif msgType == 'success' %}
+		<div class="alert alert-success">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
+
+		{% elif msgType == 'error' %}
+		<div class="alert alert-error">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  	{{msg}}
+		</div>
+
+		{% endif %}
+
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>会议模板名称</th>
+						<th>带宽:</th>
+						<th>视频协议:</th>
+						<th>视频帧率:</th>
+						<th>视频分辨率:</th>
+						<th>音频协议:</th>
+						<th>删除</th>
+					</tr>
+				</thead>
+			{% for template in templatelist %}
+				<tbody>
+					<tr>
+						<td>{{ forloop.counter }}</td>
+					    <td>{{template.name}}</td>
+					    <td>{{template.bandwidth}}</td>
+							<td>{{template.videoProtocol}}</td>
+							<td>{{template.videoFrameRate}}</td>
+							<td>{{template.capalityname}}</td>
+							<td>{{template.audioProtocol}}</td>
+							<td class="delete"><a class="btn" href="/deletetemplate/{{template.pk}}/"> </a></td>
+					</tr>
+				</tbody>
+			{% endfor %}
+			</table>
+			<a type="submit" class="btn btn-info" value="添加会议模板" href="/addtemplate"><i class="icon-plus-sign icon-white"></i> 添加会议模板</a>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill2').attr('class','accordion-body collapse in');
+		});
+	</script>
+{% endblock %}

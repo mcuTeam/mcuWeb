@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}会议控制{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/meetinglist.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+ <div class="alert alert-error" id="error">
+	<p>与MCU通信出错</p>
+</div>
+<!-- 页标 -->
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>会议控制</p>
+	</div>
+</div>
+<!-- 会议信息显示 -->
+<div class="row-fluid">
+
+	<button type="button" class="btn btn-info offset1" data-toggle="collapse" data-target="#demo">
+  会议信息
+	</button>
+ 
+<div id="demo" class="collapse">
+		<div class="span10 offset1" id="meetinfo">		
+		<div class="span4">
+			<p><strong>会议名称：</strong>{{meetInstance.name}}</p>
+			<p><strong>带宽：</strong>{{meetInstance.bandwidth}}</p>
+			<p><strong>视频分辨率：</strong>{{meetInstance.capalityname}}</p>
+		</div>
+		<div class="span4">
+			<p><strong>会议编号：</strong>{{meetInstance.meetcode}}</p>
+			<p><strong>视频协议：</strong>{{meetInstance.videoProtocol}}</p>
+			<p><strong>音频协议：</strong>{{meetInstance.audioProtocol}}</p>
+		</div>
+		<div class="span4">
+			<p><strong>会议备注：</strong>{{meetInstance.remark}}</p>
+			<p><strong>视频帧率：</strong>{{meetInstance.videoFrameRate}}</p>
+			<p><strong>主会场：</strong>会场{{meetInstance.mainMeetRoomName}}</p>
+		</div>		
+	</div>
+
+</div>
+
+</div>
+<!-- 按钮框体 -->
+<div class="row-fluid">
+	<div class="span10 offset1" id="buttonbox">			
+		<form class="form-inline">
+			<span>
+				<a class="btn btn-info" id="callall" onclick="callall()">连接选中会场</a>
+				<a class="btn btn-info" id="hungall" onclick="hungup_all()">全部断开</a>
+		    </span>
+			<span id="modelselect" class="">
+				<label>模式切换：</label>
+				<select id="modelmenu">
+						<option id="操作员模式" value="0">操作员模式</option>
+						<option id="语音激励模式" value="1">语音激励模式</option>
+						<option id="主席模式" value="2">主席模式</option>
+				</select>
+				<a class="btn btn-info" onclick="modelfun()">确定</a>
+			</span>
+		</form>
+	</div>
+</div>
+
+<!-- 进度条 -->
+<div class="row-fluid" id="modelcontrol">
+	<div class="span10 offset1" id="bar">
+		<div class="progress">
+			<div class="bar" ></div>
+		</div>
+		<div id="title"><p>主席模式 </p></div>
+		<div id="title1"><p>语音激励模式</p></div>
+	</div>
+</div>
+		
+
+
+
+<!-- 列表显示 -->
+<div class="row-fluid">
+	<div class="span10 offset1" id="table">
+		<table class="table table-condensed">
+			<div id="modelcover">
+			<thead>
+				<tr>
+					<th><label class="checkbox">
+						<input type="checkbox" value="全选" id="all" title="全选">
+						</label></th>
+					<th>#</th>
+					<th>会场名称</th>
+					<th>会场IP:</th>
+					<th>连接状态</th>
+					<th>连接</th>
+					<th>断开</th>
+					<th>静音</th>
+					<th>闭麦</th>
+					<th>双流</th>
+					<th>查看</th>
+					<th>广播</th>
+				</tr>
+			</thead>
+			{% for terminal in terminalList %}
+			<tbody>
+				<tr id="tr{{terminal.pk}}">
+					<td><label class="checkbox">
+						<input type="checkbox" name="items" id="{{terminal.pk}}">
+						</label></td>
+					<td>{{ forloop.counter }}</td>
+					<td>会场{{terminal.name}}</td>
+					<td>{{terminal.terminalIP}}</td>
+					<td class="unconnect" id="connect{{terminal.pk}}" title="state"><a></a></td>
+					<td class="callmember1" id="callmember{{terminal.pk}}" title="call"><a class="btn" onclick="callmember({{terminal.pk}})"> </a></td>
+					<td class="hangupforbid" id="hangup{{terminal.pk}}" title="hung"><a class="btn" onclick="hangup({{terminal.pk}})"> </a></td>
+					<td class="silencememberforbid" id="silencemember{{terminal.pk}}" title="silence"><a class="btn" onclick="silencemember({{terminal.pk}})"> </a></td>
+					<td class="shutupforbid" id="shutup{{terminal.pk}}" title="shutup"><a class="btn" onclick="shutup({{terminal.pk}})" > </a></td>
+					<td class="doubleforbid" id="double{{terminal.pk}}" title="double"><a class="btn" onclick="double({{terminal.pk}})" > </a></td>
+					<td class="seeforbid" id="see{{terminal.pk}}" title="see"><a class="btn" onclick="see({{terminal.pk}})" > </a></td>
+					<td class="broadcastforbid" id="broadcast{{terminal.pk}}" title="broadcast"><a class="btn" onclick="broadcast({{terminal.pk}})" > </a></td>
+				</tr>
+			</tbody>
+			<script type="text/javascript">
+			if({{meetInstance.mainMeetRoom}}==={{terminal.pk}}){
+				$("#tr{{terminal.pk}}").addClass('main');
+			}
+			</script>
+
+			{% endfor %}
+			</div>
+		</table>
+		<a type="button" class="btn" href="/meetinglist">返回</a>
+	</div>
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+$('document').ready(function(){
+	$('#{{meetInstance.operationModel}}').attr('selected','selected');
+	modellayout();
+	$('div#pill2').attr('class','accordion-body collapse in');
+	$('div.progress').hide();
+	$('#error').hide();
+	function getmeetmemberinfo() {
+		$.get("/getinfolist/"+{{meetInstance.pk}}+"/",function(){
+
+		});
+	}
+
+	$(function(){
+		function getmeetinfo(){
+			$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/").done(function(info){
+				var meetinfoJson= jQuery.parseJSON(info);
+				$('#alter').hide();
+				if(meetinfoJson.msgType==="error"){
+					light_off();
+					$('#error').show();
+				}
+				else{
+					$('#error').hide();
+
+
+
+				for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
+					
+					fresh_icon(meetinfoJson.pk[i],meetinfoJson.MemberState[i],meetinfoJson.MemberAudioBlocking[i],meetinfoJson.MemberAudioMuting[i],meetinfoJson.MemberIdentity[i],meetinfoJson.IsDualSender[i]);
+				}
+				if (meetinfoJson.AllMemberCount==="0") {
+					light_off();
+				}
+				}
+
+			}).fail(function(){
+				$('#alter').show();
+
+			});
+		}
+		getmeetinfo();
+		setInterval(getmeetinfo,2000);// 2秒状态轮询
+	});
+});
+
+$('#all').click(function(){
+	if ($('#all').val() == "全选"){
+		$("[name=items]:checkbox").each(function() { this.checked = true; });
+		$('#all').val("取消");
+
+	}
+	else  if($('#all').val() == "取消"){
+		$("[name=items]:checkbox").each(function() { this.checked = false; });
+		$('#all').val("全选");
+
+	}
+});
+
+function callall(){
+
+	var arr=[];
+	$("[name=items]:checked").each(function(){
+		arr.push(this.id);
+	});
+	var checked = JSON.stringify(arr);
+
+	$.post("/callall/"+{{meetInstance.pk}}+"/",{"checked":checked,csrfmiddlewaretoken:'{{ csrf_token }}'},function(){
+			$('#callall').attr('class','btn btn-warning');
+			$('#callall').text('连接中');
+
+			var i=0;
+			function bar(){
+				$('div.progress').show();
+				$('#modelcover').show();
+				if ( i <= arr.length) {
+					setTimeout(bar, 500);
+					$("div.bar").css("width",String((100/arr.length)*i)+"%");
+					console.log(i);
+					i++;
+				}
+				else if(i>arr.length){
+					$('div.progress').hide();
+					$('#modelcover').hide();
+					$('#callall').attr('class','btn btn-info');
+			        $('#callall').text('全部连接');
+			        
+
+					return;
+				}
+			}
+			bar();
+
+	});
+
+}
+
+function hungup_all(){
+	$.get("/getmeetinfo/"+{{meetInstance.pk}}+"/",function(info){
+		var meetinfoJson= jQuery.parseJSON(info);
+		var online=meetinfoJson.AllMemberCount;
+		
+		$.get("/hungupall/"+{{meetInstance.pk}}+"/",function(){
+			$('#hungall').attr('class','btn btn-warning');
+			$('#hungall').text('断开中');
+
+			var i=0;
+			function bar(){
+				$('div.progress').show();
+				$('#modelcover').show();
+				if ( i <= online) {
+					setTimeout(bar, 500);
+					$("div.bar").css("width",String((100/online)*i)+"%");
+					console.log(i);
+					i++;
+				}
+				else if(i>online){
+					$('div.progress').hide();
+					$('#modelcover').hide();   //此处蒙板还需处理或者把全部连接全部断开蒙上
+					$('#hungall').attr('class','btn btn-info');
+			        $('#hungall').text('全部断开');
+			        
+
+					return;
+				}
+			}
+			bar();
+
+
+
+		});
+	});
+
+	
+}
+
+function modelfun(){
+	var num = $("#modelmenu").val();
+	// console.log('{{meetInstance.operationModel}}');
+
+		$.get("/model/"+{{meetInstance.pk}}+"/"+ num+"/",function(){
+			modellayout();
+
+		});
+}
+
+function modellayout(){
+	var el = $("#modelmenu").val();
+	if(el==="0"){
+		$('#modelcover').hide();
+		$('#title').hide();
+		$('#title1').hide();
+	}
+	else if(el==="1"){
+		$('#modelcover').show();
+		$('#title1').show();
+		$('#title').hide();
+	}
+	else{
+		$('#modelcover').show();
+		$('#title1').hide();
+		$('#title').show();
+	}
+}
+
+function fresh_icon(number,state,blocking,muting,identity,double){
+	if (state==="0") {
+		$('#connect'+number.toString()).attr('class','unconnect');
+		$('#callmember'+number.toString()).attr('class','callmember1');
+		$('#hangup'+number.toString()).attr('class','hangupforbid');
+		$('#silencemember'+number.toString()).attr('class','silencememberforbid');
+		$('#shutup'+number.toString()).attr('class','shutupforbid');
+		$('#double'+number.toString()).attr('class','doubleforbid');
+		$('#see'+number.toString()).attr('class','seeforbid');
+		$('#broadcast'+number.toString()).attr('class','broadcastforbid');
+
+
+	}
+	else if (state==="1") {
+			$('#connect'+number.toString()).attr('class','connected');
+			$('#callmember'+number.toString()).attr('class','callmemberforbid');
+			$('#hangup'+number.toString()).attr('class','hangup1');
+			if (double==="0") {
+				$('#double'+number.toString()).attr('class','double0');
+			}
+			else if (double==="1"){
+				$('#double'+number.toString()).attr('class','double1');
+
+			}
+			if (blocking==="0") {                          //block是静音，mute是闭麦
+				$('#silencemember'+number.toString()).attr('class','silencemember0');
+			}
+			else if (blocking==="1") {
+				$('#silencemember'+number.toString()).attr('class','silencemember1');
+			}
+			if (muting==="0") {
+				$('#shutup'+number.toString()).attr('class','shutup0');
+			}
+			else if (muting==="1") {
+				$('#shutup'+number.toString()).attr('class','shutup1');
+			}
+			if (identity==="0") {	                          //0广播，1查看，2普通
+				$('#broadcast'+number.toString()).attr('class','broadcast1');
+				$('#see'+number.toString()).attr('class','see0');
+			}
+			else if (identity==="1") {	                          //0广播，1查看，2普通
+				$('#see'+number.toString()).attr('class','see1');
+				$('#broadcast'+number.toString()).attr('class','broadcast0');
+			}
+			else if (identity==="2") {	                          //0广播，1查看，2普通
+				$('#broadcast'+number.toString()).attr('class','broadcast0');
+				$('#see'+number.toString()).attr('class','see0');
+			}
+		}
+
+
+
+
+}
+
+function light_off(){
+	$("td[title='state']").attr('class','unconnect');
+	$("td[title='call']").attr('class','callmember1');
+	$("td[title='hung']").attr('class','hangupforbid');
+	$("td[title='silence']").attr('class','silencememberforbid');
+	$("td[title='shutup']").attr('class','shutupforbid');
+	$("td[title='double']").attr('class','doubleforbid');
+	$("td[title='see']").attr('class','seeforbid');
+	$("td[title='broadcast']").attr('class','broadcastforbid');
+
+}
+
+
+function callmember(pk){
+	// console.log(pk);
+	if ($('#callmember'+pk.toString()).hasClass('callmember1')) {
+		$('#connect'+pk.toString()).attr('class','connecting');
+		$.get("/callmember/"+ {{meetInstance.pk}}+"/" +pk+"/",function(results){
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity,parsedJson.IsDualSender);
+			// $('#double'+pk.toString()).attr('class','double0');
+			// if(parsedJson.MemberState==="0"||parsedJson.MemberState==="1"){
+			// 	lightup(pk);
+			// }
+		});
+	}
+};
+
+function hangup(pk){
+	if ($('#hangup'+pk.toString()).hasClass('hangup1')) {
+		// console.log(pk);
+		$.get("/hangup/"+ {{meetInstance.pk}}+"/"+pk+"/",function(){
+			
+			$('#connect'+pk.toString()).attr('class','unconnect');
+			$('#callmember'+pk.toString()).attr('class','callmember1');
+			$('#hangup'+pk.toString()).attr('class','hangupforbid');
+			$('#silencemember'+pk.toString()).attr('class','silencememberforbid');
+			$('#shutup'+pk.toString()).attr('class','shutupforbid');
+			$('#double'+pk.toString()).attr('class','doubleforbid');
+			$('#see'+pk.toString()).attr('class','seeforbid');
+			$('#broadcast'+pk.toString()).attr('class','broadcastforbid');
+		});
+	}
+};
+
+function silencemember(pk){
+	// console.log(pk);
+	if($('#silencemember'+pk.toString()).hasClass('silencemember0')){
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+			// $('#silencemember'+pk.toString()).attr('class','silencemember1');
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+		});
+	}
+	else if($('#silencemember'+pk.toString()).hasClass('silencemember1')){
+		$.get("/silencemember/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(results){
+			// $('#silencemember'+pk.toString()).attr('class','silencemember0');
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+
+		});
+	}
+};
+
+function shutup(pk){
+	// console.log(pk);
+	if($('#shutup'+pk.toString()).hasClass('shutup0')){
+		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+			// $('#shutup'+pk.toString()).attr('class','shutup1');
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+		});
+	}
+	else if($('#shutup'+pk.toString()).hasClass('shutup1')){
+		$.get("/shutup/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(results){
+			// $('#shutup'+pk.toString()).attr('class','shutup0');
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+		});
+	}
+};
+
+function double(pk){
+	// console.log(pk);
+	if($('#double'+pk.toString()).hasClass('double0')){
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+
+			$('#double'+pk.toString()).attr('class','double1');
+			
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+		});
+	}
+	else if($('#double'+pk.toString()).hasClass('double1')){
+		$.get("/double/"+ {{meetInstance.pk}}+"/"+pk+"/"+0+"/",function(results){
+			$('#double'+pk.toString()).attr('class','double0');
+			
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+		});
+	}
+};
+
+function see(pk){
+	if ($('#see'+pk.toString()).hasClass('see0')) {
+		$.get("/see/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+			// $('.see1').attr('class','see0');
+			// $('.broadcast1').attr('class','broadcast0');
+			// $('#see'+pk.toString()).attr('class','see1');
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+		});
+	}
+};
+
+function broadcast(pk){
+	if ($('#broadcast'+pk.toString()).hasClass('broadcast0')) {
+		$.get("/broadcast/"+ {{meetInstance.pk}}+"/"+pk+"/"+1+"/",function(results){
+			// $('.see1').attr('class','see0');
+			// $('.broadcast1').attr('class','broadcast0');
+			// $('#broadcast'+pk.toString()).attr('class','broadcast1');
+			var parsedJson = jQuery.parseJSON(results);
+			fresh_icon(pk,parsedJson.MemberState,parsedJson.MemberAudioBlocking,parsedJson.MemberAudioMuting,parsedJson.MemberIdentity);
+		});
+	}
+};
+</script>
+{% endblock %}

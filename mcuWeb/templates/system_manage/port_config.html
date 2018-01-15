@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}网口配置{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/port_config.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span8 offset1">
+		<p>网口配置</p>
+	</div>
+	<div id="content" class="span8 offset2">
+		{% if  networkAdapter1 %}
+		<form class="form-horizontal" id="one" method="post" href="/port_config/">
+			{% csrf_token %}
+
+
+			<p>{{networkAdapter1.Description.value}}</p>
+			<div class="control-group" hidden="hidden">
+				<label class="control-label">{{networkAdapter1.Index.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter1.Index}}
+					<span>{{networkAdapter1.Index.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="control-group" hidden="hidden">
+				<label class="control-label">{{networkAdapter1.Description.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter1.Description}}
+					<span>{{networkAdapter1.Description.errors.0}}</span>
+				</div>
+		    </div>
+			<div class="control-group">
+				<label class="control-label">{{networkAdapter1.IP.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter1.IP}}
+					<span>{{networkAdapter1.IP.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="control-group">
+				<label class="control-label">{{networkAdapter1.IPSubnet.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter1.IPSubnet}}
+					<span>{{networkAdapter1.IPSubnet.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="control-group">
+				<label class="control-label">{{networkAdapter1.DefaultIPGateway.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter1.DefaultIPGateway}}
+					<span>{{networkAdapter1.DefaultIPGateway.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="form-actions">
+				<button type="submit" class="btn btn-info"><i class="icon-folder-close icon-white"></i> 保存</button>
+				<button type="button" class="btn"><i class="icon-repeat"></i> 取消</button>
+			</div>
+		</form>
+		{% endif %}
+		{% if networkAdapter2 %}
+		<form class="form-horizontal" id="one" method="post" href="/port_config/">
+			{% csrf_token %}
+
+
+			<p>{{networkAdapter2.Description.value}}</p>
+			<div class="control-group" hidden="hidden">
+				<label class="control-label">{{networkAdapter2.Index.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter2.Index}}
+					<span>{{networkAdapter2.Index.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="control-group" hidden="hidden">
+				<label class="control-label">{{networkAdapter2.Description.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter2.Description}}
+					<span>{{networkAdapter2.Description.errors.0}}</span>
+				</div>
+		    </div>
+			<div class="control-group">
+				<label class="control-label">{{networkAdapter2.IP.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter2.IP}}
+					<span>{{networkAdapter2.IP.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="control-group">
+				<label class="control-label">{{networkAdapter2.IPSubnet.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter2.IPSubnet}}
+					<span>{{networkAdapter2.IPSubnet.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="control-group">
+				<label class="control-label">{{networkAdapter2.DefaultIPGateway.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter2.DefaultIPGateway}}
+					<span>{{networkAdapter2.DefaultIPGateway.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="form-actions">
+				<button type="submit" class="btn btn-info"><i class="icon-folder-close icon-white"></i> 保存</button>
+				<button type="button" class="btn"><i class="icon-repeat"></i> 取消</button>
+			</div>
+		</form>
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill1').attr('class','accordion-body collapse in');
+		});
+	</script>
+{% endblock %}

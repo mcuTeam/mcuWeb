@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}软件管理{% endblock %}
+
+{% block csss %}
+<link href="{% static "css/sw_manage.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+	{% if msgType == 'info' %}
+	<div class="alert alert-info">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{msg}}
+	</div>
+
+	{% elif msgType == 'success' %}
+	<div class="alert alert-success">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{msg}}
+	</div>
+
+	{% elif msgType == 'error' %}
+	<div class="alert alert-error">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{msg}}
+	</div>
+
+	{% endif %}
+	<div class="span8 offset1">
+		<p>{{form.file.label_tag}}</p>
+	</div>
+	<div class="span8 offset2">
+		<form enctype="multipart/form-data"  class="form-horizontal" method="post" action="/sw_manage/">
+			<div class="control-group">
+				<div class="controls">
+					<div class="input-append">
+					    {% csrf_token %}
+						{{form.file}}
+					    <input class="span10"  id="inputfile" type="text">
+					    <button class="btn" type="button">浏览</button>
+	
+					</div>
+			    </div>
+			</div>
+			
+
+			<div class="form-actions">
+				<button type="submit" class="btn btn-info"><i class="icon-circle-arrow-up icon-white"></i> 升级</button>
+				<button type="submit" class="btn btn-warning"><i class="icon-circle-arrow-down icon-white"></i> 降级</button>
+			</div>
+		</form>
+
+	</div>
+</div>
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		$('document').ready(function(){
+			$('div#pill1').attr('class','accordion-body collapse in');
+		});
+	
+		$('#id_file').change(function(){
+			document.getElementById('inputfile').value=this.value;
+		});
+
+
+
+	</script>
+{% endblock %}

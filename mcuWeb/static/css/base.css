@@ -1,0 +1,152 @@
+div#alter{
+	position: fixed; 
+	top:50%; 
+	left:40%;
+	 
+	width: 20%;
+
+}
+
+.span2{
+	position: fixed; 
+
+}
+
+
+
+a#top{
+	position: fixed;
+	top: 95%;
+	 left: 95%; 
+	 z-index: 6;
+	 display: inline-block;
+	 width: 30px;
+	 height: 30px;
+	 background: url(../images/top.png) center no-repeat;
+
+}
+
+html{
+	background-color: rgb(51,51,51);
+
+}
+
+.loading { 
+	
+	position: fixed; 
+	top: 0; 
+	left: 0; 
+	width: 100%;
+	 height: 100%; 
+	 background: rgba(50,50,50,0.5) url(../images/load.gif) no-repeat center center scroll;
+	  z-index: 7;
+}
+
+.container-fluid{
+	background-color: rgb(51,51,51);
+
+
+}
+
+.span1{
+	height: 100px;
+	background:url(../images/logo1.png) left  no-repeat;
+
+}
+
+.span10{
+	height: 100px;
+	background:url(../images/head.png) center center no-repeat;
+
+}
+
+div#errortips{
+	background:url(../images/heartbeat.png) right no-repeat;
+}
+
+div#cover{
+	width: 100%;
+	background-color: rgb(51,51,51);
+
+}
+
+div.span9{
+	border-radius: 30px;
+	background-color: rgb(68,68,68);
+	padding-bottom: 20px;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+ul#list1,#list2,#list3,#list4{
+	margin: 0px;
+	font-size: 15px;
+}
+
+ul.nav.nav-pills.nav-stacked{
+	float: right;
+	font-size: 18px;
+}
+
+li{
+	/*margin: 10px auto 10px auto;*/
+	text-align: center;
+}
+
+div.accordion{
+	margin-bottom: 0px;
+}
+
+div.accordion-group{
+	border: 0px;
+
+}
+
+div.accordion-inner{
+	border-top:0px;
+}
+
+a#nav,#nav1,#nav2,#nav3,#nav4,#nav5{
+	line-height: 20px;
+	display: block;
+	padding: 8px 12px;
+    border-radius: 5px;
+	color:rgb(255,204,0);
+	background-color: rgb(68,68,68);
+}
+
+a#nav:hover,#nav1:hover,#nav2:hover,#nav3:hover,#nav4:hover,#nav5:hover{
+	text-decoration: none;
+	background-color: black;
+	color: rgb(255,153,0);
+}
+
+a#nav:focus,#nav1:focus,#nav2:focus,#nav3:focus,#nav4:focus,#nav5:focus{
+	text-decoration: none;
+	background-color: rgb(255,204,0);
+	color: black;
+}
+
+.nav-pills.nav-stacked > li > a{
+	background-color: transparent;
+	color: #dadada;
+}
+
+.nav-pills.nav-stacked > li > a:hover{
+	background-color: transparent;
+	color: rgb(255,153,0);
+}
+
+.nav-pills.nav-stacked > li > a:focus{
+	background-color: transparent;
+	outline:none;
+	color: rgb(255,153,0);
+}
+
+ul.nav-list{
+	padding: 0px;
+}
+
+ul.nav-list > li.divider{
+	background-color: transparent;
+	border-color: red;
+}

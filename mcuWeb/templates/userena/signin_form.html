@@ -1,0 +1,70 @@
+{% load static %}
+{% load i18n %}
+<html>
+<head>
+	<title></title>
+	<script src="{% static "js/bootstrap.js" %}"></script>
+	<script src="{% static "js/jquery.js" %}"></script>
+	<link href="{% static "css/login.css" %}" rel="stylesheet" media="screen">
+	<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+</head>
+<body>
+    <div class="login">
+    	<div class="logo"></div>
+    	<div class="loginbox">
+		 	<form action="" method="post">
+		            {% csrf_token %}
+				<fieldset>
+				    <!-- <legend id="login">登录</legend> -->
+
+				    <!-- {{form.identification.errors}} -->
+				    {{form.identification.label_tag}}
+				    {{form.identification}}
+				   <!--  <span id="nameTip"></span> -->
+				    <p id="nameTip">{{form.identification.errors.0}}</p>
+
+				    {{form.password.label_tag}}
+				    {{form.password}}
+				    <!-- <span id="passwordTip"></span> -->
+				    <p id="passwordTip">{{form.password.errors.0}}</p>
+
+				    <p class="checkbox">
+				    <label for="id_{{ form.remember_me.name }}">{{form.remember_me}}  {{ form.remember_me.label }} </label>
+
+				    </p>
+				    			    
+
+
+<!-- 				    {% for field in form %}
+
+				    {% for err in field.errors %}
+				    	{{err}}
+				    {% endfor %}
+				    {% comment %} Displaying checkboxes differently {% endcomment %}
+				    {% if field.name == 'remember_me' %}
+				    <p class="checkbox">
+				    <label for="id_{{ field.name }}">{{ field }} {{ field.label }}</label>
+				    </p>
+				    {% else %}
+				    <p>
+				    {{ field.label_tag }}
+				    {{ field }}
+				    </p>
+				    {% endif %}
+				    {% endfor %} -->
+				</fieldset>
+		        <input class="btn" type="submit" id="login" value="{% trans "登录" %}" />
+		        <div id="text">
+		        	<p id="action">
+		        	{% for err in form.non_field_errors %}
+				    	{{err}}
+				    {% endfor %}
+			        </p>
+		        </div>
+		        
+			        
+		    </form>
+		</div>
+    </div>
+</body>
+</html>

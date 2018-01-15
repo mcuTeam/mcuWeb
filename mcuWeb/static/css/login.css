@@ -1,0 +1,60 @@
+body{
+	color:#006666;
+	background: #ffffff url(../images/bg.jpg) center center fixed;
+	text-align: center;
+	font-size:12px;
+}
+
+/*legend#login{
+	color: white;
+}*/
+
+label{
+	color: white;
+}
+
+p{
+	color: red;
+}
+
+p#action{
+	margin-top: 12px;
+}
+
+p#nameTip,#passwordTip{
+	margin: 5 0 4 0px;
+	height: 1px;
+}
+
+input#id_identification,#id_password{
+	width: 220px;
+	height: 25px;
+}
+
+input#id_remember_me{
+	width: 15px;
+	height: 15px;
+	margin: 0px 0px 0px -20px;
+	float: none;
+}
+
+input#login{
+	width: 220px;
+	height: 25px;
+	border-radius: 4px;
+	border: 1px solid #cccccc;
+	padding: 0px;
+}
+
+.login{
+	width: 100%;
+	margin: 0 auto;
+}
+
+.login .logo{
+	margin: 50px auto 0px auto;
+	width: 400px;
+	height: 300px;
+	background: url(../images/userlogo.png) no-repeat center center;
+}
+
