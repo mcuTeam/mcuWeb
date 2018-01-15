@@ -14,7 +14,8 @@
 		<p>网口配置</p>
 	</div>
 	<div id="content" class="span8 offset2">
-		<form class="form-horizontal" id="one" method="post">
+		{% if  networkAdapter1 %}
+		<form class="form-horizontal" id="one" method="post" href="/port_config/">
 			{% csrf_token %}
 
 
@@ -59,27 +60,46 @@
 				<button type="button" class="btn"><i class="icon-repeat"></i> 取消</button>
 			</div>
 		</form>
+		{% endif %}
+		{% if networkAdapter2 %}
+		<form class="form-horizontal" id="one" method="post" href="/port_config/">
+			{% csrf_token %}
 
-		<form class="form-horizontal">
 
-            {{networkAdapter2}}
-		    <p>本地连接2</p>
+			<p>{{networkAdapter2.Description.value}}</p>
+			<div class="control-group" hidden="hidden">
+				<label class="control-label">{{networkAdapter2.Index.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter2.Index}}
+					<span>{{networkAdapter2.Index.errors.0}}</span>
+				</div>
+		    </div>
+		    <div class="control-group" hidden="hidden">
+				<label class="control-label">{{networkAdapter2.Description.label_tag}}</label>
+				<div class="controls">
+					{{networkAdapter2.Description}}
+					<span>{{networkAdapter2.Description.errors.0}}</span>
+				</div>
+		    </div>
 			<div class="control-group">
-				<label class="control-label">IP地址</label>
+				<label class="control-label">{{networkAdapter2.IP.label_tag}}</label>
 				<div class="controls">
-					<input type="text" id="" >
+					{{networkAdapter2.IP}}
+					<span>{{networkAdapter2.IP.errors.0}}</span>
 				</div>
 		    </div>
 		    <div class="control-group">
-				<label class="control-label">子网掩码</label>
+				<label class="control-label">{{networkAdapter2.IPSubnet.label_tag}}</label>
 				<div class="controls">
-					<input type="text" id="" >
+					{{networkAdapter2.IPSubnet}}
+					<span>{{networkAdapter2.IPSubnet.errors.0}}</span>
 				</div>
 		    </div>
 		    <div class="control-group">
-				<label class="control-label">网关</label>
+				<label class="control-label">{{networkAdapter2.DefaultIPGateway.label_tag}}</label>
 				<div class="controls">
-					<input type="text" id="" >
+					{{networkAdapter2.DefaultIPGateway}}
+					<span>{{networkAdapter2.DefaultIPGateway.errors.0}}</span>
 				</div>
 		    </div>
 		    <div class="form-actions">
@@ -87,6 +107,7 @@
 				<button type="button" class="btn"><i class="icon-repeat"></i> 取消</button>
 			</div>
 		</form>
+		{% endif %}
 	</div>
 </div>
 
