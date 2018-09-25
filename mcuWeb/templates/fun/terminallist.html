@@ -5,70 +5,71 @@
 {% block title %}终端列表{% endblock %}
 
 {% block csss %}
-<link href="{% static "css/terminallist.css" %}" rel="stylesheet" media="screen">
+    <link href="{% static "css/terminallist.css" %}" rel="stylesheet" media="screen">
 {% endblock %}
 
 {% block content %}
-<div class="row-fluid">
-	<div class="span8 offset1">
-		<p>会场列表</p>
-	</div>
-	<div class="span10 offset1">
+    <div class="row-fluid">
+        <div class="span8 offset1">
+            <p>会场列表</p>
+        </div>
+        <div class="span10 offset1">
 
-		{% if msgType == 'info' %}
-		<div class="alert alert-info">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
-		</div>
+            {% if msgType == 'info' %}
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% elif msgType == 'success' %}
-		<div class="alert alert-success">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
-		</div>
+            {% elif msgType == 'success' %}
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% elif msgType == 'error' %}
-		<div class="alert alert-error">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
-		</div>
+            {% elif msgType == 'error' %}
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% endif %}
+            {% endif %}
 
 
-		<table class="table table-condensed">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>会场名称</th>
-					<th>会场IP:</th>
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>会场名称</th>
+                    <th>会场IP:</th>
 
-					<th>删除</th>
-				</tr>
-			</thead>
-		{% for terminal in terminallist %}
-			<tbody>
-				<tr>
-					<td>{{ forloop.counter }}</td>
-				    <td>会场{{terminal.name}}</td>
-				    <td>{{terminal.terminalIP}}</td>
+                    <th>删除</th>
+                </tr>
+                </thead>
+                {% for terminal in terminallist %}
+                    <tbody>
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>会场{{ terminal.name }}</td>
+                        <td>{{ terminal.terminalIP }}</td>
 
-				    <td class="delete"><a class="btn" href="/deleteterminal/{{terminal.pk}}/"> </a></td>
-				</tr>
-			</tbody>
-		{% endfor %}
-		</table>
-		<a type="submit" class="btn btn-info" value="上传文件" href="/addterminal"><i class="icon-plus-sign icon-white"></i> 添加会场</a>
+                        <td class="delete"><a class="btn" href="/deleteterminal/{{ terminal.pk }}/"> </a></td>
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+            <a type="submit" class="btn btn-info" value="上传文件" href="/addterminal"><i
+                    class="icon-plus-sign icon-white"></i> 添加会场</a>
 
-	</div>
-</div>
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block js %}
-	<script type="text/javascript">
-		$('document').ready(function(){
-			$('div#pill2').attr('class','accordion-body collapse in');
-		});
-	</script>
+    <script type="text/javascript">
+        $('document').ready(function () {
+            $('div#pill2').attr('class', 'accordion-body collapse in');
+        });
+    </script>
 {% endblock %}

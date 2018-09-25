@@ -1,27 +1,28 @@
-.span8{
-	color: #dadada;
-	font-size: 15px;
-	margin-top: 50px; 
+.span8 {
+    color: #dadada;
+    font-size: 15px;
+    margin-top: 50px;
 }
 
-form#one{
-	border-bottom: 1px solid red;
+form#one {
+    border-bottom: 1px solid red;
 }
 
-div.form-actions{
-	background-color: rgb(68,68,68);
-	border: 0px;
+div.form-actions {
+    background-color: rgb(68, 68, 68);
+    border: 0px;
 }
 
-div#content{
-	margin-top:10px;
+div#content {
+    margin-top: 10px;
 }
 
-a#nav1,a#nav1:focus,a#nav1:active,a#nav1:visited{
-	background-color: rgb(255,204,0);
-	color: black;
+a#nav1, a#nav1:focus, a#nav1:active, a#nav1:visited {
+    background-color: rgb(255, 204, 0);
+    color: black;
 }
-a#port_config,a#port_config:focus,a#port_config:active,a#port_config:visited{
-	background-color: transparent;
-	color: rgb(255,153,0)
+
+a#port_config, a#port_config:focus, a#port_config:active, a#port_config:visited {
+    background-color: transparent;
+    color: rgb(255, 153, 0)
 }

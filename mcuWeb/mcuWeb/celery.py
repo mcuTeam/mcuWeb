@@ -1,18 +1,17 @@
 from __future__ import absolute_import, unicode_literals
-import os
-from celery import Celery
-import celery.bin.amqp
-import sys
-import time
-import socket
-from socket import *
-import json
 
+import json
+import os
+import socket
+import time
+from socket import *
+
+import celery.bin.amqp
+from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
 # os.chdir('E:/workspace/mcuWeb/mcuWeb')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mcuWeb.settings')
-from django.conf import settings
 # from system.models import *
 
 app = Celery('mcuWeb', backend='rpc://', broker='pyamqp://')
@@ -28,7 +27,7 @@ app.conf.beat_schedule = {
 }
 app.conf.timezone = 'UTC'
 
-amqp = celery.bin.amqp.amqp(app = app)
+amqp = celery.bin.amqp.amqp(app=app)
 
 #
 # # Using a string here means the worker doesn't have to serialize
@@ -43,24 +42,25 @@ app.autodiscover_tasks()
 HOST = "127.0.0.1"
 PORT = 5038
 BUFSIZ = 10240
-ADDR = (HOST,PORT)
+ADDR = (HOST, PORT)
 tcpCliSock = None
 try:
-    tcpCliSock = socket(AF_INET,SOCK_STREAM)
+    tcpCliSock = socket(AF_INET, SOCK_STREAM)
     tcpCliSock.connect(ADDR)
     tcpCliSock.settimeout(3)
 except BaseException as e:
     tcpCliSock = None
 
+
 @app.task(bind=True)
-def callallCeleryTask(self,meetName="",chairMan="",memberList=""):
+def callallCeleryTask(self, meetName="", chairMan="", memberList=""):
     global tcpCliSock
 
     memberList = json.loads(memberList)
-    print("callallTask task",memberList,type(memberList))
+    print("callallTask task", memberList, type(memberList))
     if tcpCliSock is None:
         print("tcpCliSock is None")
-        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock = socket(AF_INET, SOCK_STREAM)
         tcpCliSock.connect(ADDR)
         tcpCliSock.settimeout(3)
     try:
@@ -71,13 +71,15 @@ def callallCeleryTask(self,meetName="",chairMan="",memberList=""):
             memberName = member['name']
             memberIP = member['terminalIP']
             capalityName = member['capalityName']
-            msg = ("ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
-                % (meetName,memberName,memberIP,memberName,memberName))
+            msg = (
+                    "ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
+                    % (meetName, memberName, memberIP, memberName, memberName))
 
             tcpCliSock.send(msg.encode('utf8'))
             time.sleep(0.05)
-            msg = ("SETMEMBERAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nCapabilityName:%s\r\n\r\n" \
-                % (meetName,memberName,capalityName))
+            msg = (
+                    "SETMEMBERAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nCapabilityName:%s\r\n\r\n" \
+                    % (meetName, memberName, capalityName))
 
             tcpCliSock.send(msg.encode('utf8'))
 
@@ -92,51 +94,48 @@ def callallCeleryTask(self,meetName="",chairMan="",memberList=""):
         time.sleep(0.1)
         msg = "CALLALL\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % (meetName)
         tcpCliSock.send(msg.encode('utf8'))
-        print("wait",len(memberList))
-        time.sleep(len(memberList)+2)
+        print("wait", len(memberList))
+        time.sleep(len(memberList) + 2)
         print("wait")
         msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
-            % (1,meetName,chairMan)).encode('utf8')
+               % (1, meetName, chairMan)).encode('utf8')
         tcpCliSock.send(msg)
 
     except BaseException as e:
-        print("BaseException: ",e)
+        print("BaseException: ", e)
         tcpCliSock = None
 
 
 @app.task(bind=True)
-def hungallCeleryTask(self,meetName="",memberList=""):
+def hungallCeleryTask(self, meetName="", memberList=""):
     global tcpCliSock
 
     memberList = json.loads(memberList)
-    print("hungallCeleryTask task",memberList,type(memberList))
+    print("hungallCeleryTask task", memberList, type(memberList))
     if tcpCliSock is None:
         print("tcpCliSock is None")
-        tcpCliSock = socket(AF_INET,SOCK_STREAM)
+        tcpCliSock = socket(AF_INET, SOCK_STREAM)
         tcpCliSock.connect(ADDR)
         tcpCliSock.settimeout(3)
     try:
         msg = ("HUNGUPALL\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" \
-            % (1,meetName)).encode('utf8')
+               % (1, meetName)).encode('utf8')
         tcpCliSock.send(msg)
-        time.sleep(0.5*len(memberList))
+        time.sleep(0.5 * len(memberList))
         for member in memberList:
             # first addmember
             # second setmemberavformatparaTask
 
             msg = ("DELETEMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
-                % (1,meetName,member)).encode('utf8')
+                   % (1, meetName, member)).encode('utf8')
             # print(msg)
             tcpCliSock.send(msg)
             time.sleep(0.1)
         return None
 
     except BaseException as e:
-        print("BaseException: ",e)
+        print("BaseException: ", e)
         tcpCliSock = None
-
-
-
 
 #
 # def brokenpipeHandle():
