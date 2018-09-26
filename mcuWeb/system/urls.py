@@ -1,5 +1,6 @@
 from django.conf.urls import url
 
+from fun import views as fun_view
 from system import views as system_view
 
 urlpatterns = [
@@ -8,7 +9,7 @@ urlpatterns = [
     url(r'^system_info/$', system_view.system_infoView),
     url(r'^MCU_config/$', system_view.MCU_configView),
     url(r'^port_config/$', system_view.port_configView),
-    url(r'^GK_config/$', system_view.GK_configView),
+    url(r'^GK_config/$', fun_view.GK_configView),
     url(r'^sw_manage/$', system_view.sw_manageView),
     url(r'^configfile/$', system_view.configfileView),
 

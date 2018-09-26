@@ -10,9 +10,9 @@ import wmi
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
-from fun.views import get_gk_status_task, set_gk_task, time
+# from fun.views import get_gk_status_task, set_gk_task
 from system.forms import *
 
 
@@ -303,41 +303,6 @@ def port_configView(request):
             networkAdapter2 = networkAdapterForm(data2)
         return render(request, 'system_manage/port_config.html',
                       {'networkAdapter1': networkAdapter1, 'networkAdapter2': networkAdapter2})
-
-
-@login_required
-def GK_configView(request):
-    if request.POST:
-        gk_form_data = gkForm(data=request.POST)
-        if gk_form_data.is_valid():
-            use_gk = gk_form_data.cleaned_data["active"]
-            gk_addr = gk_form_data.cleaned_data["ip"]
-            print("GK_configView", use_gk, gk_addr)
-            ret = set_gk_task(use_gk, gk_addr)
-            ret_dict = returnCode2Dict(ret)
-            if not ret_dict:
-                return redirect(GK_configView)
-            ret_code = ret_dict.get("RetCode", None)
-            if ret_code == "200":
-                time.sleep(2.5)
-                return redirect(GK_configView)
-            return redirect(GK_configView)
-        else:
-            return render(request, 'system_manage/GK_config.html', {'form': gk_form_data})
-    else:
-        ret = get_gk_status_task()
-        ret_dict = returnCode2Dict(ret)
-        if not ret_dict:
-            return redirect(homeView)
-        ret_code = ret_dict.get("RetCode", None)
-        if ret_code == "200":
-            use_gk = ret_dict.get("GKUseGK", None)
-            gk_addr = ret_dict.get("GKIPAddr", None)
-            if use_gk is not None and gk_addr is not None:
-                form = gkForm({"active": use_gk != "0", "ip": gk_addr})
-                return render(request, 'system_manage/GK_config.html', {'form': form})
-
-        return render(request, 'system_manage/GK_config.html')
 
     # if gkAttributes.objects.count() < 1:
     #     tmp = gkAttributes(ip="0.0.0.0", active=False)

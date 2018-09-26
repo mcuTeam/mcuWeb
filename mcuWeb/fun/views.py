@@ -1,13 +1,21 @@
 from __future__ import absolute_import, unicode_literals
 
+import json
+import re
+import socket
 import threading
+import time
+from socket import *
 from threading import Lock
 
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 
 from fun.forms import *
-from mcuWeb.celery import *
-from system.views import *
+from system.forms import *
+from system.views import returnCode2Dict, analysisListMeetResult, homeView
 
 # Create your views here.
 
@@ -72,6 +80,165 @@ def loop():
 
 t = threading.Thread(target=loop)
 t.start()
+
+exitFlag = 0
+
+
+class call_all(threading.Thread):  # 继承父类threading.Thread
+    def __init__(self, meetName="", chairMan="", memberList=""):
+        threading.Thread.__init__(self)
+        self.meetName = meetName
+        self.chairMan = chairMan
+        self.memberList = memberList
+
+    def run(self):  # 把要执行的代码写到run函数里面 线程在创建后会直接运行run函数
+        print("Starting " + self.meetName)
+        HOST = "127.0.0.1"
+        PORT = 5038
+        BUFSIZ = 10240
+        ADDR = (HOST, PORT)
+        tcpCliSockInTask = None
+        try:
+            tcpCliSockInTask = socket(AF_INET, SOCK_STREAM)
+            tcpCliSockInTask.connect(ADDR)
+            tcpCliSockInTask.settimeout(3)
+        except BaseException as e:
+            tcpCliSockInTask = None
+        memberList = json.loads(self.memberList)
+        print("callallTask task", memberList, type(memberList))
+        if tcpCliSockInTask is None:
+            print("tcpCliSockInTask is None")
+            tcpCliSockInTask = socket(AF_INET, SOCK_STREAM)
+            tcpCliSockInTask.connect(ADDR)
+            tcpCliSockInTask.settimeout(3)
+        try:
+            for member in memberList:
+                # first addmember
+                # second setmemberavformatparaTask
+
+                memberName = member['name']
+                memberIP = member['terminalIP']
+                capalityName = member['capalityName']
+                msg = (
+                        "ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
+                        % (self.meetName, memberName, memberIP, memberName, memberName))
+
+                tcpCliSockInTask.send(msg.encode('utf8'))
+                time.sleep(0.05)
+                msg = (
+                        "SETMEMBERAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nCapabilityName:%s\r\n\r\n" \
+                        % (self.meetName, memberName, capalityName))
+
+                tcpCliSockInTask.send(msg.encode('utf8'))
+
+                # if memberName == chairMan:
+                #     print("-------------chairMan------------")
+                #     time.sleep(0.05)
+                #     msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
+                #         % (1,meetName,memberName)).encode('utf8')
+                #     tcpCliSock.send(msg)
+            # third callall
+            # optional setidentity
+            time.sleep(0.1)
+            msg = "CALLALL\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % (self.meetName)
+            tcpCliSockInTask.send(msg.encode('utf8'))
+            print("wait", len(memberList))
+            time.sleep(len(memberList) + 2)
+            print("wait")
+            msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n"
+                   % (1, self.meetName, self.chairMan)).encode('utf8')
+            tcpCliSockInTask.send(msg)
+
+        except BaseException as e:
+            print("BaseException: ", e)
+            tcpCliSock = None
+        print("Exiting " + self.name)
+
+
+class hangup_all(threading.Thread):  # 继承父类threading.Thread
+    def __init__(self, meetName="", memberList=""):
+        threading.Thread.__init__(self)
+        self.meetName = meetName
+        self.memberList = memberList
+
+    def run(self):  # 把要执行的代码写到run函数里面 线程在创建后会直接运行run函数
+        print("Starting " + self.meetName)
+        HOST = "127.0.0.1"
+        PORT = 5038
+        BUFSIZ = 10240
+        ADDR = (HOST, PORT)
+        tcpCliSockInTask = None
+        try:
+            tcpCliSockInTask = socket(AF_INET, SOCK_STREAM)
+            tcpCliSockInTask.connect(ADDR)
+            tcpCliSockInTask.settimeout(3)
+        except BaseException as e:
+            tcpCliSockInTask = None
+        memberList = json.loads(self.memberList)
+        print("callallTask task", memberList, type(memberList))
+        try:
+            msg = ("HUNGUPALL\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n"
+                   % (1, self.meetName)).encode('utf8')
+            tcpCliSockInTask.send(msg)
+            time.sleep(0.5 * len(self.memberList))
+            for member in self.memberList:
+                # first addmember
+                # second setmemberavformatparaTask
+
+                msg = ("DELETEMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n"
+                       % (1, self.meetName, member)).encode('utf8')
+                # print(msg)
+                tcpCliSockInTask.send(msg)
+                time.sleep(0.1)
+            return None
+
+        except BaseException as e:
+            print("BaseException: ", e)
+            tcpCliSockInTask = None
+
+
+def returnCode2Dict(retCode):
+    if type(retCode) is not str:
+        return False
+    s = re.sub(r'\r\n\r\n', '', retCode)
+    a = s.split('\r\n')
+    retDict = {}
+    for item in a:
+        res = re.split(r':', item, 1)
+        if len(res) < 2:
+            retDict['RetName'] = res[0]
+        else:
+            retDict[res[0]] = res[1]
+    return retDict
+
+
+def analysisListMeetResult(retCode):
+    if type(retCode) is not str:
+        return False
+    s = re.sub(r'\r\n\r\n', '', retCode)
+    a = s.split('\r\n')
+    retDict = {}
+    for item in a:
+        res = re.split(r':', item, 1)
+        # print(res)
+        if len(res) < 2:
+            retDict['RetName'] = res[0]
+        else:
+            retDict[res[0]] = res[1]
+    meetInfo = re.split('\|', retDict['MeetPara'])
+    for item in meetInfo:
+        # print(item)
+        deep1 = re.split(r';', item)
+        # print("deep1: ",deep1)
+        for itemD1 in deep1:
+            deep2 = re.split(r'\=', itemD1, 1)
+            # print(deep2)
+            if deep2[0] in retDict and len(deep2) > 1:
+                retDict[deep2[0]].append(deep2[1])
+            elif len(deep2) > 1:
+                retDict[deep2[0]] = []
+                retDict[deep2[0]].append(deep2[1])
+    return retDict
 
 
 def brokenpipeHandle():
@@ -1815,7 +1982,9 @@ def hungupallAjaxView(request, meetpk):
             if analysysResult is not None:
                 memberList = analysysResult["EPName"]
 
-            hungallCeleryTask.apply_async((meetname, json.dumps(memberList)), serializer='json')
+            # hungallCeleryTask.apply_async((meetname, json.dumps(memberList)), serializer='json')
+            thread1 = hangup_all(meetname, json.dumps(memberList))
+            thread1.start()
 
             return HttpResponse(json.dumps({'msgType': "success", 'msg': "成功发送挂断所有消息，请耐心等待"}))
         except BaseException as e:
@@ -1846,9 +2015,9 @@ def callallAjaxView(request, meetpk):
 
         if memberList is None:
             memberList = []
-            return HttpResponse(json.dumps({'msgType': "success", 'msg': "成功发送挂断所有消息，请耐心等待"}))
+            return HttpResponse(json.dumps({'msgType': "success", 'msg': "成功发送呼叫所有消息，请耐心等待"}))
         if len(memberList) == 0:
-            return HttpResponse(json.dumps({'msgType': "success", 'msg': "成功发送挂断所有消息，请耐心等待"}))
+            return HttpResponse(json.dumps({'msgType': "success", 'msg': "成功发送呼叫所有消息，请耐心等待"}))
         memberInfoList = []
         for member in memberList:
             pk = int(member)
@@ -1866,7 +2035,9 @@ def callallAjaxView(request, meetpk):
         jsonMemberInfoList = json.dumps(memberInfoList)
         print(jsonMemberInfoList)
         try:
-            callallCeleryTask.apply_async((meetname, mainMeetRoomName, jsonMemberInfoList), serializer='json')
+            thread1 = call_all(meetname, mainMeetRoomName, jsonMemberInfoList)
+            thread1.start()
+            # callallCeleryTask.apply_async((meetname, mainMeetRoomName, jsonMemberInfoList), serializer='json')
             return HttpResponse(json.dumps({'msgType': "success", 'msg': "成功发送挂断所有消息，请耐心等待"}))
         except BaseException as e:
             print("catch callallAjaxView error", e)
@@ -1921,3 +2092,38 @@ def meetDetailsView(request, meetpk):
     terminalList = terminal.objects.all()
     return render(request, 'fun/meetDetail.html',
                   {'meetInstance': meetInstance, 'terminalList': terminalList, 'msgType': 'info', 'msg': "please add"})
+
+
+@login_required
+def GK_configView(request):
+    if request.POST:
+        gk_form_data = gkForm(data=request.POST)
+        if gk_form_data.is_valid():
+            use_gk = gk_form_data.cleaned_data["active"]
+            gk_addr = gk_form_data.cleaned_data["ip"]
+            print("GK_configView", use_gk, gk_addr)
+            ret = set_gk_task(use_gk, gk_addr)
+            ret_dict = returnCode2Dict(ret)
+            if not ret_dict:
+                return redirect(GK_configView)
+            ret_code = ret_dict.get("RetCode", None)
+            if ret_code == "200":
+                time.sleep(2.5)
+                return redirect(GK_configView)
+            return redirect(GK_configView)
+        else:
+            return render(request, 'system_manage/GK_config.html', {'form': gk_form_data})
+    else:
+        ret = get_gk_status_task()
+        ret_dict = returnCode2Dict(ret)
+        if not ret_dict:
+            return redirect(homeView)
+        ret_code = ret_dict.get("RetCode", None)
+        if ret_code == "200":
+            use_gk = ret_dict.get("GKUseGK", None)
+            gk_addr = ret_dict.get("GKIPAddr", None)
+            if use_gk is not None and gk_addr is not None:
+                form = gkForm({"active": use_gk != "0", "ip": gk_addr})
+                return render(request, 'system_manage/GK_config.html', {'form': form})
+
+        return render(request, 'system_manage/GK_config.html')
