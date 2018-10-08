@@ -63,7 +63,7 @@
             $('div#pill1').attr('class', 'accordion-body collapse in');
         });
         $('#id_file').change(function () {
-            document.getElementById('file').value = this.value;
+            document.getElementById('file').value = this.files[0].name;
         });
     </script>
 {% endblock %}

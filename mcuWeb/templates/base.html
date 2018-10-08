@@ -224,11 +224,15 @@
                 $.get("/clear/", function () {
                 });
 
+                $('#myModal3').modal('hide');
+
             });
 
             $('#reboot').click(function () {
                 $.get("/reboot/", function () {
                 });
+                
+                $('#myModal1').modal('hide');
 
             });
 
@@ -236,11 +240,17 @@
                 $.get("/shutdown/", function () {
                 });
 
+                $('#myModal2').modal('hide');
+
             });
 
             $('#restart').click(function () {
+
+            	$('#myModal').modal('hide');
                 $.get("/restart/", function () {
                 });
+                
+                
 
             });
 
