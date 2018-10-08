@@ -1,3 +1,4 @@
+#coding:utf-8
 import configparser
 import io
 import os
@@ -46,13 +47,13 @@ def analysisListMeetResult(retCode):
             retDict['RetName'] = res[0]
         else:
             retDict[res[0]] = res[1]
-    meetInfo = re.split('\|', retDict['MeetPara'])
+    meetInfo = re.split("\|", retDict['MeetPara'])
     for item in meetInfo:
         # print(item)
         deep1 = re.split(r';', item)
         # print("deep1: ",deep1)
         for itemD1 in deep1:
-            deep2 = re.split(r'\=', itemD1, 1)
+            deep2 = re.split(r'=', itemD1, 1)
             # print(deep2)
             if deep2[0] in retDict and len(deep2) > 1:
                 retDict[deep2[0]].append(deep2[1])
@@ -451,7 +452,7 @@ def downloadLogView(request):
 def clearLogView(request):
     try:
         shutil.rmtree("C:/SVCMMCUAutoStart/LOGFILE")
-    except PermissionError as e:
+    except Exception as e:
         return HttpResponse("部分文件占用，删除失败")
     return HttpResponse("操作成功")
 
