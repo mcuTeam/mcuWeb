@@ -27,16 +27,16 @@ class SigninFormExtra(AuthenticationForm):
 class mcuAttributesForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(mcuAttributesForm, self).__init__(*args, **kwargs)
-        self.fields['curDate'] = forms.DateField(label='系统日期', initial=datetime.date.today(), required=True,
-                                                 widget=forms.DateInput(attrs={'type': 'date'})
+        self.fields[u'curDate'] = forms.DateField(label=u"系统日期", initial=datetime.date.today(), required=True,
+                                                 widget=forms.DateInput(attrs={u"type": u'date'})
                                                  )
-        self.fields['curTime'] = forms.TimeField(label='系统时间', initial=datetime.datetime.now().time(), required=True,
-                                                 widget=forms.TimeInput(attrs={'type': 'time'})
+        self.fields[u'curTime'] = forms.TimeField(label=u"系统时间", initial=datetime.datetime.now().time(), required=True,
+                                                 widget=forms.TimeInput(attrs={u'type': u'time'})
                                                  )
 
     # curDate = forms.CharField(label='当前日期*',initial=datetime.date.today(),required=True)
-    curDate = forms.DateField(label='1234', initial=datetime.date.today(), required=True)
-    curTime = forms.TimeField(label='1234', initial=datetime.datetime.now().time(), required=True)
+    curDate = forms.DateField(label=u'1234', initial=datetime.date.today(), required=True)
+    curTime = forms.TimeField(label=u'1234', initial=datetime.datetime.now().time(), required=True)
 
     class Meta:
         model = mcuAttributes
@@ -60,7 +60,7 @@ class networkAdapterForm(forms.Form):
 
 
 class gkModelForm(ModelForm):
-    active = forms.BooleanField(label='是否启用GK', required=False)
+    active = forms.BooleanField(label=u'是否启用GK', required=False)
 
     class Meta:
         model = gkAttributes
@@ -68,16 +68,16 @@ class gkModelForm(ModelForm):
 
 
 class gkForm(forms.Form):
-    active = forms.BooleanField(label='是否启用GK', required=False)
+    active = forms.BooleanField(label=u'是否启用GK', required=False)
     ip = forms.GenericIPAddressField(label='IP Address', required=True,
                                      widget=forms.TextInput(attrs={'class': 'text-input small-input', }))
 
 
 class uploadFileForm(forms.Form):
-    file = forms.FileField(label="请选择上传文件：update.zip")
+    file = forms.FileField(label=u"请选择上传文件：update.zip")
     # file.widget.attrs.update({'onchange':r'document.getElementById("textfield").value=this.value'})
 
 
 class uploadConfigFileForm(forms.Form):
-    file = forms.FileField(label="请选择配置文件：svcmmcu.ini")
+    file = forms.FileField(label=u"请选择配置文件：svcmmcu.ini")
     # file.widget.attrs.update({'onchange':r'document.getElementById("textfield").value=this.value'})

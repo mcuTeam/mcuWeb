@@ -19,6 +19,7 @@ from django.shortcuts import render, redirect
 from fun.forms import *
 from system.forms import *
 from system.views import returnCode2Dict, analysisListMeetResult, homeView
+from django.utils.translation import gettext as _
 
 # Create your views here.
 
@@ -1466,14 +1467,14 @@ def addtemplateView(request):
             templateform.save(commit=True)
             templateList = meetingTemplate.objects.all()
             return render(request, 'fun/templatelist.html',
-                          {'templatelist': templateList, 'msgType': 'success', 'msg': 'add success'})
+                          dict(templatelist=templateList, msgType='success', msg=u'添加成功'))
         else:
             return render(request, 'fun/addtemplate.html',
-                          {'templateform': templateform, 'msgType': 'error', 'msg': "fail to add"})
+                          dict(templateform=templateform, msgType='error', msg=u"添加失败，请检查"))
     else:
         templateform = meetingTemplateForm()
         return render(request, 'fun/addtemplate.html',
-                      {'templateform': templateform, 'msgType': 'info', 'msg': "please add"})
+                      dict(templateform=templateform, msgType='info', msg=_(u"请添加")))
 
 
 @login_required

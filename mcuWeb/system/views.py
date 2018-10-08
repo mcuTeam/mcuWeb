@@ -1,4 +1,4 @@
-#coding:utf-8
+# coding:utf-8
 import configparser
 import io
 import os
@@ -250,12 +250,14 @@ def setNetworkInfo(paramDict):
     intReboot = 0
     for interface in colNicConfigs:
         if interface.Description == paramDict['Description'] and interface.Index == paramDict['Index']:
+            print(paramDict)
             returnValue = interface.EnableStatic(IPAddress=arrIPAddresses, SubnetMask=arrSubnetMasks)
             if returnValue[0] == 0:
                 print("  ")
             elif returnValue[0] == 1:
                 intReboot += 1
             else:
+                print(returnValue)
                 return u"修改IP失败"
             returnValue = interface.SetGateways(DefaultIPGateway=arrDefaultGateways,
                                                 GatewayCostMetric=arrGatewayCostMetrics)
@@ -280,6 +282,7 @@ def port_configView(request):
             print(ret)
             return HttpResponseRedirect('/port_config/')
         else:
+            print("is not valid")
             return HttpResponseRedirect('/port_config/')
     else:
         ret = getNetworkInfo()
@@ -327,7 +330,7 @@ def port_configView(request):
 def handle_upload_file(f):
     updateDirectory = "C:/SVCMMCUAutoStart/"
     if f.name != "update.zip":
-        return "请输入update.zip升级包"
+        return u"请输入update.zip升级包"
     else:
         if zipfile.is_zipfile(f):
             pass
@@ -335,7 +338,8 @@ def handle_upload_file(f):
                 zp = zipfile.ZipFile(f, 'r')
                 # zp.extractall(updateDirectory)
                 for filename in zp.namelist():
-                    strname = filename.encode('cp437').decode('gbk')
+                    print(filename)
+                    strname = filename.decode('gbk')
                     if '/' in strname:
                         print(os.path.dirname(updateDirectory + strname))
                         if not os.path.exists(os.path.dirname(updateDirectory + strname)):
@@ -353,7 +357,7 @@ def handle_upload_file(f):
                 print(e)
                 return e
         else:
-            return "请输入update.zip升级包"
+            return u"请输入update.zip升级包"
 
         return True
 
@@ -370,10 +374,10 @@ def sw_manageView(request):
                 return render(request, 'system_manage/sw_manage.html',
                               {'form': form, 'msgType': "error", 'msg': handleFileResult})
             form = uploadFileForm()
-            return render(request, 'system_manage/sw_manage.html', {'form': form, 'msgType': "success", 'msg': "上传成功"})
+            return render(request, 'system_manage/sw_manage.html', {'form': form, 'msgType': "success", 'msg': u"上传成功"})
         else:
             print(form)
-            return render(request, 'system_manage/sw_manage.html', {'form': form, 'msgType': "error", 'msg': "填写错误！"})
+            return render(request, 'system_manage/sw_manage.html', {'form': form, 'msgType': "error", 'msg': u"填写错误！"})
     form = uploadFileForm()
     return render(request, 'system_manage/sw_manage.html', {'form': form})
 
@@ -383,7 +387,7 @@ def handle_config_file(f):
     print(type(f))
     updateDirectory = "C:/SVCMMCUAutoStart/"
     if f.name != "svcmmcu.ini":
-        return "请输入配置文件：svcmmcu.ini"
+        return u"请输入配置文件：svcmmcu.ini"
     else:
         try:
             f_handle = open(updateDirectory + f.name, "w+b")
@@ -406,10 +410,11 @@ def configfileView(request):
                 return render(request, 'system_manage/configfile.html',
                               {'form': form, 'msgType': "error", 'msg': handleFileResult})
             form = uploadConfigFileForm()
-            return render(request, 'system_manage/configfile.html', {'form': form, 'msgType': "success", 'msg': "上传成功"})
+            return render(request, 'system_manage/configfile.html',
+                          {'form': form, 'msgType': "success", 'msg': u"上传成功"})
         else:
             print("configfile form is not valid!", form)
-            return render(request, 'system_manage/configfile.html', {'form': form, 'msgType': "error", 'msg': "填写错误！"})
+            return render(request, 'system_manage/configfile.html', {'form': form, 'msgType': "error", 'msg': u"填写错误！"})
     form = uploadConfigFileForm()
     return render(request, 'system_manage/configfile.html', {'form': form})
 
@@ -453,22 +458,25 @@ def clearLogView(request):
     try:
         shutil.rmtree("C:/SVCMMCUAutoStart/LOGFILE")
     except Exception as e:
-        return HttpResponse("部分文件占用，删除失败")
-    return HttpResponse("操作成功")
+        return HttpResponse(u"部分文件占用，删除失败")
+    return HttpResponse(u"操作成功")
 
 
 @login_required
 def rebootView(request):
     os.system("shutdown -r -t 5")
-    return HttpResponse("操作成功")
+    return HttpResponse(u"操作成功")
 
 
 @login_required
 def shutdownView(request):
     os.system("shutdown -s -t 5")
-    return HttpResponse("操作成功")
+    return HttpResponse(u"操作成功")
 
 
 @login_required
 def restartMCUView(request):
-    return HttpResponse("操作成功")
+    ret1 = os.system('taskkill /f /im "SVCMMCU.exe"')
+    if ret1 == 0:
+        return HttpResponse(u"操作成功")
+    return HttpResponse(u"关闭进程失败，可能mcu未启动")
