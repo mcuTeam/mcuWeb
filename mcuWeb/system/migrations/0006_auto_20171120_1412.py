@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('system', '0005_meeting'),
     ]
@@ -65,6 +64,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='terminal',
             name='terminalIP',
-            field=models.GenericIPAddressField(error_messages={'unique': '重复IP,请重新输入!'}, unique=True, verbose_name='IP*'),
+            field=models.GenericIPAddressField(error_messages={'unique': '重复IP,请重新输入!'}, unique=True,
+                                               verbose_name='IP*'),
         ),
     ]

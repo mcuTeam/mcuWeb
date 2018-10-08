@@ -13,24 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url,include
-
+import userena.views as userView
+from django.conf.urls import url, include
 from django.contrib import admin
 
 from system.forms import *
-import userena.views as userView
-
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    
-    
 
-    url(r'^accounts/signin/$',userView.signin,{'auth_form': SigninFormExtra},name="userena_signin"),
+    url(r'^accounts/signin/$', userView.signin, {'auth_form': SigninFormExtra}, name="userena_signin"),
 
     url(r'^accounts/', include('userena.urls')),
 
-    url(r'',include('system.urls')),
-    url(r'',include('fun.urls')),
+    url(r'', include('system.urls')),
+    url(r'', include('fun.urls')),
     # url(r'^accounts/',include('accounts.urls')),
 ]

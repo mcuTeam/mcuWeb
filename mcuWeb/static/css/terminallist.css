@@ -1,51 +1,52 @@
-.span8,.span10{
-	color: #dadada;
-	font-size: 15px;
-	margin-top: 50px; 
+.span8, .span10 {
+    color: #dadada;
+    font-size: 15px;
+    margin-top: 50px;
 }
 
-.span10.offset1{
-	height: auto;
+.span10.offset1 {
+    height: auto;
 }
 
-span.tips{
-	color: red;
+span.tips {
+    color: red;
 }
 
-thead{
-	color: rgb(255,204,0);
+thead {
+    color: rgb(255, 204, 0);
 }
 
-div.form-actions{
-	background-color: rgb(68,68,68);
-	border: 0px;
-}
-
-a#nav2,a#nav2:focus,a#nav2:active,a#nav2:visited{
-	background-color: rgb(255,204,0);
-	color: black;
-}
-a#terminallist,a#terminallist:focus,a#terminallist:active,a#terminallist:visited{
-	background-color: transparent;
-	color: rgb(255,153,0)
-}
-
-td.delete>a,td.edit>a{
-	padding: 0px;
+div.form-actions {
+    background-color: rgb(68, 68, 68);
     border: 0px;
-	height: 20px;
-	width: 20px;
 }
 
-td.delete > a:hover,td.edit> a:hover ,td.delete > a:focus,td.edit> a:focus {
-	background-color: transparent;
-	background-position:0px;
+a#nav2, a#nav2:focus, a#nav2:active, a#nav2:visited {
+    background-color: rgb(255, 204, 0);
+    color: black;
 }
 
-td.delete>a{
-	background: url(../images/delete.png) center no-repeat;
+a#terminallist, a#terminallist:focus, a#terminallist:active, a#terminallist:visited {
+    background-color: transparent;
+    color: rgb(255, 153, 0)
 }
 
-td.edit>a{
-	background: url(../images/edit.png) center no-repeat;
+td.delete > a, td.edit > a {
+    padding: 0px;
+    border: 0px;
+    height: 20px;
+    width: 20px;
+}
+
+td.delete > a:hover, td.edit > a:hover, td.delete > a:focus, td.edit > a:focus {
+    background-color: transparent;
+    background-position: 0px;
+}
+
+td.delete > a {
+    background: url(../images/delete.png) center no-repeat;
+}
+
+td.edit > a {
+    background: url(../images/edit.png) center no-repeat;
 }

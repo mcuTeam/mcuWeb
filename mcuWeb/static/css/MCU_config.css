@@ -1,19 +1,20 @@
-.span8{
-	color: #dadada;
-	font-size: 15px;
-	margin-top: 50px; 
+.span8 {
+    color: #dadada;
+    font-size: 15px;
+    margin-top: 50px;
 }
 
-div.form-actions{
-	background-color: rgb(68,68,68);
-	border: 0px;
+div.form-actions {
+    background-color: rgb(68, 68, 68);
+    border: 0px;
 }
 
-a#nav1,a#nav1:focus,a#nav1:active,a#nav1:visited{
-	background-color: rgb(255,204,0);
-	color: black;
+a#nav1, a#nav1:focus, a#nav1:active, a#nav1:visited {
+    background-color: rgb(255, 204, 0);
+    color: black;
 }
-a#MCU_config,a#MCU_config:focus,a#MCU_config:active,a#MCU_config:visited{
-	background-color: transparent;
-	color: rgb(255,153,0)
+
+a#MCU_config, a#MCU_config:focus, a#MCU_config:active, a#MCU_config:visited {
+    background-color: transparent;
+    color: rgb(255, 153, 0)
 }

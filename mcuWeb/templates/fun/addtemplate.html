@@ -7,118 +7,118 @@
 {% block title %}添加会议模板{% endblock %}
 
 {% block csss %}
-<link href="{% static "css/templatelist.css" %}" rel="stylesheet" media="screen">
+    <link href="{% static "css/templatelist.css" %}" rel="stylesheet" media="screen">
 {% endblock %}
 
 {% block content %}
-<div class="row-fluid">
-	<div class="span8 offset1">
-		<p>添加会议模板</p>
-	</div>
-	<div class="span8 offset2">
-		{% if msgType == 'info' %}
-		<div class="alert alert-info">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-			{{msg}}
-		</div>
+    <div class="row-fluid">
+        <div class="span8 offset1">
+            <p>添加会议模板</p>
+        </div>
+        <div class="span8 offset2">
+            {% if msgType == 'info' %}
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% elif msgType == 'success' %}
-		<div class="alert alert-success">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-			{{msg}}
-		</div>
+            {% elif msgType == 'success' %}
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% elif msgType == 'error' %}
-		<div class="alert alert-error">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-			{{msg}}
-		</div>
+            {% elif msgType == 'error' %}
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% endif %}
+            {% endif %}
 
-		<form   class="form-horizontal" action="/addtemplate/" role="form" method="post">
-			{% csrf_token %}
-			<div class="control-group">
+            <form class="form-horizontal" action="/addtemplate/" role="form" method="post">
+                {% csrf_token %}
+                <div class="control-group">
 
-				<label class="control-label">{{templateform.name.label_tag}}</label>
-				<div class="controls">
-					{{templateform.name}}
-					<span>{{templateform.name.errors.0}}</span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">{{templateform.bandwidth.label_tag}}</label>
-				<div class="controls">
-					{{templateform.bandwidth}}
-					<span>{{templateform.bandwidth.errors.0}}</span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">{{templateform.videoProtocol.label_tag}}</label>
-				<div class="controls">
-					{{templateform.videoProtocol}}
-					<span>{{templateform.videoProtocol.errors.0}}</span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">{{templateform.videoFrameRate.label_tag}}</label>
-				<div class="controls">
-					{{templateform.videoFrameRate}}
-					<span>{{templateform.videoFrameRate.errors.0}}</span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">{{templateform.capalityname.label_tag}}</label>
-				<div class="controls">
-					{{templateform.capalityname}}
-					<span>{{templateform.capalityname.errors.0}}</span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">{{templateform.audioProtocol.label_tag}}</label>
-				<div class="controls">
-					{{templateform.audioProtocol}}
-					<span>{{templateform.audioProtocol.errors.0}}</span>
-				</div>
-			</div>
-			<!-- 双流 -->
-			<div class="control-group">
-				<label class="control-label">{{templateform.dualProtocol.label_tag}}</label>
-				<div class="controls">
-					{{templateform.dualProtocol}}
-					<span>{{templateform.dualProtocol.errors.0}}</span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">{{templateform.dualFormat.label_tag}}</label>
-				<div class="controls">
-					{{templateform.dualFormat}}
-					<span>{{templateform.dualFormat.errors.0}}</span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">{{templateform.dualBandWidth.label_tag}}</label>
-				<div class="controls">
-					{{templateform.dualBandWidth}}
-					<span>{{templateform.dualBandWidth.errors.0}}</span>
-				</div>
-			</div>
+                    <label class="control-label">{{ templateform.name.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.name }}
+                        <span>{{ templateform.name.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{ templateform.bandwidth.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.bandwidth }}
+                        <span>{{ templateform.bandwidth.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{ templateform.videoProtocol.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.videoProtocol }}
+                        <span>{{ templateform.videoProtocol.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{ templateform.videoFrameRate.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.videoFrameRate }}
+                        <span>{{ templateform.videoFrameRate.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{ templateform.capalityname.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.capalityname }}
+                        <span>{{ templateform.capalityname.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{ templateform.audioProtocol.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.audioProtocol }}
+                        <span>{{ templateform.audioProtocol.errors.0 }}</span>
+                    </div>
+                </div>
+                <!-- 双流 -->
+                <div class="control-group">
+                    <label class="control-label">{{ templateform.dualProtocol.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.dualProtocol }}
+                        <span>{{ templateform.dualProtocol.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{ templateform.dualFormat.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.dualFormat }}
+                        <span>{{ templateform.dualFormat.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{ templateform.dualBandWidth.label_tag }}</label>
+                    <div class="controls">
+                        {{ templateform.dualBandWidth }}
+                        <span>{{ templateform.dualBandWidth.errors.0 }}</span>
+                    </div>
+                </div>
 
-			<div class="form-actions">
-				<input id="btnAddTerminal" class="btn btn-info" type="submit" value="添加" >
-				<a type="button" class="btn" href="/templatelist">返回</a>
-			</div>
-		</form>
+                <div class="form-actions">
+                    <input id="btnAddTerminal" class="btn btn-info" type="submit" value="添加">
+                    <a type="button" class="btn" href="/templatelist">返回</a>
+                </div>
+            </form>
 
-	</div>
-</div>
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript">
-$('document').ready(function(){
-	$('div#pill2').attr('class','accordion-body collapse in');
-});
-</script>
+    <script type="text/javascript">
+        $('document').ready(function () {
+            $('div#pill2').attr('class', 'accordion-body collapse in');
+        });
+    </script>
 {% endblock %}

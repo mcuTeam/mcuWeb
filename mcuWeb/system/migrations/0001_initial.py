@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -18,7 +17,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.IntegerField(verbose_name='E164 Alias')),
-                ('terminalIP', models.GenericIPAddressField(error_messages={'unique': '重复IP,请重新输入!'}, unique=True, verbose_name='IP')),
+                ('terminalIP', models.GenericIPAddressField(error_messages={'unique': '重复IP,请重新输入!'}, unique=True,
+                                                            verbose_name='IP')),
             ],
         ),
     ]

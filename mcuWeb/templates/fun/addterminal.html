@@ -6,68 +6,68 @@
 {% block title %}添加终端{% endblock %}
 
 {% block csss %}
-<link href="{% static "css/terminallist.css" %}" rel="stylesheet" media="screen">
+    <link href="{% static "css/terminallist.css" %}" rel="stylesheet" media="screen">
 {% endblock %}
 
 {% block content %}
-<div class="row-fluid">
-	<div class="span8 offset1">
-		<p>添加会场</p>
-	</div>
-	<div class="span8 offset2">
-		{% if msgType == 'info' %}
-		<div class="alert alert-info">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
-		</div>
+    <div class="row-fluid">
+        <div class="span8 offset1">
+            <p>添加会场</p>
+        </div>
+        <div class="span8 offset2">
+            {% if msgType == 'info' %}
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% elif msgType == 'success' %}
-		<div class="alert alert-success">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
-		</div>
+            {% elif msgType == 'success' %}
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% elif msgType == 'error' %}
-		<div class="alert alert-error">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-		  	{{msg}}
-		</div>
+            {% elif msgType == 'error' %}
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
 
-		{% endif %}	
+            {% endif %}
 
-		<form class="form-horizontal" id="formCreateChannel"  action="/addterminal/" role="form" method="post">
-			<div class="control-group">
-				{% csrf_token %}
-					<label class="control-label">{{terminalform.name.label_tag}}</label>
-		            <div class="controls">
-					{{terminalform.name}}
-					<span class="tips">{{terminalform.name.errors.0}}</span>
-				    </div>
-			</div>
-			<div class="control-group">
-					<label class="control-label">{{terminalform.terminalIP.label_tag}}</label>
-		            <div class="controls">
-					{{terminalform.terminalIP}}
-					<span class="tips">{{terminalform.terminalIP.errors.0}}</span>
-				    </div>
-			</div>
-			<div class="form-actions">
-				<input id="btnAddTerminal" class="btn btn-info" type="submit"  value="添加">
-				<a type="button" class="btn" href="/terminallist">返回</a>
-			</div>
-		</form>
-	</div>
-</div>
+            <form class="form-horizontal" id="formCreateChannel" action="/addterminal/" role="form" method="post">
+                <div class="control-group">
+                    {% csrf_token %}
+                    <label class="control-label">{{ terminalform.name.label_tag }}</label>
+                    <div class="controls">
+                        {{ terminalform.name }}
+                        <span class="tips">{{ terminalform.name.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">{{ terminalform.terminalIP.label_tag }}</label>
+                    <div class="controls">
+                        {{ terminalform.terminalIP }}
+                        <span class="tips">{{ terminalform.terminalIP.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <input id="btnAddTerminal" class="btn btn-info" type="submit" value="添加">
+                    <a type="button" class="btn" href="/terminallist">返回</a>
+                </div>
+            </form>
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block js %}
-	<script type="text/javascript">
-		$('document').ready(function(){
-			$('div#pill2').attr('class','accordion-body collapse in');
-			{% if msg == 0 %}
-			$(".alert").alert('close');
-			{% endif %}
-		});	
-	</script>
+    <script type="text/javascript">
+        $('document').ready(function () {
+            $('div#pill2').attr('class', 'accordion-body collapse in');
+            {% if msg == 0 %}
+                $(".alert").alert('close');
+            {% endif %}
+        });
+    </script>
 {% endblock %}
