@@ -45,13 +45,13 @@ html {
 
 }
 
-.span1 {
+div#sdtlogo {
     height: 100px;
     background: url(../images/logo1.png) left no-repeat;
 
 }
 
-.span10 {
+div#headlogo {
     height: 100px;
     background: url(../images/head.png) center center no-repeat;
 
