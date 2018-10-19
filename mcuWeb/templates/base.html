@@ -194,24 +194,24 @@
                 $('#alter').hide();
 
                 $(function () {
-                    function heartbeat() {
-                        $.get(/mcuHeartBeat/).done(function (date) {
-                            $('#alter').hide();
+                    {#function heartbeat() {#}
+                    {#    $.get(/mcuHeartBeat/).done(function (date) {#}
+                    {#        $('#alter').hide();#}
+                    {##}
+                    {#        if (date === "False") {#}
+                    {#            $('#cover').hide();#}
+                    {#        }#}
+                    {#        else {#}
+                    {#            $('#cover').show();#}
+                    {#        }#}
+                    {#    }).fail(function () {#}
+                    {#        $('#alter').show();#}
+                    {##}
+                    {#    });#}
+                    {#}#}
 
-                            if (date === "False") {
-                                $('#cover').hide();
-                            }
-                            else {
-                                $('#cover').show();
-                            }
-                        }).fail(function () {
-                            $('#alter').show();
-
-                        });
-                    }
-
-                    heartbeat();
-                    setInterval(heartbeat, 10000);// 心跳10秒
+                    {#heartbeat();#}
+                    {#setInterval(heartbeat, 10000);// 心跳10秒#}
                 });
             });
 

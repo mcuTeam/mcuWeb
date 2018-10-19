@@ -71,7 +71,8 @@ class gkForm(forms.Form):
     active = forms.BooleanField(label=u'是否启用GK', required=False)
     ip = forms.GenericIPAddressField(label='IP Address', required=True,
                                      widget=forms.TextInput(attrs={'class': 'text-input small-input', }))
-
+    e164 = forms.CharField(label=u'E164号码', max_length=100, required=True,
+                                  widget=forms.TextInput(attrs={'class': 'text-input small-input', }))
 
 class uploadFileForm(forms.Form):
     file = forms.FileField(label=u"请选择上传文件：update.zip")

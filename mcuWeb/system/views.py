@@ -1,5 +1,6 @@
 # coding:utf-8
 import configparser
+from configobj import ConfigObj
 import io
 import os
 import re
@@ -211,6 +212,7 @@ def getNetworkInfo():
         tmpdict = {}
         # Index
         tmpdict["Index"] = interface.Index
+        # print(interface.Index)
         # IP
         tmpdict["IP"] = interface.IPAddress[0]
         # 描述
@@ -272,12 +274,27 @@ def setNetworkInfo(paramDict):
     return True
 
 
+def setlocalip(localip):
+    try:
+        config = ConfigObj("C:\SVCMMCUAutoStart\svcmmcu.ini")
+        config['svcmmcu::main']['Local IP'] = localip.encode("gb2312")
+        config.write()
+    except BaseException as e:
+        print("setmcue164 error occurs: ", e)
+
+
 @login_required
 def port_configView(request):
     if request.POST:
         adapterInstance = networkAdapterForm(request.POST)
         if adapterInstance.is_valid():
             print("is valid")
+            localip = adapterInstance.cleaned_data["IP"]
+            index = adapterInstance.cleaned_data["Index"]
+            print(index, localip)
+            setlocalip(localip)
+            os.system('taskkill /f /im "SVCMMCU.exe"')
+
             ret = setNetworkInfo(adapterInstance.cleaned_data)
             print(ret)
             return HttpResponseRedirect('/port_config/')
@@ -338,8 +355,9 @@ def handle_upload_file(f):
                 zp = zipfile.ZipFile(f, 'r')
                 # zp.extractall(updateDirectory)
                 for filename in zp.namelist():
+                    os.system('taskkill /f /im "SVCMMCU.exe"')
                     print(filename)
-                    strname = filename.decode('gbk')
+                    strname = filename.decode('gb2312')
                     if '/' in strname:
                         print(os.path.dirname(updateDirectory + strname))
                         if not os.path.exists(os.path.dirname(updateDirectory + strname)):
@@ -390,6 +408,7 @@ def handle_config_file(f):
         return u"请输入配置文件：svcmmcu.ini"
     else:
         try:
+            os.system('taskkill /f /im "SVCMMCU.exe"')
             f_handle = open(updateDirectory + f.name, "w+b")
             for chunk in f.chunks():
                 f_handle.write(chunk)

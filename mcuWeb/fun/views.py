@@ -1,8 +1,11 @@
-#coding:utf-8
+# coding:utf-8
 from __future__ import print_function
 from __future__ import print_function
 from __future__ import absolute_import, unicode_literals
 
+import ConfigParser
+from configobj import ConfigObj
+import os
 import json
 import re
 import socket
@@ -54,31 +57,35 @@ def loop():
 
             data = tcpCliSock.recv(BUFSIZ)
             # print("loop recv:",data)
-            if "RESP_NOTIFY" in data.decode('utf8'):
-                print("recv notify!")
+            if "RESP_NOTIFY" in data.decode('gb2312'):
+                print("recv notify!",data.decode('gb2312'))
                 if cache.get('notify') is not None:
                     tmp = cache.get('notify')
-                    tmp.append(data.decode('utf8'))
+                    tmp.append(data.decode('gb2312'))
                     # print("tmp is ",tmp)
                     cache.set('notify', tmp, 10)
                 else:
                     # print("notify is none")
                     tmp = []
-                    tmp.append(data.decode('utf8'))
+                    tmp.append(data.decode('gb2312'))
                     cache.set('notify', tmp, 10)
                 continue
-            g = re.search('SeqNumber:\d+', data.decode('utf8'))
+            g = re.search('SeqNumber:\d+', data.decode('gb2312'))
             if g is not None:
                 # print(g.group())
 
                 # global recvDict
-                cache.set(g.group(), data.decode('utf8'), 10)
-                # recvDict[g.group()] = data.decode('utf8')
+                cache.set(g.group(), data.decode('gb2312'), 10)
+                # recvDict[g.group()] = data.decode('gb2312')
                 # cache.set('recvDict',recvDict,10)
                 # print(cache.get('recvDict').keys())
+        except UnicodeDecodeError as e:
+            print("loop decode error:",e)
         except BaseException as e:
             print("loop error:", e)
             tcpCliSock = None
+            time.sleep(1.0)
+
     print("out loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
@@ -127,30 +134,30 @@ class call_all(threading.Thread):  # 继承父类threading.Thread
                         "ADDMEMBER\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
                         % (self.meetName, memberName, memberIP, memberName, memberName))
 
-                tcpCliSockInTask.send(msg.encode('utf8'))
+                tcpCliSockInTask.send(msg.encode('gb2312'))
                 time.sleep(0.05)
                 msg = (
                         "SETMEMBERAVFORMATPARA\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\nMemberName:%s\r\nCapabilityName:%s\r\n\r\n" \
                         % (self.meetName, memberName, capalityName))
 
-                tcpCliSockInTask.send(msg.encode('utf8'))
+                tcpCliSockInTask.send(msg.encode('gb2312'))
 
                 # if memberName == chairMan:
                 #     print("-------------chairMan------------")
                 #     time.sleep(0.05)
                 #     msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
-                #         % (1,meetName,memberName)).encode('utf8')
+                #         % (1,meetName,memberName)).encode('gb2312')
                 #     tcpCliSock.send(msg)
             # third callall
             # optional setidentity
             time.sleep(0.1)
             msg = "CALLALL\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % (self.meetName)
-            tcpCliSockInTask.send(msg.encode('utf8'))
+            tcpCliSockInTask.send(msg.encode('gb2312'))
             print("wait", len(memberList))
             time.sleep(len(memberList) + 2)
             print("wait")
             msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n"
-                   % (1, self.meetName, self.chairMan)).encode('utf8')
+                   % (1, self.meetName, self.chairMan)).encode('gb2312')
             tcpCliSockInTask.send(msg)
 
         except BaseException as e:
@@ -182,7 +189,7 @@ class hangup_all(threading.Thread):  # 继承父类threading.Thread
         print("callallTask task", memberList, type(memberList))
         try:
             msg = ("HUNGUPALL\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n"
-                   % (1, self.meetName)).encode('utf8')
+                   % (1, self.meetName)).encode('gb2312')
             tcpCliSockInTask.send(msg)
             time.sleep(0.5 * len(self.memberList))
             for member in self.memberList:
@@ -190,7 +197,7 @@ class hangup_all(threading.Thread):  # 继承父类threading.Thread
                 # second setmemberavformatparaTask
 
                 msg = ("DELETEMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n"
-                       % (1, self.meetName, member)).encode('utf8')
+                       % (1, self.meetName, member)).encode('gb2312')
                 # print(msg)
                 tcpCliSockInTask.send(msg)
                 time.sleep(0.1)
@@ -294,7 +301,7 @@ def setmeetgeneraparaTask(meetName="", meetMode="0", meetType="0"):
     try:
         tcpCliSock.send((
                                 "SETMEETGENERALPARA\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMeetMode:%s\r\nMeetType:%s\r\n\r\n" % (
-                            seqNumber, meetName, meetMode, meetType)).encode('utf8'))
+                            seqNumber, meetName, meetMode, meetType)).encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
         for i in range(0, 5):
@@ -340,7 +347,7 @@ def addmeetTask(meetName="", meetAlias="", meetRemark=""):
     try:
         tcpCliSock.send((
                                 "ADDMEET\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMeetAlias:%s\r\nMeetRemark:%s\r\n\r\n" % (
-                            seqNumber, meetName, meetAlias, meetRemark)).encode('utf8'))
+                            seqNumber, meetName, meetAlias, meetRemark)).encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
         for i in range(0, 5):
@@ -381,7 +388,7 @@ def deletemeetTask(meetName=""):
     print("deletemeetTask task")
     try:
         tcpCliSock.send(
-            ("DELETEMEET\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" % (seqNumber, meetName)).encode('utf8'))
+            ("DELETEMEET\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" % (seqNumber, meetName)).encode('gb2312'))
         time.sleep(0.5)
         key = "SeqNumber:" + unicode(seqNumber)
         for i in range(0, 5):
@@ -422,7 +429,7 @@ def listmeetTask():
 
     print("listmeetTask task")
     try:
-        tcpCliSock.send(("LISTMEET\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
+        tcpCliSock.send(("LISTMEET\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
         for i in range(0, 5):
@@ -459,7 +466,7 @@ def addmemberTask(meetName="", memberName="0", memberIP="0"):
                 "ADDMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nMemberIP:%s\r\nMemberE164Alias:%s\r\nMemberH232Alias:%s\r\n\r\n" \
                 % (seqNumber, meetName, memberName, memberIP, memberName, memberName))
         # print(msg)
-        tcpCliSock.send(msg.encode('utf8'))
+        tcpCliSock.send(msg.encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
         for i in range(0, 5):
@@ -498,7 +505,7 @@ def setmemberavformatparaTask(meetName="", memberName="0", capalityName="1080P")
                 "\nCapabilityName:%s\r\n\r\n"
                 % (seqNumber, meetName, memberName, capalityName))
         # print(msg)
-        tcpCliSock.send(msg.encode('utf8'))
+        tcpCliSock.send(msg.encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
         for i in range(0, 5):
@@ -535,7 +542,7 @@ def callmemberTask(meetName="", memberName="0"):
         msg = ("CALLMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
                % (seqNumber, meetName, memberName))
         # print(msg)
-        tcpCliSock.send(msg.encode('utf8'))
+        tcpCliSock.send(msg.encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
         for i in range(0, 5):
@@ -571,7 +578,7 @@ def set_gk_task(usegk=False, gk_ip="192.168.1.1"):
         msg = ("SETGATEKEEPERPARA\r\nVersion:1\r\nSeqNumber:%d\r\nGKUseGK:%d\r\nGKIPAddr:%s\r\n\r\n"
                % (seqNumber, usegk, gk_ip))
         # print(msg)
-        tcpCliSock.send(msg.encode('utf8'))
+        tcpCliSock.send(msg.encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
         for i in range(0, 5):
@@ -606,7 +613,7 @@ def get_gk_status_task():
     try:
         msg = ("GETGATEKEEPERPARA\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n"
                % seqNumber)
-        tcpCliSock.send(msg.encode('utf8'))
+        tcpCliSock.send(msg.encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
 
@@ -638,7 +645,7 @@ def checkNet():
 
     if tcpCliSock is not None:
         try:
-            tcpCliSock.send(("HEARTBEAT\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('utf8'))
+            tcpCliSock.send(("HEARTBEAT\r\nVersion:1\r\nSeqNumber:%d\r\n\r\n" % seqNumber).encode('gb2312'))
             time.sleep(0.2)
             key = "SeqNumber:" + unicode(seqNumber)
             for i in range(0, 5):
@@ -682,7 +689,7 @@ def addavformatpara(meetname='', capalityname='', callbandwidth='', audioprotoco
         msg = (
                 "ADDAVFORMATPARA\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nCapabilityName:%s\r\nCallBandWidth:%s\r\nAudioProtocol:%s\r\nVideoProtocol:%s\r\nVideoFormat:%s\r\nVideoFrameRate:%d\r\n\r\n" \
                 % (seqNumber, meetname, capalityname, callbandwidth, audioprotocol, videoprotocol, videoformat,
-                   videoframerate)).encode('utf8')
+                   videoframerate)).encode('gb2312')
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
@@ -719,7 +726,7 @@ def setdualformatparaTask(meetname="", dualprotocol='', dualformat='', dualBandW
     try:
         msg = (
                 "SETDUALFORMATPARA\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nDualProtocol:%s\r\nDualFormat:%s\r\nDualBandWidth:%d\r\n\r\n" \
-                % (seqNumber, meetname, dualprotocol, dualformat, dualBandWidth)).encode('utf8')
+                % (seqNumber, meetname, dualprotocol, dualformat, dualBandWidth)).encode('gb2312')
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
@@ -756,7 +763,7 @@ def getmeetinfoTask(meetName=""):
     try:
         msg = ("GETMEETINFO\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" \
                % (seqNumber, meetName))
-        tcpCliSock.send(msg.encode('utf8'))
+        tcpCliSock.send(msg.encode('gb2312'))
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
 
@@ -793,7 +800,7 @@ def hungupmemberTask(meetname, membername):
     print("hungupmemberTask task")
     try:
         msg = ("HUNGUPMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
-               % (seqNumber, meetname, membername)).encode('utf8')
+               % (seqNumber, meetname, membername)).encode('gb2312')
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
@@ -831,7 +838,7 @@ def mutememberTask(meetname, membername, isMuting=0):
     try:
         msg = (
                 "SETMEMBERAUDIOMUTING\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nMutingMode:%d\r\n\r\n" \
-                % (seqNumber, meetname, membername, isMuting)).encode('utf8')
+                % (seqNumber, meetname, membername, isMuting)).encode('gb2312')
         # print(msg)
         tcpCliSock.send(msg)
         time.sleep(0.2)
@@ -871,7 +878,7 @@ def audioblockTask(meetname, membername, isBlock=0):
         msg = (
                 "SETMEMBERAUDIOBLOCKING\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r"
                 "\nBlockingMode:%d\r\n\r\n"
-                % (seqNumber, meetname, membername, isBlock)).encode('utf8')
+                % (seqNumber, meetname, membername, isBlock)).encode('gb2312')
         tcpCliSock.send(msg)
         time.sleep(0.2)
         key = "SeqNumber:" + unicode(seqNumber)
@@ -903,7 +910,7 @@ def setcontrolmodeTask(meetname, membername, mode=0):
     print("setcontrolmodeTask task")
     try:
         msg = ("MEETCONTROL\r\nMeetName:%s\r\nConMode:%d\r\nMemberName:%s\r\n\r\n" \
-               % (meetname, int(mode), membername)).encode('utf8')
+               % (meetname, int(mode), membername)).encode('gb2312')
         print(msg)
         tcpCliSock.send(msg)
         return None
@@ -930,7 +937,7 @@ def getmemberinfoTask(meetname, membername):
     print("getmemberinfoTask task")
     try:
         msg = ("GETMEMBERINFO\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
-               % (seqNumber, meetname, membername)).encode('utf8')
+               % (seqNumber, meetname, membername)).encode('gb2312')
         tcpCliSock.send(msg)
         time.sleep(0.05)
         key = "SeqNumber:" + unicode(seqNumber)
@@ -967,7 +974,7 @@ def deletememberTask(meetname, membername):
     print("deletememberTask task")
     try:
         msg = ("DELETEMEMBER\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
-               % (seqNumber, meetname, membername)).encode('utf8')
+               % (seqNumber, meetname, membername)).encode('gb2312')
         # print(msg)
         tcpCliSock.send(msg)
         time.sleep(0.2)
@@ -1005,7 +1012,7 @@ def setsecondvideosrcTask(meetname, membername, isSecond=0):
     print("setsecondvideosrcTask task")
     try:
         msg = ("SETSECONDVIDEOSRC\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\nSwitcher:%d\r\n\r\n" \
-               % (seqNumber, meetname, membername, isSecond)).encode('utf8')
+               % (seqNumber, meetname, membername, isSecond)).encode('gb2312')
         # print(msg)
         tcpCliSock.send(msg)
         time.sleep(0.1)
@@ -1044,7 +1051,7 @@ def setmemberidentityTask(meetname, membername):
     print("setmemberidentityTask task")
     try:
         msg = ("SETMEMBERIDENTITY\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nMemberName:%s\r\n\r\n" \
-               % (seqNumber, meetname, membername)).encode('utf8')
+               % (seqNumber, meetname, membername)).encode('gb2312')
         # print(msg)
         tcpCliSock.send(msg)
         time.sleep(0.1)
@@ -1084,7 +1091,7 @@ def setmemberidentity_compTask(meetname, lecturename, audiencename):
     try:
         msg = (
                 "SETMEMBERIDENTITY_COMP\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\nLectureName:%s\r\nAudienceName:%s\r\n\r\n" \
-                % (seqNumber, meetname, lecturename, audiencename)).encode('utf8')
+                % (seqNumber, meetname, lecturename, audiencename)).encode('gb2312')
         tcpCliSock.send(msg)
         time.sleep(0.1)
         key = "SeqNumber:" + unicode(seqNumber)
@@ -1120,7 +1127,7 @@ def hungallTask(meetname):
     print("hungallTask task")
     try:
         msg = ("HUNGUPALL\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" \
-               % (seqNumber, meetname)).encode('utf8')
+               % (seqNumber, meetname)).encode('gb2312')
         tcpCliSock.send(msg)
         return None
     # 开始连接成功，后来MCU断开连接了
@@ -1146,7 +1153,7 @@ def callallTask(meetname):
     print("callallTask task")
     try:
         msg = ("CALLALL\r\nVersion:1\r\nSeqNumber:%d\r\nMeetName:%s\r\n\r\n" \
-               % (seqNumber, meetname)).encode('utf8')
+               % (seqNumber, meetname)).encode('gb2312')
         tcpCliSock.send(msg)
         return None
     # 开始连接成功，后来MCU断开连接了
@@ -1274,11 +1281,16 @@ def creat_meetingView(request):
                               {'meetinglist': meetinglist, 'msgType': msgType, 'msg': msg})
             return redirect(meetinglistView)
         else:
+            e164name = getmcue164()
+            msg = u"填写错误，请重新提交!" + u" 如果级联会议，请将会议名称改写为：" + e164name + "1"
             return render(request, 'fun/creat_meeting.html',
-                          {'meetform': meetform, 'msgType': "error", 'msg': "填写错误，请重新提交"})
+                          {'meetform': meetform, 'msgType': "error", 'msg': msg})
     else:
         meetform = meetingForm()
-        return render(request, 'fun/creat_meeting.html', {'meetform': meetform, 'msgType': "info", 'msg': "请添加会议"})
+        e164name = getmcue164()
+        msg = u"请添加会议" + u" 如果级联会议，请将会议名称改写为：" + e164name + "1"
+        return render(request, 'fun/creat_meeting.html', {'meetform': meetform, 'msgType': "info",
+                                                          'msg': msg})
 
 
 @login_required
@@ -1392,7 +1404,7 @@ def meetinglistView(request, msgType='', msg=''):
         meetinglist = meeting.objects.all()
         return render(request, 'fun/meetinglist.html', {'meetinglist': meetinglist, 'msgType': msgType, 'msg': msg})
     result = analysisListMeetResult(data)
-    print("---",result)
+    print("---", result)
     syncMeetingListAndDB(result)
     msgType = "nothing"
     msg = "未知连接错误，将显示数据库备份内容"
@@ -2098,6 +2110,28 @@ def meetDetailsView(request, meetpk):
                   {'meetInstance': meetInstance, 'terminalList': terminalList, 'msgType': 'info', 'msg': "please add"})
 
 
+def getmcue164():
+    cf = ConfigParser.ConfigParser()
+    mcue164name = ""
+    try:
+        # os.chdir("C:\SVCMMCUAutoStart")
+        cf.read("C:\SVCMMCUAutoStart\svcmmcu.ini")
+        mcue164name = cf.get("svcmmcu::gatekeeper", "Gatekeeper UserNamePrefix")
+    except BaseException as e:
+        print("getmcue164 error occurs: ", e)
+    return mcue164name
+
+
+def setmcue164(e164name):
+    try:
+        config = ConfigObj("C:\SVCMMCUAutoStart\svcmmcu.ini")
+        config['svcmmcu::gatekeeper']['Gatekeeper UserNamePrefix'] = e164name.encode("gb2312")
+        config.write()
+    except BaseException as e:
+        print("setmcue164 error occurs: ", e)
+
+
+
 @login_required
 def GK_configView(request):
     if request.POST:
@@ -2105,14 +2139,20 @@ def GK_configView(request):
         if gk_form_data.is_valid():
             use_gk = gk_form_data.cleaned_data["active"]
             gk_addr = gk_form_data.cleaned_data["ip"]
-            print("GK_configView", use_gk, gk_addr)
+            e164 = gk_form_data.cleaned_data["e164"]
+            print("GK_configView", use_gk, gk_addr, e164)
+
             ret = set_gk_task(use_gk, gk_addr)
             ret_dict = returnCode2Dict(ret)
             if not ret_dict:
                 return redirect(GK_configView)
             ret_code = ret_dict.get("RetCode", None)
-            if ret_code == "200":
+            if e164 != getmcue164():
+                setmcue164(e164)
+                os.system('taskkill /f /im "SVCMMCU.exe"')
                 time.sleep(2.5)
+            if ret_code == "200":
+                time.sleep(1.5)
                 return redirect(GK_configView)
             return redirect(GK_configView)
         else:
@@ -2130,7 +2170,7 @@ def GK_configView(request):
             use_gk = ret_dict.get("GKUseGK", None)
             gk_addr = ret_dict.get("GKIPAddr", None)
             if use_gk is not None and gk_addr is not None:
-                form = gkForm({"active": use_gk != "0", "ip": gk_addr})
+                form = gkForm({"active": use_gk != "0", "ip": gk_addr, "e164": getmcue164()})
                 return render(request, 'system_manage/GK_config.html', {'form': form})
 
         return render(request, 'system_manage/GK_config.html')

@@ -25,6 +25,13 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label class="control-label">{{ form.e164.label_tag }}</label>
+                    <div class="controls">
+                        {{ form.e164 }}
+                        <span>{{ form.e164.errors.0 }}</span>
+                    </div>
+                </div>
+                <div class="control-group">
                     <div class="controls">
                         <label class="checkbox">
                             {{ form.active }}
