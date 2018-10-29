@@ -74,9 +74,9 @@ class gkForm(forms.Form):
 
 class uploadFileForm(forms.Form):
     file = forms.FileField(label="请选择上传文件：update.zip")
-    # file.widget.attrs.update({'onchange':r'document.getElementById("textfield").value=this.value'})
+    file.widget.attrs.update({'style':r'display:inline-block'})
 
 
 class uploadConfigFileForm(forms.Form):
     file = forms.FileField(label="请选择配置文件：svcmmcu.ini")
-    # file.widget.attrs.update({'onchange':r'document.getElementById("textfield").value=this.value'})
+    file.widget.attrs.update({'style':r'display:inline-block'})
