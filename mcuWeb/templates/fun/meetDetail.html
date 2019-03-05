@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block content %}
-    <div class="alert alert-error" id="error">
+<!--     <div class="alert alert-error" id="error">
         <p>与MCU通信出错</p>
-    </div>
+    </div> -->
     <!-- 页标 -->
     <div class="row-fluid">
         <div class="span8 offset1">
@@ -31,6 +31,7 @@
                     <p><strong>会议名称：</strong>{{ meetInstance.name }}</p>
                     <p><strong>带宽：</strong>{{ meetInstance.bandwidth }}</p>
                     <p><strong>视频分辨率：</strong>{{ meetInstance.capalityname }}</p>
+                    <p><strong>会议状态：</strong><span id="error">与MCU通信出错</span></p>
                 </div>
                 <div class="span4">
                     <p><strong>会议编号：</strong>{{ meetInstance.meetcode }}</p>
@@ -115,26 +116,13 @@
                             <td>会场{{ terminal.name }}</td>
                             <td>{{ terminal.terminalIP }}</td>
                             <td class="unconnect" id="connect{{ terminal.pk }}" title="state"><a></a></td>
-                            <td class="callmember1" id="callmember{{ terminal.pk }}" title="call"><a class="btn"
-                                                                                                     onclick="callmember({{ terminal.pk }})"> </a>
-                            </td>
-                            <td class="hangupforbid" id="hangup{{ terminal.pk }}" title="hung"><a class="btn"
-                                                                                                  onclick="hangup({{ terminal.pk }})"> </a>
-                            </td>
-                            <td class="silencememberforbid" id="silencemember{{ terminal.pk }}" title="silence"><a
-                                    class="btn" onclick="silencemember({{ terminal.pk }})"> </a></td>
-                            <td class="shutupforbid" id="shutup{{ terminal.pk }}" title="shutup"><a class="btn"
-                                                                                                    onclick="shutup({{ terminal.pk }})"> </a>
-                            </td>
-                            <td class="doubleforbid" id="double{{ terminal.pk }}" title="double"><a class="btn"
-                                                                                                    onclick="double({{ terminal.pk }})"> </a>
-                            </td>
-                            <td class="seeforbid" id="see{{ terminal.pk }}" title="see"><a class="btn"
-                                                                                           onclick="see({{ terminal.pk }})"> </a>
-                            </td>
-                            <td class="broadcastforbid" id="broadcast{{ terminal.pk }}" title="broadcast"><a class="btn"
-                                                                                                             onclick="broadcast({{ terminal.pk }})"> </a>
-                            </td>
+                            <td class="callmember1" id="callmember{{ terminal.pk }}" title="call"><a class="btn" onclick="callmember({{ terminal.pk }})"> </a></td>
+                            <td class="hangupforbid" id="hangup{{ terminal.pk }}" title="hung"><a class="btn" onclick="hangup({{ terminal.pk }})"> </a></td>
+                            <td class="silencememberforbid" id="silencemember{{ terminal.pk }}" title="silence"><a class="btn" onclick="silencemember({{ terminal.pk }})"> </a></td>
+                            <td class="shutupforbid" id="shutup{{ terminal.pk }}" title="shutup"><a class="btn" onclick="shutup({{ terminal.pk }})"> </a></td>
+                            <td class="doubleforbid" id="double{{ terminal.pk }}" title="double"><a class="btn"onclick="double({{ terminal.pk }})"> </a></td>
+                            <td class="seeforbid" id="see{{ terminal.pk }}" title="see"><a class="btn"onclick="see({{ terminal.pk }})"> </a></td>
+                            <td class="broadcastforbid" id="broadcast{{ terminal.pk }}" title="broadcast"><a class="btn" onclick="broadcast({{ terminal.pk }})"> </a></td>
                         </tr>
                         </tbody>
                         <script type="text/javascript">
