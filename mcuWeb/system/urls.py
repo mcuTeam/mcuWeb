@@ -21,6 +21,9 @@ urlpatterns = [
 
     url(r'^clear/$', system_view.clearLogView),
     url(r'^restart/$', system_view.restartMCUView),
-    url(r'^reboot/$', system_view.rebootView),
     url(r'^shutdown/$', system_view.shutdownView),
+
+    url(r'^useraccounts/$', system_view.useraccountsView),
+    url(r'^adduseraccounts/$', system_view.adduseraccountsView),
+    url(r'^deleteuseraccounts/(?P<acpk>\d+)/$', system_view.deleteuseraccountsView),
 ]

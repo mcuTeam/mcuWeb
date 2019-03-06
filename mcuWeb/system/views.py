@@ -12,13 +12,24 @@ import wmi
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+
+from django.contrib.auth.models import Group
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm, AdminPasswordChangeForm
+from django.contrib.auth.models import User as sysUser
+from django.contrib.auth.decorators import user_passes_test
 
 # from fun.views import get_gk_status_task, set_gk_task
 from system.forms import *
 
 
 # Create your views here.
+
+def if_not_zby(user):
+    print "if_not_zby:", user
+    new_group, created = Group.objects.get_or_create(name="user")
+    return new_group not in user.groups.all()
+
 
 def returnCode2Dict(retCode):
     if type(retCode) is not str:
@@ -499,3 +510,42 @@ def restartMCUView(request):
     if ret1 == 0:
         return HttpResponse(u"操作成功")
     return HttpResponse(u"关闭进程失败，可能mcu未启动")
+
+
+@login_required
+@user_passes_test(if_not_zby,login_url="/home/" )
+def useraccountsView(request):
+    new_group, created = Group.objects.get_or_create(name="user")
+
+    zbyList = new_group.user_set.all()
+    return render(request, 'system_manage/zbys.html', {"zbyList": zbyList})
+
+
+@login_required
+@user_passes_test(if_not_zby,login_url="/home/" )
+def adduseraccountsView(request):
+    if request.POST:
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            print "user valid!"
+
+            user = form.save(commit=False)
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+
+            new_group, created = Group.objects.get_or_create(name="user")
+            new_group.user_set.add(user)
+            return HttpResponseRedirect("/useraccounts/")
+        else:
+            return render(request, 'system_manage/addZbyAccount.html', {"form": form})
+    form = UserCreationForm()
+    return render(request, 'system_manage/addZbyAccount.html', {"form": form})
+
+
+@login_required
+@user_passes_test(if_not_zby,login_url="/home/" )
+def deleteuseraccountsView(request, acpk):
+    instance = get_object_or_404(sysUser, pk=int(acpk))
+    instance.delete()
+    return HttpResponseRedirect("/useraccounts/")

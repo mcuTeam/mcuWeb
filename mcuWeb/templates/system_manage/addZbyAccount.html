@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% load i18n %}
+
+{% block title %}创建用户{% endblock %}
+
+{% block csss %}
+    <link href="{% static "css/meetinglist.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span8 offset1">
+            <p>创建用户</p>
+        </div>
+        <div class="span8 offset2">
+
+            {% if msgType == 'info' %}
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
+
+            {% elif msgType == 'success' %}
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
+
+            {% elif msgType == 'error' %}
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ msg }}
+                </div>
+
+            {% endif %}
+
+            <form class="form-horizontal" id="formCreateChannel" action="/adduseraccounts/" role="form" method="post">
+            <div class="control-group">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="control-group">
+
+                    {{field.label_tag}} {% if field.errors %} {% for err in field.errors %} {{err}} {% endfor %} {% endif %}
+                    {{field}}
+                </div>
+
+                {% endfor %}
+                <div class="form-actions">
+                    <input id="btnAddTerminal" class="btn btn-info" type="submit" value="创建"/>
+                    <a type="button" class="btn" href="/useraccounts">返回</a>
+                </div>
+            </div>
+            </form>
+
+
+
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $('document').ready(function () {
+            $('div#pill2').attr('class', 'accordion-body collapse in');
+        });
+    </script>
+{% endblock %}
+
+
