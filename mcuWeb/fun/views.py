@@ -58,7 +58,7 @@ def loop():
             data = tcpCliSock.recv(BUFSIZ)
             # print("loop recv:",data)
             if "RESP_NOTIFY" in data.decode('gb2312'):
-                print("recv notify!",data.decode('gb2312'))
+                print("recv notify!", data.decode('gb2312'))
                 if cache.get('notify') is not None:
                     tmp = cache.get('notify')
                     tmp.append(data.decode('gb2312'))
@@ -80,7 +80,7 @@ def loop():
                 # cache.set('recvDict',recvDict,10)
                 # print(cache.get('recvDict').keys())
         except UnicodeDecodeError as e:
-            print("loop decode error:",e)
+            print("loop decode error:", e)
         except BaseException as e:
             print("loop error:", e)
             tcpCliSock = None
@@ -1169,12 +1169,17 @@ def syncMeetingListAndDB(result):
     meeting.objects.all().update(activeInMcu=False)
     meetingNumber = result['MeetCount']
     # print(result)
+    meetingNotInDB = []
     for index in range(0, int(meetingNumber)):
         filtered = meeting.objects.filter(name=result['MeetName'][index], meetcode=result['MeetAlias'][index])
         if filtered.exists():
             print("esists!")
             filtered.update(activeInMcu=True)
+        else:
+            meetingNotInDB.append({'MeetName': result['MeetName'][index], 'MeetAlias': result['MeetAlias'][index],
+                                   'MeetRemark': result['MeetRemark'][index]})
     meeting.objects.filter(activeInMcu=False).delete()
+    return meetingNotInDB
 
 
 def analysisMeetinfo(retCode):
@@ -1405,11 +1410,14 @@ def meetinglistView(request, msgType='', msg=''):
         return render(request, 'fun/meetinglist.html', {'meetinglist': meetinglist, 'msgType': msgType, 'msg': msg})
     result = analysisListMeetResult(data)
     print("---", result)
-    syncMeetingListAndDB(result)
+    meetingNotInDB = syncMeetingListAndDB(result)
+    for item in meetingNotInDB:
+        print("--------WuNL:", item)
     msgType = "nothing"
     msg = "未知连接错误，将显示数据库备份内容"
     meetinglist = meeting.objects.all()
-    return render(request, 'fun/meetinglist.html', {'meetinglist': meetinglist, 'msgType': msgType, 'msg': msg})
+    return render(request, 'fun/meetinglist.html',
+                  {'meetinglist': meetinglist, 'meetingNotInDB': meetingNotInDB, 'msgType': msgType, 'msg': msg})
 
 
 # @login_required
@@ -1646,7 +1654,7 @@ def getmeetinfoAjaxView(request, meetpk):
                 #             print("mainMeetRoom online!!!!!!!!!")
                 #             setmemberidentityTask(meetname,mainMeetRoomName)
                 cache.delete('notify')
-            # print("getmeetinfo result is: \n",result)
+            print("getmeetinfo result is: \n",result)
             if result is not None:
                 analysysResult = analysisMeetinfo(result)
                 # analysysResult['']
@@ -1671,6 +1679,47 @@ def getmeetinfoAjaxView(request, meetpk):
             return HttpResponse(json.dumps({'msgType': "error", 'msg': ("获取会议信息过程中MCU返回%s！" % retDict['RetCode'])}))
         return HttpResponse(json.dumps({'msgType': "success", 'msg': "操作成功！"}))
 
+
+@login_required
+def getcsmeetinfoAjaxView(request, meetname):
+    if request.is_ajax():
+        print("recv getcsmeetinfo ajax request")
+        result = ""
+        try:
+            result = getmeetinfoTask(meetname)
+            notifyList = cache.get('notify')
+            if notifyList is not None:
+                # print(notifyList)
+                # for notify in notifyList:
+                #     if 'RESP_NOTIFYONLINE' in  notify:
+                #         if ('MeetName:%s' % meetname) in notify and ('MemberName:%s' % mainMeetRoomName) in notify:
+                #             print("mainMeetRoom online!!!!!!!!!")
+                #             setmemberidentityTask(meetname,mainMeetRoomName)
+                cache.delete('notify')
+            print("getcsmeetinfo result is: \n",result)
+            if result is not None:
+                analysysResult = analysisMeetinfo(result)
+                # analysysResult['']
+                if "EPName" in analysysResult.keys():
+                    analysysResult['pk'] = []
+                    for ename in analysysResult['EPName']:
+                        if terminal.objects.filter(name=ename).exists():
+                            analysysResult['pk'].append(terminal.objects.get(name=ename).pk)
+                        else:
+                            analysysResult['pk'].append("None")
+                # print(analysysResult)
+                return HttpResponse(json.dumps(analysysResult))
+        except BaseException as e:
+            print("catch getmeetinfo error", e, "-----", result)
+            return HttpResponse(json.dumps({'msgType': "error", 'msg': "获取会议信息过程中发生通信错误！"}))
+        if result is None:
+            print("getmeetinfo return None")
+            return HttpResponse(json.dumps({'msgType': "error", 'msg': "获取会议信息过程中MCU返回None！"}))
+        retDict = returnCode2Dict(result)
+        if retDict['RetCode'] != "200":
+            # print("getmeetinfo return %s" % retDict['RetCode'])
+            return HttpResponse(json.dumps({'msgType': "error", 'msg': ("获取会议信息过程中MCU返回%s！" % retDict['RetCode'])}))
+        return HttpResponse(json.dumps({'msgType': "success", 'msg': "操作成功！"}))
 
 @login_required
 def hungupAjaxView(request, meetpk, pk):
@@ -2110,6 +2159,13 @@ def meetDetailsView(request, meetpk):
                   {'meetInstance': meetInstance, 'terminalList': terminalList, 'msgType': 'info', 'msg': "please add"})
 
 
+@login_required
+def csmeetDetailsView(request, meetname):
+    # print(meetname)
+    return render(request, 'fun/csmeetDetail.html',
+                  {'meetname':str(meetname), 'msgType': 'info', 'msg': "please add"})
+
+
 def getmcue164():
     cf = ConfigParser.ConfigParser()
     mcue164name = ""
@@ -2129,7 +2185,6 @@ def setmcue164(e164name):
         config.write()
     except BaseException as e:
         print("setmcue164 error occurs: ", e)
-
 
 
 @login_required

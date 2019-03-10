@@ -35,7 +35,32 @@
                 </div>
 
             {% endif %}
+            <table class="table table table-condensed">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>客户端会议名称</th>
+                    <th>会议编号</th>
+                    <th>会议备注</th>
+                    <th>会议监控</th>
 
+                </tr>
+                </thead>
+                {% for meeting in meetingNotInDB %}
+                    <tbody>
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ meeting.MeetAlias }}</td>
+                        <td>{{ meeting.MeetName }}</td>
+
+                        <td>{{ meeting.MeetRemark }}</td>
+                        <td class="control"><a class="btn" href="/csmeetDetails/{{ meeting.MeetName }}/"> </a></td>
+
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
+            <hr>
             <table class="table table table-condensed">
                 <thead>
                 <tr>

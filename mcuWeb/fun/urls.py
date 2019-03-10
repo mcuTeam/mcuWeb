@@ -18,6 +18,9 @@ urlpatterns = [
 
     url(r'^meetDetails/(?P<meetpk>\d+)/$', fun_view.meetDetailsView),
 
+    url(r'^csmeetDetails/(?P<meetname>\w+)/$', fun_view.csmeetDetailsView),
+    url(r'^getcsmeetinfo/(?P<meetname>\w+)/$', fun_view.getcsmeetinfoAjaxView),
+
     url(r'^mcuHeartBeat/$', fun_view.heartBeatAjaxView),
     url(r'^callmember/(?P<meetpk>\d+)/(?P<pk>\d+)/$', fun_view.callmemberAjaxView),
     url(r'^hangup/(?P<meetpk>\d+)/(?P<pk>\d+)/$', fun_view.hungupAjaxView),

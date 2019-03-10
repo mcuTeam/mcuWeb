@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}CS客户端会议监控{% endblock %}
+
+{% block csss %}
+    <!--suppress ALL -->
+    <link href="{% static "css/meetinglist.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+<!--     <div class="alert alert-error" id="error">
+        <p>与MCU通信出错</p>
+    </div> -->
+    <!-- 页标 -->
+    <div class="row-fluid">
+        <div class="span8 offset1">
+            <p>CS会议监控:{{ meetname }}</p>
+        </div>
+    </div>
+
+
+    <!-- 列表显示 -->
+    <div class="row-fluid">
+        <div class="span10 offset1" id="table">
+            <table class="table table-condensed" id="terminalList">
+
+                    <thead>
+                    <tr>
+{#                        <th><label class="checkbox">#}
+{#                            <input type="checkbox" value="全选" id="all" title="全选">#}
+{#                        </label></th>#}
+{#                        <th>#</th>#}
+                        <th>会场名称</th>
+
+                        <th>连接状态</th>
+
+                        <th>静音</th>
+                        <th>闭麦</th>
+                        <th>双流</th>
+                        <th>查看</th>
+                        <th>广播</th>
+                    </tr>
+                    </thead>
+
+
+            </table>
+            <a type="button" class="btn" href="/meetinglist">返回</a>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $('document').ready(function () {
+            $('#{{meetInstance.operationModel}}').attr('selected', 'selected');
+            modellayout();
+            $('div#pill2').attr('class', 'accordion-body collapse in');
+            $('div.progress').hide();
+            $('#error').hide();
+
+            $(function () {
+                function getmeetinfo() {
+                    var mn = '{{meetname}}';
+
+                    $.get("/getcsmeetinfo/"+mn+
+                    "/"
+                ).
+                    done(function (info) {
+                        var meetinfoJson = jQuery.parseJSON(info);
+                        $('#alter').hide();
+                        if (meetinfoJson.msgType === "error") {
+                            light_off();
+                            // $('#error').show();
+                        }
+                        else {
+                            $('#error').hide();
+
+
+                            for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
+
+                                add_and_fresh_icon(meetinfoJson.EPName[i], meetinfoJson.MemberState[i], meetinfoJson.MemberAudioBlocking[i], meetinfoJson.MemberAudioMuting[i], meetinfoJson.MemberIdentity[i], meetinfoJson.IsDualSender[i]);
+                            }
+                            if (meetinfoJson.AllMemberCount === "0") {
+                                light_off();
+                            }
+                        }
+
+                    }).fail(function () {
+                        $('#alter').show();
+
+                    });
+                }
+
+                getmeetinfo();
+                setInterval(getmeetinfo, 2000);// 2秒状态轮询
+            });
+        });
+
+        $('#all').click(function () {
+            if ($('#all').val() == "全选") {
+                $("[name=items]:checkbox").each(function () {
+                    this.checked = true;
+                });
+                $('#all').val("取消");
+
+            }
+            else if ($('#all').val() == "取消") {
+                $("[name=items]:checkbox").each(function () {
+                    this.checked = false;
+                });
+                $('#all').val("全选");
+
+            }
+        });
+
+        function modellayout() {
+            var el = $("#modelmenu").val();
+            if (el === "0") {
+                $('#modelcover').hide();
+                $('#title').hide();
+                $('#title1').hide();
+            }
+            else if (el === "1") {
+                $('#modelcover').show();
+                $('#title1').show();
+                $('#title').hide();
+            }
+            else {
+                $('#modelcover').show();
+                $('#title1').hide();
+                $('#title').show();
+            }
+        }
+
+        function add_and_fresh_icon(name, state, blocking, muting, identity, double) {
+            var div = document.getElementById("terminalList");
+            var row = document.getElementById("tbody_"+name);
+            {#已存在，更新该终端状态即可#}
+            if(row!=null)
+            {
+                fresh_icon_with_name(name, state, blocking, muting, identity, double);
+            }
+            {#不存在，创建一行#}
+            else
+            {
+                row = document.createElement("tbody");
+                row.setAttribute("id", "tbody_"+name);
+                var tr = document.createElement("tr");
+                tr.setAttribute("id", "tr_"+name);
+
+                var td = document.createElement("td");
+                td.setAttribute("id", "td_"+name);
+                td.appendChild(document.createTextNode(name));
+                tr.appendChild(td);
+
+                var state = document.createElement("td");
+                state.setAttribute("id", "connect_"+name);
+                state.setAttribute("class", "unconnect");
+                state.setAttribute("title", "state");
+                state.appendChild(document.createElement("a"));
+                tr.appendChild(state);
+
+                var slience = document.createElement("td");
+                slience.setAttribute("id", "silencemember_"+name);
+                slience.setAttribute("class", "silencememberforbid");
+                slience.setAttribute("title", "silence");
+                var a = document.createElement("a");
+                a.setAttribute("class","btn");
+                slience.appendChild(a);
+                tr.appendChild(slience);
+
+                {#<td class="shutupforbid" id="shutup{{ terminal.pk }}" title="shutup"><a class="btn" onclick="shutup({{ terminal.pk }})"> </a></td>#}
+                var shutup = document.createElement("td");
+                shutup.setAttribute("id", "shutup_"+name);
+                shutup.setAttribute("class", "shutupforbid");
+                shutup.setAttribute("title", "silence");
+                var a = document.createElement("a");
+                a.setAttribute("class","btn");
+                shutup.appendChild(a);
+                tr.appendChild(shutup);
+
+                {#<td class="doubleforbid" id="double{{ terminal.pk }}" title="double"><a class="btn"onclick="double({{ terminal.pk }})"> </a></td>#}
+                var double = document.createElement("td");
+                double.setAttribute("id", "double_"+name);
+                double.setAttribute("class", "doubleforbid");
+                double.setAttribute("title", "double");
+                var a = document.createElement("a");
+                a.setAttribute("class","btn");
+                double.appendChild(a);
+                tr.appendChild(double);
+
+                {#<td class="seeforbid" id="see{{ terminal.pk }}" title="see"><a class="btn"onclick="see({{ terminal.pk }})"> </a></td>#}
+                var see = document.createElement("td");
+                see.setAttribute("id", "see_"+name);
+                see.setAttribute("class", "seeforbid");
+                see.setAttribute("title", "see");
+                var a = document.createElement("a");
+                a.setAttribute("class","btn");
+                see.appendChild(a);
+                tr.appendChild(see);
+
+                {#<td class="broadcastforbid" id="broadcast{{ terminal.pk }}" title="broadcast"><a class="btn" onclick="broadcast({{ terminal.pk }})"> </a></td>#}
+                var broadcast = document.createElement("td");
+                broadcast.setAttribute("id", "broadcast_"+name);
+                broadcast.setAttribute("class", "broadcastforbid");
+                broadcast.setAttribute("title", "broadcast");
+                var a = document.createElement("a");
+                a.setAttribute("class","btn");
+                broadcast.appendChild(a);
+                tr.appendChild(broadcast);
+
+
+                row.appendChild(tr);
+                div.appendChild(row);
+
+                fresh_icon_with_name(name, state, blocking, muting, identity, double);
+            }
+
+
+        }
+
+        function fresh_icon_with_name(name, state, blocking, muting, identity, double) {
+            if (state === "0") {
+                $('#connect_' + name.toString()).attr('class', 'unconnect');
+                $('#callmember_' + name.toString()).attr('class', 'callmember1');
+                $('#hangup_' + name.toString()).attr('class', 'hangupforbid');
+                $('#silencemember_' + name.toString()).attr('class', 'silencememberforbid');
+                $('#shutup_' + name.toString()).attr('class', 'shutupforbid');
+                $('#double_' + name.toString()).attr('class', 'doubleforbid');
+                $('#see_' + name.toString()).attr('class', 'seeforbid');
+                $('#broadcast_' + name.toString()).attr('class', 'broadcastforbid');
+
+
+            }
+            else if (state === "1") {
+                $('#connect_' + name.toString()).attr('class', 'connected');
+                $('#callmember_' + name.toString()).attr('class', 'callmemberforbid');
+                $('#hangup_' + name.toString()).attr('class', 'hangup1');
+                if (double === "0") {
+                    $('#double_' + name.toString()).attr('class', 'double0');
+                }
+                else if (double === "1") {
+                    $('#double_' + name.toString()).attr('class', 'double1');
+
+                }
+                if (blocking === "0") {                          //block是静音，mute是闭麦
+                    $('#silencemember_' + name.toString()).attr('class', 'silencemember0');
+                }
+                else if (blocking === "1") {
+                    $('#silencemember_' + name.toString()).attr('class', 'silencemember1');
+                }
+                if (muting === "0") {
+                    $('#shutup_' + name.toString()).attr('class', 'shutup0');
+                }
+                else if (muting === "1") {
+                    $('#shutup_' + name.toString()).attr('class', 'shutup1');
+                }
+                if (identity === "0") {	                          //0广播，1查看，2普通
+                    $('#broadcast_' + name.toString()).attr('class', 'broadcast1');
+                    $('#see_' + name.toString()).attr('class', 'see0');
+                }
+                else if (identity === "1") {	                          //0广播，1查看，2普通
+                    $('#see_' + name.toString()).attr('class', 'see1');
+                    $('#broadcast_' + name.toString()).attr('class', 'broadcast0');
+                }
+                else if (identity === "2") {	                          //0广播，1查看，2普通
+                    $('#broadcast_' + name.toString()).attr('class', 'broadcast0');
+                    $('#see_' + name.toString()).attr('class', 'see0');
+                }
+            }
+
+
+        }
+
+        function fresh_icon(number, state, blocking, muting, identity, double) {
+            if (state === "0") {
+                $('#connect' + number.toString()).attr('class', 'unconnect');
+                $('#callmember' + number.toString()).attr('class', 'callmember1');
+                $('#hangup' + number.toString()).attr('class', 'hangupforbid');
+                $('#silencemember' + number.toString()).attr('class', 'silencememberforbid');
+                $('#shutup' + number.toString()).attr('class', 'shutupforbid');
+                $('#double' + number.toString()).attr('class', 'doubleforbid');
+                $('#see' + number.toString()).attr('class', 'seeforbid');
+                $('#broadcast' + number.toString()).attr('class', 'broadcastforbid');
+
+
+            }
+            else if (state === "1") {
+                $('#connect' + number.toString()).attr('class', 'connected');
+                $('#callmember' + number.toString()).attr('class', 'callmemberforbid');
+                $('#hangup' + number.toString()).attr('class', 'hangup1');
+                if (double === "0") {
+                    $('#double' + number.toString()).attr('class', 'double0');
+                }
+                else if (double === "1") {
+                    $('#double' + number.toString()).attr('class', 'double1');
+
+                }
+                if (blocking === "0") {                          //block是静音，mute是闭麦
+                    $('#silencemember' + number.toString()).attr('class', 'silencemember0');
+                }
+                else if (blocking === "1") {
+                    $('#silencemember' + number.toString()).attr('class', 'silencemember1');
+                }
+                if (muting === "0") {
+                    $('#shutup' + number.toString()).attr('class', 'shutup0');
+                }
+                else if (muting === "1") {
+                    $('#shutup' + number.toString()).attr('class', 'shutup1');
+                }
+                if (identity === "0") {	                          //0广播，1查看，2普通
+                    $('#broadcast' + number.toString()).attr('class', 'broadcast1');
+                    $('#see' + number.toString()).attr('class', 'see0');
+                }
+                else if (identity === "1") {	                          //0广播，1查看，2普通
+                    $('#see' + number.toString()).attr('class', 'see1');
+                    $('#broadcast' + number.toString()).attr('class', 'broadcast0');
+                }
+                else if (identity === "2") {	                          //0广播，1查看，2普通
+                    $('#broadcast' + number.toString()).attr('class', 'broadcast0');
+                    $('#see' + number.toString()).attr('class', 'see0');
+                }
+            }
+
+
+        }
+
+        function light_off() {
+            $("td[title='state']").attr('class', 'unconnect');
+            $("td[title='call']").attr('class', 'callmember1');
+            $("td[title='hung']").attr('class', 'hangupforbid');
+            $("td[title='silence']").attr('class', 'silencememberforbid');
+            $("td[title='shutup']").attr('class', 'shutupforbid');
+            $("td[title='double']").attr('class', 'doubleforbid');
+            $("td[title='see']").attr('class', 'seeforbid');
+            $("td[title='broadcast']").attr('class', 'broadcastforbid');
+
+        }
+
+
+        function callmember(pk) {
+            // console.log(pk);
+            if ($('#callmember' + pk.toString()).hasClass('callmember1')) {
+                $('#connect' + pk.toString()).attr('class', 'connecting');
+                $.get("/callmember/" + {{meetInstance.pk}}+"/" + pk + "/", function (results) {
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity, parsedJson.IsDualSender);
+                    // $('#double'+pk.toString()).attr('class','double0');
+                    // if(parsedJson.MemberState==="0"||parsedJson.MemberState==="1"){
+                    // 	lightup(pk);
+                    // }
+                });
+            }
+        };
+
+        function hangup(pk) {
+            if ($('#hangup' + pk.toString()).hasClass('hangup1')) {
+                // console.log(pk);
+                $.get("/hangup/" + {{meetInstance.pk}}+"/" + pk + "/", function () {
+
+                    $('#connect' + pk.toString()).attr('class', 'unconnect');
+                    $('#callmember' + pk.toString()).attr('class', 'callmember1');
+                    $('#hangup' + pk.toString()).attr('class', 'hangupforbid');
+                    $('#silencemember' + pk.toString()).attr('class', 'silencememberforbid');
+                    $('#shutup' + pk.toString()).attr('class', 'shutupforbid');
+                    $('#double' + pk.toString()).attr('class', 'doubleforbid');
+                    $('#see' + pk.toString()).attr('class', 'seeforbid');
+                    $('#broadcast' + pk.toString()).attr('class', 'broadcastforbid');
+                });
+            }
+        };
+
+        function silencemember(pk) {
+            // console.log(pk);
+            if ($('#silencemember' + pk.toString()).hasClass('silencemember0')) {
+                $.get("/silencemember/" + {{meetInstance.pk}}+"/" + pk + "/" + 1 + "/", function (results) {
+                    // $('#silencemember'+pk.toString()).attr('class','silencemember1');
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity);
+                });
+            }
+            else if ($('#silencemember' + pk.toString()).hasClass('silencemember1')) {
+                $.get("/silencemember/" + {{meetInstance.pk}}+"/" + pk + "/" + 0 + "/", function (results) {
+                    // $('#silencemember'+pk.toString()).attr('class','silencemember0');
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity);
+
+                });
+            }
+        };
+
+        function shutup(pk) {
+            // console.log(pk);
+            if ($('#shutup' + pk.toString()).hasClass('shutup0')) {
+                $.get("/shutup/" + {{meetInstance.pk}}+"/" + pk + "/" + 1 + "/", function (results) {
+                    // $('#shutup'+pk.toString()).attr('class','shutup1');
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity);
+                });
+            }
+            else if ($('#shutup' + pk.toString()).hasClass('shutup1')) {
+                $.get("/shutup/" + {{meetInstance.pk}}+"/" + pk + "/" + 0 + "/", function (results) {
+                    // $('#shutup'+pk.toString()).attr('class','shutup0');
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity);
+                });
+            }
+        };
+
+        function double(pk) {
+            // console.log(pk);
+            if ($('#double' + pk.toString()).hasClass('double0')) {
+                $.get("/double/" + {{meetInstance.pk}}+"/" + pk + "/" + 1 + "/", function (results) {
+
+                    $('#double' + pk.toString()).attr('class', 'double1');
+
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity);
+                });
+            }
+            else if ($('#double' + pk.toString()).hasClass('double1')) {
+                $.get("/double/" + {{meetInstance.pk}}+"/" + pk + "/" + 0 + "/", function (results) {
+                    $('#double' + pk.toString()).attr('class', 'double0');
+
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity);
+                });
+            }
+        };
+
+        function see(pk) {
+            if ($('#see' + pk.toString()).hasClass('see0')) {
+                $.get("/see/" + {{meetInstance.pk}}+"/" + pk + "/" + 1 + "/", function (results) {
+                    // $('.see1').attr('class','see0');
+                    // $('.broadcast1').attr('class','broadcast0');
+                    // $('#see'+pk.toString()).attr('class','see1');
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity);
+                });
+            }
+        };
+
+        function broadcast(pk) {
+            if ($('#broadcast' + pk.toString()).hasClass('broadcast0')) {
+                $.get("/broadcast/" + {{meetInstance.pk}}+"/" + pk + "/" + 1 + "/", function (results) {
+                    // $('.see1').attr('class','see0');
+                    // $('.broadcast1').attr('class','broadcast0');
+                    // $('#broadcast'+pk.toString()).attr('class','broadcast1');
+                    var parsedJson = jQuery.parseJSON(results);
+                    fresh_icon(pk, parsedJson.MemberState, parsedJson.MemberAudioBlocking, parsedJson.MemberAudioMuting, parsedJson.MemberIdentity);
+                });
+            }
+        };
+    </script>
+{% endblock %}

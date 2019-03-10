@@ -1,0 +1,297 @@
+.span8, .span10 {
+    color: #dadada;
+    font-size: 15px;
+    margin-top: 50px;
+}
+
+.span10.offset1 {
+    height: auto;
+}
+
+form.form-inline {
+    margin: 0px;
+}
+
+div#table {
+    margin-top: 18px;
+}
+
+div#error {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+
+    width: 20%;
+
+}
+
+span#modelselect {
+    position: absolute;
+    z-index: 6;
+}
+
+div.progress {
+    position: absolute;
+    margin-top: 20px;
+    width: 60%
+
+}
+
+div#modelcover {
+    top: 0px;
+
+    left: 18%;
+
+    position: fixed;
+
+    width: 100%;
+    height: 100%;
+    background: rgba(50, 50, 50, 0.5);
+    z-index: 5;
+}
+
+div#title {
+    padding-top: 10px;
+
+    text-align: center;
+    font-size: 20px;
+    margin-top: 10px;
+    position: absolute;
+    border-radius: 10px;
+    width: 60%;
+
+    background: rgba(20, 20, 20, 0.5);
+    z-index: 6;
+}
+
+div#title1 {
+    padding-top: 10px;
+
+    text-align: center;
+    font-size: 20px;
+    margin-top: 10px;
+    position: absolute;
+    border-radius: 10px;
+    width: 60%;
+
+    background: rgba(20, 20, 20, 0.5);
+    z-index: 6;
+}
+
+div#meetinfo {
+    padding-top: 10px;
+    padding-left: 20px;
+    border-radius: 7px;
+    margin-top: 10px;
+    background-color: rgb(51, 51, 51);
+    color: #dadada;
+    font-size: 15px;
+    height: auto;
+
+}
+
+div#bar {
+    margin-top: 0px;
+}
+
+div#buttonbox {
+    margin-top: 15px;
+
+}
+
+/*strong{
+	color: rgb(255,204,0);
+}*/
+
+span.tips {
+    color: red;
+}
+
+thead {
+    color: rgb(255, 204, 0);
+}
+
+div.form-actions {
+    background-color: rgb(68, 68, 68);
+    border: 0px;
+}
+
+a#hungall {
+    margin-right: 30px;
+}
+
+a#nav2, a#nav2:focus, a#nav2:active, a#nav2:visited {
+    background-color: rgb(255, 204, 0);
+    color: black;
+}
+
+a#usercontrol, a#usercontrol:focus, a#usercontrol:active, a#usercontrol:visited {
+    background-color: transparent;
+    color: rgb(255, 153, 0);
+}
+
+tr.main {
+    background-color: rgb(255, 204, 0);
+    color: black;
+
+}
+
+td.delete > a, td.edit > a, td.control > a,
+td.callmember1 > a, td.hangup1 > a, td.silencemember1 > a, td.shutup1 > a, td.double1 > a, td.see1 > a, td.broadcast1 > a,
+td.callmemberforbid > a, td.hangupforbid > a, td.silencememberforbid > a, td.shutupforbid > a, td.doubleforbid > a, td.seeforbid > a, td.broadcastforbid > a,
+td.silencemember0 > a, td.shutup0 > a, td.double0 > a, td.see0 > a, td.broadcast0 > a,
+td.unconnect > button, td.connecting > button, td.connected > button {
+    padding: 0px;
+    border: 0px;
+    height: 20px;
+    width: 20px;
+}
+
+td.delete > a:hover, td.edit > a:hover, td.control > a:hover,
+td.callmember1 > a:hover, td.hangup1 > a:hover, td.silencemember1 > a:hover, td.shutup1 > a:hover, td.double1 > a:hover, td.see1 > a:hover, td.broadcast1 > a:hover,
+td.callmemberforbid > a:hover, td.hangupforbid > a:hover, td.silencememberforbid > a:hover, td.shutupforbid > a:hover, td.doubleforbid > a:hover, td.seeforbid > a:hover, td.broadcastforbid > a:hover,
+td.silencemember0 > a:hover, td.shutup0 > a:hover, td.double0 > a:hover, td.see0 > a:hover, td.broadcast0 > a:hover,
+td.delete > a:focus, td.edit > a:focus, td.control > a:focus,
+td.callmember1 > a:focus, td.hangup1 > a:focus, td.silencemember1 > a:focus, td.shutup1 > a:focus, td.double1 > a:focus, td.see1 > a:focus, td.broadcast1 > a:focus,
+td.callmemberforbid > a:focus, td.hangupforbid > a:focus, td.silencememberforbid > a:focus, td.shutupforbid > a:focus, td.doubleforbid > a:focus, td.seeforbid > a:focus, td.broadcastforbid > a:focus,
+td.silencemember0 > a:focus, td.shutup0 > a:focus, td.double0 > a:focus, td.see0 > a:focus, td.broadcast0 > a:focus {
+    background-color: transparent;
+    background-position: 0px;
+}
+
+td.unconnect > button:focus {
+    outline: none;
+}
+
+td.connected > button:focus {
+    outline: none;
+}
+
+td.delete > a {
+    background: url(../images/delete.png) center no-repeat;
+}
+
+td.edit > a {
+    background: url(../images/edit.png) center no-repeat;
+}
+
+td.control > a {
+    background: url(../images/control.png) center no-repeat;
+}
+
+td.callmember1 > a {
+    background: url(../images/call.png) center no-repeat;
+
+}
+
+td.callmemberforbid > a {
+    background: url(../images/callforbid.png) center no-repeat;
+
+}
+
+td.hangup1 > a {
+    background: url(../images/hangup.png) center no-repeat;
+
+}
+
+td.hangupforbid > a {
+    background: url(../images/hangupforbid.png) center no-repeat;
+
+}
+
+td.silencemember1 > a {
+    background: url(../images/silence.png) center no-repeat;
+
+}
+
+td.silencememberforbid > a {
+    background: url(../images/silenceforbid.png) center no-repeat;
+
+}
+
+td.silencemember0 > a {
+    background: url(../images/silence0.png) center no-repeat;
+
+}
+
+td.shutup1 > a {
+    background: url(../images/shutup.png) center no-repeat;
+
+}
+
+td.shutupforbid > a {
+    background: url(../images/shutupforbid.png) center no-repeat;
+
+}
+
+td.shutup0 > a {
+    background: url(../images/shutup0.png) center no-repeat;
+
+}
+
+td.double1 > a {
+    background: url(../images/double.png) center no-repeat;
+
+}
+
+td.doubleforbid > a {
+    background: url(../images/doubleforbid.png) center no-repeat;
+
+}
+
+td.double0 > a {
+    background: url(../images/double0.png) center no-repeat;
+
+}
+
+td.seeforbid > a {
+    background: url(../images/seeforbid.png) center no-repeat;
+
+}
+
+td.see0 > a {
+    background: url(../images/see0.png) center no-repeat;
+
+}
+
+td.see1 > a {
+    background: url(../images/see1.png) center no-repeat;
+
+}
+
+td.broadcastforbid > a {
+    background: url(../images/broadcastforbid.png) center no-repeat;
+
+}
+
+td.broadcast0 > a {
+    background: url(../images/broadcast0.png) center no-repeat;
+
+}
+
+td.broadcast1 > a {
+    background: url(../images/broadcast1.png) center no-repeat;
+
+}
+
+td.unconnect > a {
+    background: url(../images/unconnect.png) center no-repeat;
+}
+
+td.connecting > a {
+    background: url(../images/connecting.png) center no-repeat;
+}
+
+td.connected > a {
+    background: url(../images/connected.png) center no-repeat;
+}
+
+td.unconnect > a, td.connecting > a, td.connected > a {
+    display: inline-block;
+    padding: 0px;
+    border: 0px;
+    height: 20px;
+    width: 20px;
+
+}
+
