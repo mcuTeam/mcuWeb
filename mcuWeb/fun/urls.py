@@ -36,4 +36,6 @@ urlpatterns = [
     url(r'^callall/(?P<meetpk>\d+)/$', fun_view.callallAjaxView),
 
     url(r'^model/(?P<meetpk>\d+)/(?P<mode>\d+)/$', fun_view.setoperationmodeAjaxView),
+
+    url(r'^MCU_status/$', fun_view.MCU_statusView),
 ]

@@ -62,6 +62,19 @@
             $('div.progress').hide();
             $('#error').hide();
 
+function findall(a,x){
+      len=a.length,
+      pos=0;
+  while(pos<len){
+    pos=a.indexOf(x,pos);
+    if(pos===-1){//未找到就退出循环完成搜索
+      break;
+    }
+    return true;
+  }
+  return false;
+}
+
             $(function () {
                 function getmeetinfo() {
                     var mn = '{{meetname}}';
@@ -79,6 +92,18 @@
                         else {
                             $('#error').hide();
 
+                            var divnode = document.getElementById('terminalList');
+                            for(var i=0;i<divnode.childNodes.length;i++)
+                            {
+                                if(divnode.childNodes[i].nodeName=='TBODY'){
+                                    var terminalID = divnode.childNodes[i].id.split('_')[1];
+                                    if(!findall(meetinfoJson.EPName,terminalID))
+                                    {
+                                        //删除该dom
+                                        document.getElementById('tbody_'+terminalID).remove();
+                                    }
+                                }
+                            }
 
                             for (var i = 0; i < meetinfoJson.AllMemberCount; i++) {
 

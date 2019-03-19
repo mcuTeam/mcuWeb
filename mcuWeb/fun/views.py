@@ -150,7 +150,7 @@ class call_all(threading.Thread):  # 继承父类threading.Thread
                 #     tcpCliSock.send(msg)
             # third callall
             # optional setidentity
-            time.sleep(0.1)
+            time.sleep(0.2)
             msg = "CALLALL\r\nVersion:1\r\nSeqNumber:1\r\nMeetName:%s\r\n\r\n" % (self.meetName)
             tcpCliSockInTask.send(msg.encode('gb2312'))
             print("wait", len(memberList))
@@ -606,8 +606,7 @@ def get_gk_status_task():
 
     if tcpCliSock is None:
         print("tcpCliSock is None")
-        tcpCliSock = socket(AF_INET, SOCK_STREAM)
-        tcpCliSock.connect(ADDR)
+        return None
 
     print("get_gk_status_task task")
     try:
@@ -624,7 +623,6 @@ def get_gk_status_task():
                 print(key, "-----------wait for cache in get_gk_status_task-------------")
                 continue
             else:
-                # print(data)
                 return data
         return None
     # 开始连接成功，后来MCU断开连接了
@@ -1654,7 +1652,7 @@ def getmeetinfoAjaxView(request, meetpk):
                 #             print("mainMeetRoom online!!!!!!!!!")
                 #             setmemberidentityTask(meetname,mainMeetRoomName)
                 cache.delete('notify')
-            print("getmeetinfo result is: \n",result)
+            print("getmeetinfo result is: \n", result)
             if result is not None:
                 analysysResult = analysisMeetinfo(result)
                 # analysysResult['']
@@ -1696,7 +1694,7 @@ def getcsmeetinfoAjaxView(request, meetname):
                 #             print("mainMeetRoom online!!!!!!!!!")
                 #             setmemberidentityTask(meetname,mainMeetRoomName)
                 cache.delete('notify')
-            print("getcsmeetinfo result is: \n",result)
+            print("getcsmeetinfo result is: \n", result)
             if result is not None:
                 analysysResult = analysisMeetinfo(result)
                 # analysysResult['']
@@ -1720,6 +1718,7 @@ def getcsmeetinfoAjaxView(request, meetname):
             # print("getmeetinfo return %s" % retDict['RetCode'])
             return HttpResponse(json.dumps({'msgType': "error", 'msg': ("获取会议信息过程中MCU返回%s！" % retDict['RetCode'])}))
         return HttpResponse(json.dumps({'msgType': "success", 'msg': "操作成功！"}))
+
 
 @login_required
 def hungupAjaxView(request, meetpk, pk):
@@ -2163,7 +2162,7 @@ def meetDetailsView(request, meetpk):
 def csmeetDetailsView(request, meetname):
     # print(meetname)
     return render(request, 'fun/csmeetDetail.html',
-                  {'meetname':str(meetname), 'msgType': 'info', 'msg': "please add"})
+                  {'meetname': str(meetname), 'msgType': 'info', 'msg': "please add"})
 
 
 def getmcue164():
@@ -2229,3 +2228,23 @@ def GK_configView(request):
                 return render(request, 'system_manage/GK_config.html', {'form': form})
 
         return render(request, 'system_manage/GK_config.html')
+
+
+@login_required
+def MCU_statusView(request):
+    ret = get_gk_status_task()
+
+    gkStatus = returnCode2Dict(ret)
+    print("gkStatus:", gkStatus)
+    isRegistered = u"否"
+    mcuOnline = u"不在线"
+    useGK = u"否"
+    gkIpAddr = ""
+    if gkStatus:
+        mcuOnline = u"在线"
+        useGK = u"是"if gkStatus.get("GKUseGK", None) == '1' else u"否"
+        isRegistered = u"是" if gkStatus.get("GKIsRegistered", None) == '1' else u"否"
+        gkIpAddr = gkStatus.get("GKIPAddr", "")
+
+    return render(request, 'system_manage/MCU_status.html',
+                  {"mcuOnline": mcuOnline, "useGK": useGK, "isRegistered": isRegistered, "gkIpAddr": gkIpAddr})

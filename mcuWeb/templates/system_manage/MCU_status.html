@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}MCU状态{% endblock %}
+
+{% block csss %}
+    <link href="{% static "css/MCU_status.css" %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="span8 offset1">
+            <p>MCU状态</p>
+        </div>
+        <div class="span8 offset3">
+            <p>MCU在线状态：{{ mcuOnline }}</p>
+            <p>MCU是否使用GK：{{ useGK }}</p>
+            <p>MCU是否已注册GK：{{ isRegistered }}</p>
+            <p>GK地址：{{ gkIpAddr }}</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $('document').ready(function () {
+            $('div#pill1').attr('class', 'accordion-body collapse in');
+        });
+    </script>
+{% endblock %}

@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import user_passes_test
 
 # from fun.views import get_gk_status_task, set_gk_task
 from system.forms import *
+# from fun.views import *
 
 
 # Create your views here.
@@ -211,6 +212,8 @@ def MCU_configView(request):
         mcuInstance = mcuAttributes.objects.get(pk=1)
         form = mcuAttributesForm(instance=mcuInstance)
         return render(request, 'system_manage/MCU_config.html', {'form': form})
+
+
 
 
 def getNetworkInfo():
@@ -447,6 +450,26 @@ def configfileView(request):
             return render(request, 'system_manage/configfile.html', {'form': form, 'msgType': "error", 'msg': u"填写错误！"})
     form = uploadConfigFileForm()
     return render(request, 'system_manage/configfile.html', {'form': form})
+
+
+configfileDir = "C:/SVCMMCUAutoStart/"
+
+@login_required
+def downloadconfigfileView(request):
+    filename = configfileDir + 'svcmmcu.ini'
+    # print fileNames
+    zip_subdir = str("configfile")  # name of the zip file to be
+    zip_filename = "%s.zip" % zip_subdir
+    s = io.BytesIO()
+    zf = zipfile.ZipFile(s, "w")
+
+    fdir, fname = os.path.split(filename)
+    zip_path = os.path.join(zip_subdir, fname)
+    zf.write(filename, zip_path)
+    zf.close()
+    resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+    resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+    return resp
 
 
 logDir = "C:/SVCMMCUAutoStart/LOGFILE/"
